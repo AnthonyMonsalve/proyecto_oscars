@@ -3,20 +3,20 @@ LISTA DE TRIGGERS
     TABLA - CATEGORIA:
         1.- BEFORE INSERT OR UPDATE:
 
-            1.1.- Validar que cuando nivel = 1:
-                1.1.1.- Rama debe ser NOT NULL. [LISTO]
-                1.1.2.- hist_premio_nt debe ser NULL. [LISTO]
-                1.1.3.- id_categoria2 debe ser NULL. [LISTO]
+        ✅  1.1.- Validar que cuando nivel = 1: 
+                1.1.1.- Rama debe ser NOT NULL. ✅
+                1.1.2.- hist_premio_nt debe ser NULL. ✅
+                1.1.3.- id_categoria2 debe ser NULL. ✅
 
             1.2.- Validar que cuando nivel = 2:
-                1.2.1.- Rama debe ser NULL.
+                1.2.1.- Rama debe ser NULL. ✅
                 1.2.2.- hist_premio_nt debe ser NOT NULL.
                     1.2.2.1.- fecha_ini < fecha_fin.
                     1.2.2.2.- nombre y cantidad_nom deben ser NOT NULL.
                     1.2.2.3.- fecha_fin puede ser NULL.
                     1.2.2.4.- Para agregar otra hist_premio_nt se debe validar que el anterior historico deba estar cerrado (fecha_fin NOT NULL)
-                1.2.3.- id_categoria2 debe ser NOT NULL.
-                    1.2.3.1.- Hay que validar que el nivel del registro de id_categoria2 sea 1.
+                1.2.3.- id_categoria2 debe ser NOT NULL. ✅
+                    1.2.3.1.- Hay que validar que el nivel del registro de id_categoria2 sea 1. ✅
 
     TABLA - PERSONA:
         1.- BEFORE INSERT:
