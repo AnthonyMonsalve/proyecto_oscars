@@ -24,24 +24,24 @@ LISTA DE TRIGGERS
     TABLA - PERSONA:
         1.- BEFORE INSERT:
 
-            1.1.- Validar que cuando una persona sea un actor:
-                1.1.1.- a_lugar_nac debe ser NOT NULL.
-                1.1.2.- a_biografia debe ser NOT NULL.
-            1.2.- Validar que fecha_defuncion debe ser NULL.
+        ❌  1.1.- Validar que cuando una persona sea un actor:
+                1.1.1.- a_lugar_nac debe ser NOT NULL. ❌
+                1.1.2.- a_biografia debe ser NOT NULL. ❌
+            1.2.- Validar que fecha_defuncion debe ser NULL. ❌
 
     TABLA - POSTULADAS_PERS_P:
         1.- BEFORE INSERT OR UPDATE:
-            1.1.- Validar arco exclusivo
+            1.1.- Validar arco exclusivo ❌
 
     TABLA - VOTOS:
         1.- BEFORE INSERT:
-            1.1.- Validar arco exclusivo
+            1.1.- Validar arco exclusivo ❌
             
     TABLA - AUDIOVISUAL:
         1.- BEFORE INSERT:
 
-            1.1.- Validar que total_nomi debe ser NULL.
-            1.2.- Validar que total_ganador debe ser NULL.
+            1.1.- Validar que total_nomi debe ser NULL. ❌
+            1.2.- Validar que total_ganador debe ser NULL. ❌
             1.3.- 
 
 LISTA DE PROCEDURES:
