@@ -40,9 +40,9 @@ LISTA DE TRIGGERS
     TABLA - AUDIOVISUAL:
         1.- BEFORE INSERT:
 
-            1.1.- Validar que total_nomi debe ser NULL.
-            1.2.- Validar que total_ganador debe ser NULL.
+            1.1.- Validar que total_nomi debe ser 0 cuando se inserte en el sistema.
+            1.2.- Validar que total_ganador debe ser 0 cuando se inserte en el sistema.
             1.3.- 
-
+            (Se debera cambiar a not null)
 LISTA DE PROCEDURES:
 
