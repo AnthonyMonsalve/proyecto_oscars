@@ -17,7 +17,7 @@ LISTA DE TRIGGERS
                     1.2.2.1.- fecha_ini < fecha_fin. ✅
                     1.2.2.2.- nombre y cantidad_nom deben ser NOT NULL ✅
                     1.2.2.3.- fecha_fin puede ser NULL. ✅
-                    ❌ 1.2.2.4.- Para agregar otra hist_premio_nt se debe validar que el anterior historico deba estar cerrado (fecha_fin NOT NULL)
+                    1.2.2.4.- Para agregar otra hist_premio_nt se debe validar que el anterior historico deba estar cerrado (fecha_fin NOT NULL) ✅
                 1.2.3.- id_categoria2 debe ser NOT NULL. ✅
                     1.2.3.1.- Hay que validar que el nivel del registro de id_categoria2 sea 1. ✅
 
