@@ -46,8 +46,13 @@ LISTA DE TRIGGERS
 =======
             1.1.- Validar que total_nomi debe ser 0 cuando se inserte en el sistema.
             1.2.- Validar que total_ganador debe ser 0 cuando se inserte en el sistema.
+<<<<<<< HEAD
 >>>>>>> b5a5ddd1d5e9c75f3ee081360290042331612fbe
             1.3.- 
             (Se debera cambiar a not null)
+=======
+            1.3.- Hacer los inserts y updates para los arrays de distribucion y fotos 
+            (Se debera cambiar a not null el total ganador y total nominado)
+>>>>>>> d689736e5ebdeff5457565bf3155a8fed67998a4
 LISTA DE PROCEDURES:
 
