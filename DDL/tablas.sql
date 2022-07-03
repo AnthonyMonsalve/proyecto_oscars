@@ -20,7 +20,8 @@
         segundo_nom VARCHAR(50),
         a_lugar_nac VARCHAR(50),
         a_biografia TEXT,
-        fecha_defuncion DATE
+        fecha_defuncion DATE,
+        CONSTRAINT fecha_nac_valida CHECK(fecha_ini_carrera>fecha_nac)
     );
 
     -- FALTA FOTO Y DUDA EN DISTRIBUCION_VA
