@@ -15,10 +15,11 @@
         segundo_ape VARCHAR(50) NOT NULL,
         sexo CHAR(1) NOT NULL CHECK(sexo IN ('M','F')),
         es_actor VARCHAR(2) NOT NULL CHECK(es_actor IN ('SI','NO')),
+        fecha_nac DATE NOT NULL, 
         fecha_ini_carrera DATE, 
         segundo_nom VARCHAR(50),
         a_lugar_nac VARCHAR(50),
-        a_biografia VARCHAR(150),
+        a_biografia TEXT,
         fecha_defuncion DATE
     );
 
