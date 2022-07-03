@@ -26,7 +26,7 @@
         id_audiovi SERIAL PRIMARY KEY NOT NULL,
         titulo_espanol VARCHAR(50) NOT NULL,
         titulo_original VARCHAR(50) NOT NULL,
-        sinopsis VARCHAR(150) NOT NULL,
+        sinopsis TEXT NOT NULL,
         fecha_estreno_cine DATE NOT NULL,
         duracion_min SMALLINT NOT NULL,
         distribucion_va VARCHAR(20)[3] NOT NULL,
@@ -128,9 +128,9 @@
 
     -- LISTO
     CREATE TABLE public.organizacion (
-        id_organizacion INT PRIMARY KEY,
+        id_organizacion SERIAL PRIMARY KEY,
         nombre VARCHAR(50) NOT NULL,
-        mision VARCHAR(150) NOT NULL, 
+        mision TEXT NOT NULL, 
         donacion_nt donacion[]
     );
 
