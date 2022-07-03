@@ -82,7 +82,8 @@
         id_categoria SERIAL PRIMARY KEY,
         nombre VARCHAR(50) NOT NULL,
         nivel CHAR(1) NOT NULL CHECK(nivel IN ('1','2')),
-        rama VARCHAR(20) CHECK(rama IN ('actores','guionista','directores','productores','técnicos')),
+        rama VARCHAR(20) CHECK(rama IN ('actor','guionista','director','productor','fotografo','tecnico', 
+        'ing.sonido', 'musico', 'estilista', 'artista')),
         id_categoria2 INT REFERENCES categoria(id_categoria),
         hist_premio_nt hist_premio[]
     );
