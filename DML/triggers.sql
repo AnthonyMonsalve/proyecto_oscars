@@ -78,9 +78,7 @@ BEGIN
 					
       			END LOOP;
 			END IF;
-			
-			
-			
+            			
 		END IF;		
 	END IF;
 	RETURN NEW;

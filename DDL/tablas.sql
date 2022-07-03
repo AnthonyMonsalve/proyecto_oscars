@@ -35,8 +35,9 @@
         ano_realizacion SMALLINT NOT NULL,
         genero_va VARCHAR(15)[5] NOT NULL,
         -- fotos BYTEA[] NOT NULL,
-        total_nomi int,
-        total_postu int
+        total_nomi int NOT NULL,
+        total_postu int NOT NULL,
+        total_ganador int NOT NULL
     );
 
     -- LISTO
