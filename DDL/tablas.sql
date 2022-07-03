@@ -29,7 +29,7 @@
         sinopsis VARCHAR(150) NOT NULL,
         fecha_estreno_cine DATE NOT NULL,
         duracion_min SMALLINT NOT NULL,
-        -- distribucion_va VARCHAR(5)[20] NOT NULL,
+        distribucion_va VARCHAR(20)[3] NOT NULL,
         censura VARCHAR(2) NOT NULL CHECk(censura IN ('AA','A','B','C','D')),
         clas_audiovisual VARCHAR(15) NOT NULL CHECK(clas_audiovisual IN ('largometraje','cortometraje','documental')),
         ano_realizacion SMALLINT NOT NULL,
