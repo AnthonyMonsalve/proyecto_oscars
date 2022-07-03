@@ -4,7 +4,7 @@
     CREATE TABLE public.rol (
         id_rol SERIAL PRIMARY KEY,
         nombre VARCHAR(25) NOT NULL,
-        descripcion VARCHAR(50) NOT NULL
+        descripcion VARCHAR(250) NOT NULL
     );
 
     -- LISTO
