@@ -30,3 +30,6 @@ INSERT INTO public.rol(id_rol, nombre, descripcion)
 
 INSERT INTO public.rol(id_rol, nombre, descripcion)
 	VALUES (10, 'artista', 'Persona que participa profesionalmente en un espectáculo cinematográfico');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (11, 'actor de reparto', 'Un actor secundario, actor de reparto o personaje secundario es un actor que interpreta personajes en obras, películas o series de televisión, acompañando a los actores protagonistas');
