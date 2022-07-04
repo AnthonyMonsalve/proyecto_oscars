@@ -7,7 +7,7 @@ BEGIN
 	if valor like '%,%' or valor like '%?%' or
 	valor like '%?%' or valor like '%+%' or
 	valor like '%(%' or valor like '%)%' or
-	valor like '%_%' or valor like '%*%' or
+	valor like '%*%' or
 	valor like '%[%' or valor like '%]%' or
 	valor like '%<%' or valor like '%>%' or
 	valor like '%$%' or valor like '%/%' 
