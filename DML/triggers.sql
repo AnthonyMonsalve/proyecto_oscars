@@ -153,3 +153,94 @@ CREATE TRIGGER validar_audiovisual_update
 BEFORE INSERT or update
 ON public.audiovisual FOR EACH ROW
 EXECUTE PROCEDURE validar_audiovisual_update();
+
+--Validar inserción en la tabla Gala 
+CREATE OR REPLACE FUNCTION validar_gala() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	BEGIN
+		if new.ano < 1900 or new.ano> 2200 then
+			RAISE EXCEPTION 'El año introducido no es valido';
+		end if;
+		if new.fecha< TO_DATE(new.ano::varchar(4),'YYYY') or new.fecha> TO_DATE((new.ano+1)::varchar(4),'YYYY') then
+			RAISE EXCEPTION 'La fecha de realizacion no concuerda con el ano de la gala';
+		end if;
+		RETURN NEW;
+	END;
+$BODY$;
+
+CREATE TRIGGER validar_gala
+BEFORE INSERT or update
+ON public.gala FOR EACH ROW
+EXECUTE PROCEDURE validar_gala();
+
+--Insert registro de gala
+INSERT INTO public.gala(
+	ano, fecha, lugar, numero_edicion, descripcion,doc_identidad)
+	VALUES ('2001', '2001-07-30', 'Las Vegas, Estados Unidos', 57 , 'La espectaculo se dio a cabo la noche del dia 30 de Julio del ano 2000, asistieron grandes celebridades de todo el mundo.', 26996360);
+	
+	select * from public.gala;
+--Organizacion
+
+--Validaciones
+
+-- Función usada para validar la Organizacion ingresada o modificada
+CREATE OR REPLACE FUNCTION validar_org() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+AS $BODY$
+DECLARE
+ 	v_donacio_nt_length int;
+	v_ano int;
+	v_mensaje varchar(250);
+	v_suma int;
+BEGIN
+	v_suma=0;
+	if val_cadena(4,50,new.nombre) = false then
+		RAISE EXCEPTION 'El nombre introducido no es valido';
+	end if;
+	if val_cadena(10,1000,new.mision) = false then
+		RAISE EXCEPTION 'La mision no esta cumpliendo el largo establecido o este posee caracteres no permitidos';
+	end if;
+		IF NEW.donacion_nt IS NULL THEN
+			RAISE EXCEPTION 'No se puede registrar una organizacion sin ninguna donacion';
+		ELSE
+			v_donacio_nt_length := array_length(NEW.donacion_nt,1);
+				WITH list AS
+				 (SELECT 
+						UNNEST(new.donacion_nt) AS row_result
+				  FROM   public.organizacion)
+				Select   
+					SUM((row_result).porcentaje) into v_suma
+					FROM     list
+					group by (row_result).ano 
+					having SUM((row_result).porcentaje)>100;
+				
+				if v_suma<>0 then 
+					RAISE EXCEPTION 'La suma de los porcentajes de cada gala no pueden exceder el 100';
+      			END IF;
+				FOR i IN 1..v_donacio_nt_length
+				LOOP
+					select ano into v_ano from public.gala where ano= NEW.donacion_nt[i].ano;
+					if not found then
+						v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.donacion_nt[i].ano,'.');
+						RAISE EXCEPTION using message=v_mensaje;
+					END IF;
+					
+					IF NEW.donacion_nt[i].porcentaje < 0 or NEW.donacion_nt[i].porcentaje > 100 THEN
+						RAISE EXCEPTION 'El porcentaje debe estar entre 0 y 100';
+					END IF;	
+					
+      			END LOOP;
+			END IF;
+	
+	
+	RETURN NEW;
+END;
+$BODY$;
+
+CREATE TRIGGER validar_org
+BEFORE INSERT OR UPDATE
+ON public.organizacion FOR EACH ROW
+EXECUTE PROCEDURE validar_org();

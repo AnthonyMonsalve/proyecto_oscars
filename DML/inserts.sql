@@ -13,11 +13,10 @@ FROM     list;
 
 
 --insert historicos de los premios
-UPDATE public.categoria
-SET    hist_premio_nt = (SELECT ARRAY_APPEND(hist_premio_nt,('2020-01-01','2020-12-31','Mejor Pelicula','1')::hist_premio) 
-						FROM public.categoria
- 						WHERE id_categoria = 3)
-WHERE id_categoria=3;
+UPDATE public.categoria 
+SET hist_premio_nt = hist_premio_nt || ('2018-01-01','2018-12-31','Mejor Pelicula','1')::hist_premio
+WHERE id_categoria = 3;
+
 
 --Para modificar un registro en particular de nuestro  array, este se utilizara para colocar la fecha de fin a 
 --nuestro registro
