@@ -151,8 +151,8 @@
         tipo VARCHAR(50),
         textocritica VARCHAR(150) NOT NULL,
         negativa CHAR(2) NOT NULL CHECK(negativa in('si','no')),
-        id_categoria INT NOT NULL,
-        id_postuladas_p_pers INT NOT NULL,
+        --id_categoria INT NOT NULL,
+        --id_postuladas_p_pers INT NOT NULL,
         --ano_oscar INT NOT NULL,
         --CONSTRAINT FK_postuladas_p_pers_critica FOREIGN KEY ( id_postuladas_p_pers, ano_oscar, id_categoria) REFERENCES postuladas_p_pers(id_postuladas_p_pers, ano_oscar, id_categoria)
     );
