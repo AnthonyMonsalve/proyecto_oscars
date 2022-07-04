@@ -14,7 +14,7 @@
         primer_ape VARCHAR(50) NOT NULL,
         segundo_ape VARCHAR(50) NOT NULL,
         sexo CHAR(1) NOT NULL CHECK(sexo IN ('M','F')),
-        es_actor VARCHAR(2) NOT NULL CHECK(es_actor IN ('SI','NO')),
+        es_actor VARCHAR(2) NOT NULL CHECK(es_actor IN ('si','no')),
         fecha_nac DATE NOT NULL, 
         fecha_ini_carrera DATE, 
         segundo_nom VARCHAR(50),
@@ -146,11 +146,11 @@
 
     -- No se que es tipo -LISTO
     CREATE TABLE public.critica (
-        id_critica INT PRIMARY KEY,
+        id_critica SERIAL PRIMARY KEY,
         ano SMALLINT NOT NULL,
         tipo VARCHAR(50) CHECK(tipo in ('postulacion', 'nominados', 'ganadores', 'gala')),
-        textocritica VARCHAR(150) NOT NULL,
-        negativa CHAR(2) NOT NULL CHECK(negativa in('si','no')),
+        textocritica VARCHAR(255) NOT NULL,
+        negativa CHAR(2) NOT NULL CHECK(negativa in('si','no'))
     );
 
     -- LISTO 
