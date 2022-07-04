@@ -1,0 +1,72 @@
+------------------------------MANTENIMIENTO---------------------------------
+-----------------------Persona-------------------
+
+
+------------------------------TRIGGERS--------------------------------------
+-----------------------Persona-------------------
+
+CREATE OR REPLACE FUNCTION validar_persona() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+AS $BODY$
+DECLARE
+
+BEGIN
+	if val_cadena(3,50,new.primer_nom) = false then
+		RAISE EXCEPTION 'El nombre introducido no es valido';
+	end if;
+	if val_cadena(3,50,new.primer_ape) = false then
+		RAISE EXCEPTION 'El primer apellido introducido no es valido';
+	end if;
+	if val_cadena(3,50,new.segundo_ape) = false then
+		RAISE EXCEPTION 'El segundo apellido introducido no es valido';
+	end if;
+	if val_cadena(3,50,new.segundo_nom) = false and new.segundo_nom is not null then
+		RAISE EXCEPTION 'El segundo nombre introducido no es valido';
+	end if;
+	if new.es_actor='si' then
+		if new.a_lugar_nac is null or new.a_biografia is null then
+			RAISE EXCEPTION 'Si la persona registrada es actor, el lugar de nacimiento y la biografia deben ser completadas';
+		end if;
+		if val_cadena(3,50,new.a_lugar_nac) = false  then
+			RAISE EXCEPTION 'El lugar de nacimiento no es valido';
+		end if;
+		if character_length(new.a_biografia)<20  then
+			RAISE EXCEPTION 'La biografia no es valida';
+		end if;
+	END IF;
+	if new.es_actor='no' then
+		if new.a_lugar_nac is not null or new.a_biografia is not null then
+			RAISE EXCEPTION 'Si la persona registrada no es actor, no se puede ingresar el lugar de nacimiento o la biografia';
+		end if;
+	END IF;
+	
+	RETURN NEW;
+END;
+$BODY$;
+
+CREATE TRIGGER validar_persona
+BEFORE INSERT OR UPDATE
+ON public.persona FOR EACH ROW
+EXECUTE PROCEDURE validar_persona();
+------------------------------INSERTS---------------------------------------
+-----------------------Persona-------------------
+
+-------------------- PERSONAS --------------------
+-- Relacionadas al audiovisual "Regreso al futuro"
+
+--Director y Guionista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, es_actor, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (12545, 'Robert', 'Zemeckis', 'Lee', 'M', 'no', '1945-12-12', '1972-05-05', NULL, NULL, NULL, NULL);
+
+--Guionista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, es_actor, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (7886, 'Mchael', 'Robert', 'Gale', 'M', 'no', '1930-10-07', '1965-01-24', null, null, null, NULL);
+
+--Actores principales
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, es_actor, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (7826, 'Michael', 'Fox', 'Andrew', 'M', 'si', '1970-12-12', '1977-02-04', 'Julio', 'Canada', 'Michael Andrew Fox OC (born June 9, 1961), known professionally as Michael J. Fox, is a Canadian-American retired actor. Beginning his career in the 1970s, he first rose to prominence for portraying Alex P. Keaton on the NBC sitcom Family Ties 1982–1989. Fox is most famous for his role as protagonist Marty McFly in the Back to the Future film trilogy (1985–1990), which became a critical and commercial success. He went on to headline several films throughout the 1980s and 1990s, including Teen Wolf (1985), The Secret of My Success (1987), Casualties of War (1989), Doc Hollywood (1991), and The Frighteners (1996). Fox returned to television on the ABC sitcom Spin City, in which he portrayed the lead role of Mike Flaherty from 1996 to 2000', NULL);
+
