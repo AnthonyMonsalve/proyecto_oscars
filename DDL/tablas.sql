@@ -53,7 +53,7 @@
 
     -- LISTO
     CREATE TABLE public.miembro (
-        id_miembro INT PRIMARY KEY NOT NULL,
+        id_miembro SERIAL PRIMARY KEY NOT NULL,
         fecha_inicio DATE NOT NULL,
         vitalicio CHAR(2) NOT NULL CHECK(vitalicio IN ('si','no')),
         doc_identidad BIGINT NOT NULL UNIQUE REFERENCES persona(doc_identidad),
