@@ -57,9 +57,9 @@
         id_miembro INT PRIMARY KEY NOT NULL,
         fecha_inicio DATE NOT NULL,
         vitalicio CHAR(2) NOT NULL CHECK(vitalicio IN ('si','no')),
-        doc_identidad INT NOT NULL REFERENCES persona(doc_identidad),
-        fecha_fin DATE CHECK(fecha_inicio < fecha_fin)--,
-        -- area_nt VARCHAR(25)[]
+        doc_identidad BIGINT UNIQUE NOT NULL REFERENCES persona(doc_identidad),
+        fecha_fin DATE CHECK(fecha_inicio < fecha_fin),
+        area_nt VARCHAR(25)[]
     );
 
     -- LISTO
