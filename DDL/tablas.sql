@@ -14,7 +14,6 @@
         primer_ape VARCHAR(50) NOT NULL,
         segundo_ape VARCHAR(50) NOT NULL,
         sexo CHAR(1) NOT NULL CHECK(sexo IN ('M','F')),
-        es_actor VARCHAR(2) NOT NULL CHECK(es_actor IN ('si','no')),
         fecha_nac DATE NOT NULL, 
         fecha_ini_carrera DATE, 
         segundo_nom VARCHAR(50),
