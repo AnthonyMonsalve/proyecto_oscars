@@ -14,7 +14,6 @@
         primer_ape VARCHAR(50) NOT NULL,
         segundo_ape VARCHAR(50) NOT NULL,
         sexo CHAR(1) NOT NULL CHECK(sexo IN ('M','F')),
-        es_actor VARCHAR(2) NOT NULL CHECK(es_actor IN ('si','no')),
         fecha_nac DATE NOT NULL, 
         fecha_ini_carrera DATE, 
         segundo_nom VARCHAR(50),
@@ -24,7 +23,7 @@
         CONSTRAINT fecha_nac_valida CHECK(fecha_ini_carrera>fecha_nac)
     );
 
-    -- FALTA FOTO Y DUDA EN DISTRIBUCION_VA
+    -- LISTO
     CREATE TABLE public.audiovisual (
         id_audiovi SERIAL PRIMARY KEY NOT NULL,
         titulo_espanol VARCHAR(50) NOT NULL,
@@ -37,7 +36,7 @@
         clas_audiovisual VARCHAR(15) NOT NULL CHECK(clas_audiovisual IN ('largometraje','cortometraje','documental')),
         ano_realizacion SMALLINT NOT NULL,
         genero_va VARCHAR(15)[5] NOT NULL,
-        -- fotos BYTEA[] NOT NULL,
+        fotos VARCHAR(255) NOT NULL,
         total_nomi int NOT NULL,
         total_postu int NOT NULL,
         total_ganador int NOT NULL
@@ -47,17 +46,21 @@
     CREATE TABLE public.rol_pel_pers (
         id_rol INT  NOT NULL REFERENCES rol(id_rol),
         id_audiovi INT NOT NULL REFERENCES audiovisual(id_audiovi),
-        doc_identidad INT NOT NULL REFERENCES persona(doc_identidad),
+        doc_identidad BIGINT NOT NULL REFERENCES persona(doc_identidad),
         cancion_titulo VARCHAR(50),
-        CONSTRAINT primary_key_rol_pel_pers PRIMARY KEY (id_rol, id_audiovi, doc_identidad)
+        CONSTRAINT PK_rol_pel_pers PRIMARY KEY (id_rol, id_audiovi, doc_identidad)
     );
 
-    -- FALTA AREA_NT
+    -- LISTO
     CREATE TABLE public.miembro (
         id_miembro INT PRIMARY KEY NOT NULL,
         fecha_inicio DATE NOT NULL,
         vitalicio CHAR(2) NOT NULL CHECK(vitalicio IN ('si','no')),
+<<<<<<< HEAD
         doc_identidad BIGINT UNIQUE NOT NULL REFERENCES persona(doc_identidad),
+=======
+        doc_identidad BIGINT NOT NULL UNIQUE REFERENCES persona(doc_identidad),
+>>>>>>> e3c027e4aea9ae50904e86229942dd2a2deb36e5
         fecha_fin DATE CHECK(fecha_inicio < fecha_fin),
         area_nt VARCHAR(25)[]
     );
@@ -67,12 +70,12 @@
         id_audiovi INT NOT NULL,
         id_miembro INT NOT NULL,
         fecha_ano DATE,
-        CONSTRAINT primary_key_postulado_votos PRIMARY KEY (id_audiovi, id_miembro)
+        CONSTRAINT PK_postulado_votos PRIMARY KEY (id_audiovi, id_miembro)
     );
 
     -- LISTO
     CREATE TABLE public.gala (
-        ano SMALLINT PRIMARY KEY,
+        ano SMALLINT PRIMARY KEY NOT NULL,
         fecha DATE NOT NULL,
         lugar VARCHAR(50) NOT NULL,
         numero_edicion SMALLINT NOT NULL,
@@ -94,16 +97,16 @@
     -- LISTO
     CREATE TABLE public.presentador (
         id_gala INT NOT NULL REFERENCES gala(ano),
-        doc_identidad INT NOT NULL REFERENCES persona(doc_identidad),
+        doc_identidad BIGINT NOT NULL REFERENCES persona(doc_identidad),
         id_categoria INT NOT NULL REFERENCES categoria(id_categoria),
-        CONSTRAINT llave_prensentador PRIMARY KEY (id_gala, doc_identidad, id_categoria)
+        CONSTRAINT PK_prensentador PRIMARY KEY (id_gala, doc_identidad, id_categoria)
     );
 
     --LISTO
-    CREATE TABLE public.P_C (
+    CREATE TABLE public.M_P (
         id_miembro INT NOT NULL REFERENCES miembro(id_miembro),
         id_categoria INT NOT NULL REFERENCES categoria(id_categoria),
-        CONSTRAINT llave_P_C PRIMARY KEY (id_miembro, id_categoria)
+        CONSTRAINT PK_M_P PRIMARY KEY (id_miembro, id_categoria)
     );
 
     -- LISTO
@@ -112,11 +115,11 @@
         ano_oscar INT NOT NULL,
         id_categoria INT NOT NULL REFERENCES categoria(id_categoria),
         id_rol INT,
-        doc_identidad INT,
+        doc_identidad BIGINT,
         id_audiovi INT,
         id_audiovi2 INT REFERENCES audiovisual(id_audiovi),
-        CONSTRAINT llave_rol_pel_pers FOREIGN KEY (id_rol, id_audiovi, doc_identidad) REFERENCES rol_pel_pers(id_rol, id_audiovi, doc_identidad),
-        CONSTRAINT primary_key_portuladas_p_pers PRIMARY KEY (id_postuladas_p_pers, ano_oscar, id_categoria)
+        CONSTRAINT FK_rol_pel_pers FOREIGN KEY (id_rol, id_audiovi, doc_identidad) REFERENCES rol_pel_pers(id_rol, id_audiovi, doc_identidad),
+        CONSTRAINT PK_portuladas_p_pers PRIMARY KEY (id_postuladas_p_pers, ano_oscar, id_categoria)
     );
 
     -- LISTO
@@ -138,13 +141,7 @@
         donacion_nt donacion[]
     );
 
-    -- NO ESTOY SEGURO DE ESTA RELACION - LISTO
-    CREATE TABLE public.o_g (
-        id_organizacion INT NOT NULL REFERENCES organizacion(id_organizacion),
-        id_gala INT NOT NULL REFERENCES gala(ano)
-    );
-
-    -- No se que es tipo -LISTO
+    -- LISTO
     CREATE TABLE public.critica (
         id_critica SERIAL PRIMARY KEY,
         ano SMALLINT NOT NULL,
