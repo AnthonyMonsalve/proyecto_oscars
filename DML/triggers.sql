@@ -111,7 +111,7 @@ CREATE OR REPLACE FUNCTION validar_audiovisual()
 		END IF;
 		IF NEW.total_ganador != 0 THEN
 			RAISE EXCEPTION 'No se puede crear una pelicula que ya posea galardones';
-		END_IF;
+		END IF;
 		RETURN NEW;
 	END;
 $BODY$;
