@@ -22,7 +22,7 @@ INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, h
 	VALUES (7, 'Sonido', '1', 'ing.sonido', NULL, NULL);
 
 INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
-	VALUES (8, 'Cortometrajes', '1', 'directores', NULL, NULL);
+	VALUES (8, 'Cortometrajes', '1', 'director', NULL, NULL);
 
 INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
 	VALUES (9, 'Música', '1', 'musico', NULL, NULL);
@@ -34,16 +34,16 @@ INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, h
 	VALUES (11, 'Efectos visuales', '1', 'tecnico', NULL, NULL);
 
 INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
-	VALUES (12, 'Documentales', '1', 'directores', NULL, NULL);
+	VALUES (12, 'Documentales', '1', 'director', NULL, NULL);
 
 INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
 	VALUES (13, 'Vestuario', '1', 'estilista', NULL, NULL);
 
 INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
-	VALUES (14, 'Películas extranjeras', '1', 'directores', NULL, NULL);
+	VALUES (14, 'Películas extranjeras', '1', 'director', NULL, NULL);
 
 INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
-	VALUES (15, 'Sonido', '1', 'directores', NULL, NULL);
+	VALUES (15, 'Sonido', '1', 'director', NULL, NULL);
 
 INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
 	VALUES (16, 'Maquillaje', '1', 'artista', NULL, NULL);
