@@ -1,3 +1,67 @@
+-- Función usada por el trigger crear_relacion_miembro_premios
+
+CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
+	RETURNS TRIGGER
+	LANGUAGE PLPGSQL
+	AS $BODY$
+	DECLARE
+	v_id_rol SMALLINT;
+	v_nombre_rol varchar(50);
+	v_tmp_roles SMALLINT;
+	v_tmp_categorias SMALLINT;
+	v_id_categoria SMALLINT;
+		BEGIN
+			--SELECT id_rol INTO v_id_rol FROM rol_pel_pers WHERE doc_identidad = NEW.doc_identidad;
+			
+			CREATE TEMP TABLE tmp_roles (
+				tmp_reg SERIAL,
+				id_rol SMALLINT
+			);
+			
+			INSERT INTO tmp_roles (id_rol) SELECT id_rol FROM rol_pel_pers 
+			WHERE doc_identidad = NEW.doc_identidad;
+			
+			SELECT COUNT(*) INTO v_tmp_roles FROM tmp_roles;
+			
+			FOR i IN 1..v_tmp_roles
+			LOOP
+			
+				CREATE TEMP TABLE tmp_categorias (
+					tmp_reg SERIAL,
+					id_categoria SMALLINT
+				);
+
+				SELECT id_rol INTO v_id_rol FROM tmp_roles WHERE tmp_reg = i;
+				SELECT nombre INTO v_nombre_rol FROM rol where id_rol = v_id_rol;
+				
+				INSERT INTO tmp_categorias (id_categoria) SELECT id_categoria 
+				FROM categoria WHERE rama = v_nombre_rol;
+				
+				--
+				SELECT COUNT(*) INTO v_tmp_categorias FROM tmp_categorias;
+
+				FOR e IN 1..v_tmp_categorias
+				LOOP
+					SELECT id_categoria INTO v_id_categoria FROM tmp_categorias WHERE tmp_reg = e;
+					INSERT INTO m_p (id_miembro, id_categoria) SELECT NEW.id_miembro, id_categoria FROM categoria 
+					WHERE id_categoria2 = v_id_categoria;
+				END LOOP;
+				--		
+				DROP TABLE tmp_categorias;
+      		END LOOP;
+			
+			DROP TABLE tmp_roles;
+			RETURN NEW;
+	END;
+$BODY$;
+
+-- Validar crear_relacion_miembro_premios 
+CREATE TRIGGER crear_relacion_miembro_premios 
+AFTER INSERT ON
+public.miembro FOR EACH ROW
+EXECUTE PROCEDURE crear_relacion_miembro_premios();
+
+
 -- Función usada por el trigger arcoexclusivo_postu_p_pers
 CREATE OR REPLACE FUNCTION arcoexclusivo_postuladas_p_pers()
 	RETURNS TRIGGER
