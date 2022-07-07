@@ -141,7 +141,7 @@
     CREATE TABLE public.critica (
         id_critica SERIAL PRIMARY KEY,
         ano SMALLINT NOT NULL,
-        tipo VARCHAR(50) CHECK(tipo in ('postulacion', 'nominados', 'ganadores', 'gala')),
+        tipo VARCHAR(50) CHECK(tipo in ('postulados', 'nominados', 'ganadores', 'gala')),
         textocritica VARCHAR(255) NOT NULL,
         negativa CHAR(2) NOT NULL CHECK(negativa in('si','no'))
     );
