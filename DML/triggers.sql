@@ -174,14 +174,6 @@ BEFORE INSERT or update
 ON public.gala FOR EACH ROW
 EXECUTE PROCEDURE validar_gala();
 
---Insert registro de gala
-INSERT INTO public.gala(
-	ano, fecha, lugar, numero_edicion, descripcion,doc_identidad)
-	VALUES ('2001', '2001-07-30', 'Las Vegas, Estados Unidos', 57 , 'La espectaculo se dio a cabo la noche del dia 30 de Julio del ano 2000, asistieron grandes celebridades de todo el mundo.', 26996360);
-	
-	select * from public.gala;
---Organizacion
-
 --Validaciones
 
 -- Función usada para validar la Organizacion ingresada o modificada
