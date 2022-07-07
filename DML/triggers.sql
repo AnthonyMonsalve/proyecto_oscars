@@ -1,4 +1,5 @@
--- Función usada por el trigger crear_relacion_miembro_premios
+-- Validar crear_relacion_miembro_premios al crear una membresía
+-- Validar crear_relacion_miembro_premios al crear una membresía
 
 CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
 	RETURNS TRIGGER
@@ -10,12 +11,13 @@ CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
 	v_tmp_roles SMALLINT;
 	v_tmp_categorias SMALLINT;
 	v_id_categoria SMALLINT;
+	v_area_nt TEXT;
 		BEGIN
-			--SELECT id_rol INTO v_id_rol FROM rol_pel_pers WHERE doc_identidad = NEW.doc_identidad;
 			
 			CREATE TEMP TABLE tmp_roles (
 				tmp_reg SERIAL,
-				id_rol SMALLINT
+				id_rol SMALLINT,
+				nombre_rol VARCHAR(50)
 			);
 			
 			INSERT INTO tmp_roles (id_rol) SELECT id_rol FROM rol_pel_pers 
@@ -33,6 +35,7 @@ CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
 
 				SELECT id_rol INTO v_id_rol FROM tmp_roles WHERE tmp_reg = i;
 				SELECT nombre INTO v_nombre_rol FROM rol where id_rol = v_id_rol;
+				UPDATE tmp_roles SET nombre_rol = v_nombre_rol WHERE id_rol = v_id_rol;
 				
 				INSERT INTO tmp_categorias (id_categoria) SELECT id_categoria 
 				FROM categoria WHERE rama = v_nombre_rol;
@@ -49,13 +52,28 @@ CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
 				--		
 				DROP TABLE tmp_categorias;
       		END LOOP;
-			
+
+			v_area_nt = '{';
+		
+			FOR o IN 1..v_tmp_roles
+			LOOP
+				SELECT nombre_rol INTO v_nombre_rol FROM tmp_roles WHERE tmp_reg = o;
+				IF v_tmp_roles = o THEN
+					v_area_nt = concat (v_area_nt,v_nombre_rol);
+				ELSE
+					v_area_nt = concat (v_area_nt,v_nombre_rol,',');
+				END IF;
+			END LOOP;
+			v_area_nt = concat (v_area_nt,'}');
+
+			UPDATE public.miembro SET area_nt = v_area_nt::VARCHAR[] WHERE id_miembro = NEW.id_miembro;
+
 			DROP TABLE tmp_roles;
 			RETURN NEW;
 	END;
 $BODY$;
 
--- Validar crear_relacion_miembro_premios 
+-- Validar crear_relacion_miembro_premios al crear una membresía
 CREATE TRIGGER crear_relacion_miembro_premios 
 AFTER INSERT ON
 public.miembro FOR EACH ROW
