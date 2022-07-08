@@ -90,13 +90,16 @@ CREATE OR REPLACE FUNCTION arcoexclusivo_postuladas_p_pers()
 				IF NEW.id_audiovi2 IS NOT NULL THEN
 					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
 				END IF;
+				Return new;
 			END IF;
 			
-			IF NEW.id_rol IS NULL AND NEW.id_audiovi IS NULL AND NEW.doc_identidad IS NULL AND NEW.id_audiovi2 IS NULL THEN	
-				RAISE EXCEPTION 'Debe ingresar los datos de una pelicula o de rol_pel_pers';
+			IF NEW.id_audiovi2 IS NOT NULL THEN
+				IF NEW.id_rol IS NOT NULL or NEW.id_audiovi IS NOT NULL or NEW.doc_identidad IS NOT NULL THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
+				END IF;
+				Return new;
 			END IF;
-		
-			RETURN NEW;
+			RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
 	END;
 $BODY$;
 
