@@ -347,3 +347,158 @@ CREATE TRIGGER validar_org
 BEFORE INSERT OR UPDATE
 ON public.organizacion FOR EACH ROW
 EXECUTE PROCEDURE validar_org();
+
+---------------------------Postulacion--------------------------------
+
+CREATE OR REPLACE FUNCTION validar_postulacion() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+AS $BODY$
+Declare
+v_nombre varchar(50);
+v_mensaje varchar (50);
+v_ano integer;
+BEGIN
+	v_nombre=null;
+	select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
+	if not found then
+		RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
+	END IF;
+	select ano into v_ano from public.gala where ano= NEW.ano_oscar;
+	if not found then
+		v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
+		RAISE EXCEPTION using message=v_mensaje;
+	END IF;
+	RETURN NEW;
+END;
+$BODY$;
+
+CREATE TRIGGER validar_postulacion
+BEFORE INSERT OR UPDATE
+ON public.postuladas_p_pers FOR EACH ROW
+EXECUTE PROCEDURE validar_postulacion();
+
+
+-- Función usada por el trigger arcoexclusivo_postu_p_pers
+CREATE OR REPLACE FUNCTION arcoexclusivo_postuladas_p_pers()
+	RETURNS TRIGGER
+	LANGUAGE PLPGSQL
+	AS $BODY$
+		BEGIN
+			IF NEW.id_rol IS NOT NULL AND NEW.id_audiovi IS NOT NULL AND NEW.doc_identidad IS NOT NULL THEN
+				IF NEW.id_audiovi2 IS NOT NULL THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
+				END IF;
+				Return new;
+			END IF;
+			
+			IF NEW.id_audiovi2 IS NOT NULL THEN
+				IF NEW.id_rol IS NOT NULL or NEW.id_audiovi IS NOT NULL or NEW.doc_identidad IS NOT NULL THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
+				END IF;
+				Return new;
+			END IF;
+			
+			
+			RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
+	END;
+$BODY$;
+
+-- Validar arco exclusivo de postu_p_pers
+CREATE TRIGGER arcoexclusivo_postu_p_pers 
+BEFORE INSERT OR UPDATE ON
+public.postuladas_p_pers FOR EACH ROW
+EXECUTE PROCEDURE arcoexclusivo_postuladas_p_pers();
+
+-- Función usada para validar arco exclusivo de votos
+CREATE OR REPLACE FUNCTION arcoexclusivo_votos()
+	RETURNS TRIGGER
+	LANGUAGE PLPGSQL
+	AS $BODY$
+		BEGIN
+			IF NEW.id_categoria1 IS NOT NULL AND NEW.id_postuladas_p_pers1 IS NOT NULL AND NEW.ano_oscar1 IS NOT NULL and new.tipo_voto='postulado' THEN
+				IF NEW.id_categoria IS NOT NULL or NEW.id_postuladas_p_pers IS NOT NULL or NEW.ano_oscar is not null or new.id_nominada is not null THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una nominacion o de una postulacion';
+				END IF;
+				Return new;
+			END IF;
+			
+			IF NEW.id_categoria IS NOT NULL and NEW.id_postuladas_p_pers IS NOT NULL and NEW.ano_oscar is not null and new.id_nominada is not null and new.tipo_voto='nominado' THEN
+				IF NEW.id_categoria1 IS NOT NULL or NEW.id_postuladas_p_pers1 IS NOT NULL or NEW.ano_oscar1 IS NOT NULL THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una nominacion o de una postulacion';
+				END IF;
+				Return new;
+			END IF;
+			RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una postulacion o de una nominacion';
+	END;
+$BODY$;
+
+-- Validar arco exclusivo de votos
+CREATE TRIGGER arcoexclusivo_votos
+BEFORE INSERT OR UPDATE ON
+public.votos FOR EACH ROW
+EXECUTE PROCEDURE arcoexclusivo_votos();
+
+--------------------------------Votos---------------------------------------
+
+CREATE OR REPLACE FUNCTION validar_votos() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+AS $BODY$
+Declare
+v_cantidad_max_nom integer;
+v_cant_nom integer;
+v_vitalicio varchar(3);
+v_id integer;
+v_fecha_fin date;
+BEGIN
+	v_fecha_fin= null;
+	select vitalicio, fecha_fin into v_vitalicio, v_fecha_fin  from miembro where id_miembro=new.id_miembro;
+	if v_fecha_fin is not null then 
+			RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido caancelada, por ende, no puede participar en la votaciones';	
+	end if;
+	if v_vitalicio='no' then
+		select p_c.id_miembro into v_id from public.p_c inner join public.miembro on p_c.id_miembro=miembro.id_miembro where p_c.id_miembro=new.id_miembro;
+		if not found then
+			RAISE EXCEPTION 'Usted no tiene los permisos necesarios para ingresar un voto en esta categoria, para votar en una categoria debe haber ganado en una vez en un premio relacionado o haber sido nominado dos veces a premios relacionados';
+		END IF;
+	end if;
+	
+	
+	v_cantidad_max_nom=-1;
+	WITH list AS
+	 (SELECT 
+			UNNEST(hist_premio_nt) AS row_result
+	  FROM   public.categoria
+	  WHERE  id_categoria= new.id_categoria or id_categoria= new.id_categoria1)
+	SELECT   
+		   (row_result).cantidad_nom into v_cantidad_max_nom FROM list where (row_result).fecha_fin is null;
+	if v_cantidad_max_nom is null then 
+		RAISE EXCEPTION 'No existe ningun historico de este premio activo, por favor revisar el premio en la tabla categoria';
+	end if;
+	if new.tipo_voto='nominado' then
+		select count(*) into v_cant_nom from public.votos where id_miembro=new.id_miembro and ano_oscar=new.ano_oscar and id_categoria=new.id_categoria;
+		if v_cant_nom>0 then 
+			RAISE EXCEPTION 'Ya ingreso el maximo de votos posibles para los nominados de este premio, el cual es %', v_cant_nom;
+		end if;
+	else
+		perform from public.votos where id_postuladas_p_pers1=new.id_postuladas_p_pers1;
+		if found then 
+			RAISE EXCEPTION 'No puedes votar por la misma postulaciones dos veces';
+		end if;
+		select count(*) into v_cant_nom from public.votos where id_miembro=new.id_miembro and ano_oscar1=new.ano_oscar1 and id_categoria1=new.id_categoria1;
+		if v_cant_nom>v_cantidad_max_nom-1 then 
+			RAISE EXCEPTION 'Ya ingreso el maximo de votos posibles para los postulados de este premio este premio, el cual es %', v_cant_nom;
+		end if;
+	end if;
+	
+	
+	RETURN NEW;
+END;
+$BODY$;
+
+CREATE TRIGGER validar_votos
+BEFORE INSERT OR UPDATE
+ON public.votos FOR EACH ROW
+EXECUTE PROCEDURE validar_votos();
+
