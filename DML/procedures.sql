@@ -55,3 +55,39 @@ end;$$
 -----Prueba
 
 call gestion_postulados(2001,19);
+
+-----------------------------------Procedimiento calculo de votos nominados y actualizacion de ganador------------------
+
+create or replace procedure gestion_nominados(
+   v_ano_oscar integer,
+	v_id_categoria integer
+)
+language plpgsql    
+as $$
+Declare 
+	v_id_ganador integer;
+	v_numero_votos integer;
+begin
+
+	
+	
+	----Calculo de votos
+	
+	
+	select id_nominada, count(*) into v_id_ganador, v_numero_votos from public.votos 
+	where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria 
+	group by id_nominada
+	order by 2 DESC
+	limit 1;
+	
+	
+	----Modificamos el parametro ganador
+	
+	update public.nominadas set ganador= 'si' where id_nominada= v_id_ganador; 
+
+    commit;
+end;$$
+
+-----Prueba
+
+call gestion_nominados(2001,19);
