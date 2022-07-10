@@ -232,7 +232,8 @@ INSERT INTO public.persona(
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (8, 5, 74511, 'Love in Paradise');
---Encargado de Sonido
+
+--Encargado de SonidO Y gotos
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
 	VALUES (2015, 'Kevin', 'Cleary', 'Faraday', 'M', '1938-04-11', '1967-12-24', NULL, NULL, NULL, NULL);
@@ -240,6 +241,10 @@ INSERT INTO public.persona(
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (7, 5, 2015, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (5, 5, 2015, NULL);
 
 --------------------------------------------------
 -- Relacionadas al audiovisual "Los nombramientos de Dennis Jennings"
