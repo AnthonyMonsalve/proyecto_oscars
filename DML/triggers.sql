@@ -3,22 +3,42 @@ CREATE OR REPLACE FUNCTION validar_insert_membresia()
    RETURNS TRIGGER 
    LANGUAGE PLPGSQL
    AS $BODY$
+   DECLARE 
+   v_tmp_ganador INT;
+   v_tmp_nominado2veces INT;
 BEGIN
 
-	CREATE TEMP TABLE tmp_ganador_nominado2veces (
-		tmp_reg SERIAL,
-		id_voto INT,
-        fecha_hora TIMESTAMP,
-        tipo_voto VARCHAR(8),
-        id_miembro INT,
-        id_nominada INT,
-        id_categoria INT,
-        id_postuladas_p_pers INT,
-        ano_oscar INT
+	CREATE TEMP TABLE tmp_ganador_nominado2veces(
+		--id_postuladas_p_pers INT,
+		--ano_oscar INT,
+		--id_rol INT,	
+		--doc_identidad INT,
+		--id_audiovi INT,	
+		--id_nominada INT,
+		ganador VARCHAR(2)
+		--id_categoria INT
 	);
+			
+	INSERT INTO tmp_ganador_nominado2veces (
+		ganador
+	) SELECT ganador
+			  
+	FROM postuladas_p_pers
+	INNER JOIN nominadas ON 
+	postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+	WHERE doc_identidad = NEW.doc_identidad;
 	
-	INSERT INTO tmp_ganador_nominado2veces (id_voto, fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar) SELECT id_voto, fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar FROM votos 
-	WHERE id_miembro = NEW.id_miembro;
+	SELECT COUNT(*) INTO v_tmp_nominado2veces FROM tmp_ganador_nominado2veces
+	WHERE ganador = 'no';
+	
+	SELECT COUNT(*) INTO v_tmp_ganador FROM tmp_ganador_nominado2veces
+	WHERE ganador = 'si';	
+	
+	IF v_tmp_nominado2veces < 2 AND v_tmp_ganador = 0 THEN
+		RAISE EXCEPTION 'No ha sido nominado dos veces ni ha ganado al menos una nominación';
+	END IF;
+
+	DROP TABLE tmp_ganador_nominado2veces;
 
 	RETURN NEW;
 END;
