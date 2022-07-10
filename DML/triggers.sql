@@ -1,4 +1,35 @@
--- Validar crear_relacion_miembro_premios al crear una membresía
+-- Validar el insert de una membresía
+CREATE OR REPLACE FUNCTION validar_insert_membresia() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+   AS $BODY$
+BEGIN
+
+	CREATE TEMP TABLE tmp_ganador_nominado2veces (
+		tmp_reg SERIAL,
+		id_voto INT,
+        fecha_hora TIMESTAMP,
+        tipo_voto VARCHAR(8),
+        id_miembro INT,
+        id_nominada INT,
+        id_categoria INT,
+        id_postuladas_p_pers INT,
+        ano_oscar INT
+	);
+	
+	INSERT INTO tmp_ganador_nominado2veces (id_voto, fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar) SELECT id_voto, fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar FROM votos 
+	WHERE id_miembro = NEW.id_miembro;
+
+	RETURN NEW;
+END;
+$BODY$;
+
+-- -- Validar el insert de una membresía
+CREATE TRIGGER validar_insert_membresia
+BEFORE INSERT ON public.miembro FOR EACH ROW
+EXECUTE PROCEDURE validar_insert_membresia();
+
+
 -- Validar crear_relacion_miembro_premios al crear una membresía
 
 CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
