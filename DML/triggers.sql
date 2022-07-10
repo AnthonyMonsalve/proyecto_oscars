@@ -391,6 +391,11 @@ v_mensaje varchar (50);
 v_ano integer;
 BEGIN
 	v_nombre=null;
+	perform from public.postuladas_p_pers where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi and id_audiovi2=new.id_audiovi2;
+	if not found then
+		RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
+	END IF;
+	
 	select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
 	if not found then
 		RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
@@ -400,6 +405,7 @@ BEGIN
 		v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
 		RAISE EXCEPTION using message=v_mensaje;
 	END IF;
+	
 	RETURN NEW;
 END;
 $BODY$;
