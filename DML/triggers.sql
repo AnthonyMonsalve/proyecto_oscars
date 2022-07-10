@@ -131,36 +131,6 @@ public.miembro FOR EACH ROW
 EXECUTE PROCEDURE crear_relacion_miembro_premios();
 
 
--- Función usada por el trigger arcoexclusivo_postu_p_pers
-CREATE OR REPLACE FUNCTION arcoexclusivo_postuladas_p_pers()
-	RETURNS TRIGGER
-	LANGUAGE PLPGSQL
-	AS $BODY$
-		BEGIN
-			IF NEW.id_rol IS NOT NULL AND NEW.id_audiovi IS NOT NULL AND NEW.doc_identidad IS NOT NULL THEN
-				IF NEW.id_audiovi2 IS NOT NULL THEN
-					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
-				END IF;
-				Return new;
-			END IF;
-			
-			IF NEW.id_audiovi2 IS NOT NULL THEN
-				IF NEW.id_rol IS NOT NULL or NEW.id_audiovi IS NOT NULL or NEW.doc_identidad IS NOT NULL THEN
-					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
-				END IF;
-				Return new;
-			END IF;
-			RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
-	END;
-$BODY$;
-
--- Validar arco exclusivo de postu_p_pers
-CREATE TRIGGER arcoexclusivo_postu_p_pers 
-BEFORE INSERT OR UPDATE ON
-public.postuladas_p_pers FOR EACH ROW
-EXECUTE PROCEDURE arcoexclusivo_postuladas_p_pers();
-
-
 CREATE OR REPLACE FUNCTION validar_categoria_nivel_1() 
    RETURNS TRIGGER 
    LANGUAGE PLPGSQL
