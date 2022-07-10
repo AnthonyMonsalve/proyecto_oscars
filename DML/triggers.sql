@@ -400,7 +400,6 @@ ON public.organizacion FOR EACH ROW
 EXECUTE PROCEDURE validar_org();
 
 ---------------------------Postulacion--------------------------------
-
 CREATE OR REPLACE FUNCTION validar_postulacion() 
    RETURNS TRIGGER 
    LANGUAGE PLPGSQL
@@ -411,8 +410,9 @@ v_mensaje varchar (50);
 v_ano integer;
 BEGIN
 	v_nombre=null;
-	perform from public.postuladas_p_pers where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi and id_audiovi2=new.id_audiovi2;
-	if not found then
+	perform from public.postuladas_p_pers 
+	where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and (id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi) or (new.id_rol is null and new.doc_identidad is null and new.id_audiovi is null) and (new.id_audiovi2 is null or id_audiovi2=new.id_audiovi2);
+	if found then
 		RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
 	END IF;
 	
@@ -429,6 +429,7 @@ BEGIN
 	RETURN NEW;
 END;
 $BODY$;
+
 
 CREATE TRIGGER validar_postulacion
 BEFORE INSERT OR UPDATE
