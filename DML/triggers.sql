@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
 	DECLARE
 	v_area_nt TEXT;
 	BEGIN
-		CALL atualizar_area_nt_membresia(NEW.doc_identidad);
+		--CALL public.atualizar_area_nt_membresia(NEW.doc_identidad);
 		RETURN NEW;
 	END;
 $BODY$;

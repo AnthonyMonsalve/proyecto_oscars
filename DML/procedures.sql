@@ -309,5 +309,51 @@ BEGIN
 
 END; $$
 
+-- PRUEBA
 CALL actualizar_area_nt_membresia(doc_identidad);
 
+---------------------------------------------------------------------------------------------
+-- ACTUALIZAR M_P DE MEMBRESÍA
+
+
+CREATE OR replace procedure actualizar_mp(
+	v_id_miembro integer
+)
+
+LANGUAGE PLPGSQL    
+AS $$
+DECLARE 
+	v_doc_identidad integer;
+	v_nt_area varchar[];
+	v_nt_area_length int;
+	v_id_categoria int;
+BEGIN
+
+	----
+	SELECT area_nt INTO v_nt_area FROM public.miembro 
+	WHERE id_miembro = v_id_miembro;
+		
+	----
+	v_nt_area_length := array_length(v_nt_area, 1);
+
+    --
+	DELETE FROM public.m_p WHERE id_miembro = v_id_miembro;
+
+	FOR i IN 1..v_nt_area_length
+	LOOP
+		
+		SELECT id_categoria INTO v_id_categoria FROM public.categoria WHERE rama = v_nt_area[i];
+
+		INSERT INTO m_p (
+			id_miembro, id_categoria
+		) SELECT v_id_miembro, id_categoria
+		FROM categoria
+		WHERE id_categoria2 = v_id_categoria;		
+		
+	END LOOP;
+
+    COMMIT;
+end;$$
+
+--PRUEBA
+call actualizar_mp(id_miembro);
