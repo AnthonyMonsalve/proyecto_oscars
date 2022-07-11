@@ -76,7 +76,7 @@
         lugar VARCHAR(50) NOT NULL,
         numero_edicion SMALLINT NOT NULL,
         doc_identidad BIGINT NOT NULL REFERENCES persona(doc_identidad),
-        descripcion VARCHAR(50)
+        descripcion VARCHAR(250)
     );
 
     -- LISTO

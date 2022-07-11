@@ -9,14 +9,7 @@ CREATE OR REPLACE FUNCTION validar_insert_membresia()
 BEGIN
 
 	CREATE TEMP TABLE tmp_ganador_nominado2veces(
-		--id_postuladas_p_pers INT,
-		--ano_oscar INT,
-		--id_rol INT,	
-		--doc_identidad INT,
-		--id_audiovi INT,	
-		--id_nominada INT,
 		ganador VARCHAR(2)
-		--id_categoria INT
 	);
 			
 	INSERT INTO tmp_ganador_nominado2veces (
@@ -51,76 +44,17 @@ EXECUTE PROCEDURE validar_insert_membresia();
 
 
 -- Validar crear_relacion_miembro_premios al crear una membresía
-
 CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
 	RETURNS TRIGGER
 	LANGUAGE PLPGSQL
 	AS $BODY$
 	DECLARE
-	v_id_rol SMALLINT;
-	v_nombre_rol varchar(50);
-	v_tmp_roles SMALLINT;
-	v_tmp_categorias SMALLINT;
-	v_id_categoria SMALLINT;
 	v_area_nt TEXT;
-		BEGIN
-			
-			CREATE TEMP TABLE tmp_roles (
-				tmp_reg SERIAL,
-				id_rol SMALLINT,
-				nombre_rol VARCHAR(50)
-			);
-			
-			INSERT INTO tmp_roles (id_rol) SELECT id_rol FROM rol_pel_pers 
-			WHERE doc_identidad = NEW.doc_identidad;
-			
-			SELECT COUNT(*) INTO v_tmp_roles FROM tmp_roles;
-			
-			FOR i IN 1..v_tmp_roles
-			LOOP
-			
-				CREATE TEMP TABLE tmp_categorias (
-					tmp_reg SERIAL,
-					id_categoria SMALLINT
-				);
-
-				SELECT id_rol INTO v_id_rol FROM tmp_roles WHERE tmp_reg = i;
-				SELECT nombre INTO v_nombre_rol FROM rol where id_rol = v_id_rol;
-				UPDATE tmp_roles SET nombre_rol = v_nombre_rol WHERE id_rol = v_id_rol;
-				
-				INSERT INTO tmp_categorias (id_categoria) SELECT id_categoria 
-				FROM categoria WHERE rama = v_nombre_rol;
-				
-				--
-				SELECT COUNT(*) INTO v_tmp_categorias FROM tmp_categorias;
-
-				FOR e IN 1..v_tmp_categorias
-				LOOP
-					SELECT id_categoria INTO v_id_categoria FROM tmp_categorias WHERE tmp_reg = e;
-					INSERT INTO m_p (id_miembro, id_categoria) SELECT NEW.id_miembro, id_categoria FROM categoria 
-					WHERE id_categoria2 = v_id_categoria;
-				END LOOP;
-				--		
-				DROP TABLE tmp_categorias;
-      		END LOOP;
-
-			v_area_nt = '{';
-		
-			FOR o IN 1..v_tmp_roles
-			LOOP
-				SELECT nombre_rol INTO v_nombre_rol FROM tmp_roles WHERE tmp_reg = o;
-				IF v_tmp_roles = o THEN
-					v_area_nt = concat (v_area_nt,v_nombre_rol);
-				ELSE
-					v_area_nt = concat (v_area_nt,v_nombre_rol,',');
-				END IF;
-			END LOOP;
-			v_area_nt = concat (v_area_nt,'}');
-
-			UPDATE public.miembro SET area_nt = v_area_nt::VARCHAR[] WHERE id_miembro = NEW.id_miembro;
-
-			DROP TABLE tmp_roles;
-			RETURN NEW;
+	BEGIN
+		--v_area_nt = '{';
+		--v_area_nt = concat (v_area_nt,'}');
+		--UPDATE public.miembro SET area_nt = v_area_nt::VARCHAR[] WHERE id_miembro = NEW.id_miembro;
+		RETURN NEW;
 	END;
 $BODY$;
 
@@ -324,7 +258,7 @@ BEGIN
 	if val_cadena(4,50,new.nombre) = false then
 		RAISE EXCEPTION 'El nombre introducido no es valido';
 	end if;
-	if val_cadena(10,1000,new.mision) = false then
+	if val_cadena(10,10000,new.mision) = false then
 		RAISE EXCEPTION 'La mision no esta cumpliendo el largo establecido o este posee caracteres no permitidos';
 	end if;
 		IF NEW.donacion_nt IS NULL THEN

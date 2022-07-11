@@ -5,5 +5,5 @@
 
     INSERT INTO public.gala(
         ano, fecha, lugar, numero_edicion, doc_identidad, descripcion)
-        VALUES (1986, '1986-04-20', 'MGM', 51, 2015, 'Esta gala sera mejor que la anterior. Vendrán a cantar Nacho y Chino con el tema promocional "Mi niña fea". La gala empieza a partir de las 10:00 p.m, estan invitados');
+        VALUES (1986, '1986-04-20', 'MGM', 51, 2015, 'Vendrán a cantar Nacho y Chino el tema Mi niña fea');
 -- FIN GALA

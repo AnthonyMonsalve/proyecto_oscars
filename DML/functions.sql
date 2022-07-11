@@ -4,9 +4,8 @@ BEGIN
 	if character_length(valor)< min or character_length(valor)>max then
         return false;
     END IF;
-	if valor like '%,%' or valor like '%?%' or
+	if valor like '%?%' or
 	valor like '%?%' or valor like '%+%' or
-	valor like '%(%' or valor like '%)%' or
 	valor like '%*%' or
 	valor like '%[%' or valor like '%]%' or
 	valor like '%<%' or valor like '%>%' or

@@ -241,6 +241,10 @@ INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (7, 5, 2015, NULL);
 
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (5, 5, 2015, NULL);
+
 --------------------------------------------------
 -- Relacionadas al audiovisual "Los nombramientos de Dennis Jennings"
 

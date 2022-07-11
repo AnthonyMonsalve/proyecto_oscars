@@ -45,4 +45,9 @@
         fecha_inicio, vitalicio, doc_identidad, fecha_fin)
         VALUES ('1967-06-06', 'si', 74511, NULL);
 
+--  'Pamela', 'Eilerson'
+    INSERT INTO public.miembro(
+        fecha_inicio, vitalicio, doc_identidad, fecha_fin)
+        VALUES ('1981-01-02', 'no', 9522, NULL);
+
 -- FIN MIEMBRO
