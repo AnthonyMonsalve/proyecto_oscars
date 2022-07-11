@@ -33,7 +33,7 @@
 	    VALUES (8, 1985, 27, 8, 2525, 3);
 
     INSERT INTO public.postuladas_p_pers(
-	    id_postuladas_p_pers, ano_oscar, id_audiovi2)
+	    id_postuladas_p_pers, ano_oscar, id_categoria, id_audiovi2)
 	    VALUES (9, 1985, 18, 5);
 
     INSERT INTO public.postuladas_p_pers(
@@ -42,7 +42,11 @@
 
     INSERT INTO public.postuladas_p_pers(
 	    id_postuladas_p_pers, ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi)
-	    VALUES (20, 1985, 21, 3, 12545, 1);
+	    VALUES (20, 1985, 18, 3, 12545, 1);
+
+    INSERT INTO public.postuladas_p_pers(
+	    id_postuladas_p_pers, ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi)
+	    VALUES (21, 1986, 21, 2, 12545, 2);
 -- FIN POSTULADAS_P_PERS
 
 -- AÑO 1986

@@ -51,9 +51,7 @@ CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
 	DECLARE
 	v_area_nt TEXT;
 	BEGIN
-		--v_area_nt = '{';
-		--v_area_nt = concat (v_area_nt,'}');
-		--UPDATE public.miembro SET area_nt = v_area_nt::VARCHAR[] WHERE id_miembro = NEW.id_miembro;
+		CALL atualizar_area_nt_membresia(NEW.doc_identidad);
 		RETURN NEW;
 	END;
 $BODY$;
