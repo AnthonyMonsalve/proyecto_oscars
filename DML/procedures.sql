@@ -89,7 +89,7 @@ call gestion_nominados(2001,19);
 -- ACTUALIZAR NT_AREA MEMBRESÍA
 
 CREATE OR REPLACE PROCEDURE actualizar_area_nt_membresia(
-	v_doc_identidad integer
+	
 )
 LANGUAGE PLPGSQL
 AS 
@@ -97,10 +97,15 @@ $$
 DECLARE
 	v_area_nt VARCHAR(255);
 	query_rama varchar (200);
+	query_persona varchar (200);
 	v_rama RECORD;
+	v_persona RECORD;
 	v_cont integer;
 	v_cont2 integer;
 BEGIN
+query_persona='select doc_identidad from public.persona';
+FOR v_persona IN EXECUTE query_persona LOOP
+
 	v_area_nt = '{';
 	
 	query_rama='select distinct rama from public.categoria where rama is not null';
@@ -110,7 +115,7 @@ BEGIN
 			SELECT COUNT(C2.rama) INTO v_cont
 			FROM postuladas_p_pers INNER JOIN nominadas ON postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
 			INNER JOIN categoria C1 ON C1.id_categoria = nominadas.id_categoria
-			INNER JOIN categoria C2 ON C2.id_categoria = C1.id_categoria2 WHERE doc_identidad = v_doc_identidad AND C2.rama = v_rama.rama;
+			INNER JOIN categoria C2 ON C2.id_categoria = C1.id_categoria2 WHERE doc_identidad = v_persona.doc_identidad AND C2.rama = v_rama.rama;
 
 			IF v_cont > 1 THEN 
 				v_area_nt = concat (v_area_nt,v_rama.rama); 
@@ -118,7 +123,7 @@ BEGIN
 				SELECT COUNT(ganador) INTO v_cont2
 				FROM postuladas_p_pers INNER JOIN nominadas ON postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
 				INNER JOIN categoria C1 ON C1.id_categoria = nominadas.id_categoria
-				INNER JOIN categoria C2 ON C2.id_categoria = C1.id_categoria2 WHERE doc_identidad = v_doc_identidad 
+				INNER JOIN categoria C2 ON C2.id_categoria = C1.id_categoria2 WHERE doc_identidad = v_persona.doc_identidad 
 				AND ganador = 'si' AND C2.rama = v_rama.rama;
 
 				IF v_cont2 > 0 THEN 
@@ -131,16 +136,18 @@ BEGIN
 
 	v_area_nt = concat (v_area_nt, '}');
 	if (v_area_nt<>'{}') then
-		UPDATE public.miembro SET area_nt = v_area_nt::VARCHAR[] WHERE doc_identidad = v_doc_identidad;
+		UPDATE public.miembro SET area_nt = v_area_nt::VARCHAR[] WHERE doc_identidad = v_persona.doc_identidad;
 	else 
-		UPDATE public.miembro SET area_nt = null WHERE doc_identidad = v_doc_identidad;
+		UPDATE public.miembro SET area_nt = null WHERE doc_identidad = v_persona.doc_identidad;
 	end if;
-	COMMIT;	
+	
+end loop;
+COMMIT;	
 
 END; $$
 
 -- PRUEBA
-CALL actualizar_area_nt_membresia(doc_identidad);
+CALL actualizar_area_nt_membresia();
 
 ---------------------------------------------------------------------------------------------
 -- ACTUALIZAR M_P DE MEMBRESÍA
