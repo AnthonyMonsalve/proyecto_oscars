@@ -152,9 +152,9 @@ CALL actualizar_area_nt_membresia();
 ---------------------------------------------------------------------------------------------
 -- ACTUALIZAR M_P DE MEMBRESÍA
 
+select id_miembro from public.miembro
 
 CREATE OR replace procedure actualizar_mp(
-	v_id_miembro integer
 )
 
 LANGUAGE PLPGSQL    
@@ -164,33 +164,39 @@ DECLARE
 	v_nt_area varchar[];
 	v_nt_area_length int;
 	v_id_categoria int;
+	v_miembro RECORD;
+	query_miembro varchar (100);
 BEGIN
+	query_miembro='select id_miembro from public.miembro';
+	FOR v_miembro IN EXECUTE query_miembro LOOP
+		----
+		SELECT area_nt INTO v_nt_area FROM public.miembro 
+		WHERE id_miembro = v_miembro.id_miembro;
 
-	----
-	SELECT area_nt INTO v_nt_area FROM public.miembro 
-	WHERE id_miembro = v_id_miembro;
-		
-	----
-	v_nt_area_length := array_length(v_nt_area, 1);
+		----
+		v_nt_area_length := array_length(v_nt_area, 1);
 
-    --
-	DELETE FROM public.m_p WHERE id_miembro = v_id_miembro;
+		--
+		if v_nt_area_length is not null then
+			DELETE FROM public.m_p WHERE id_miembro = v_miembro.id_miembro;
 
-	FOR i IN 1..v_nt_area_length
-	LOOP
-		
-		SELECT id_categoria INTO v_id_categoria FROM public.categoria WHERE rama = v_nt_area[i];
+			FOR i IN 1..v_nt_area_length
+			LOOP
 
-		INSERT INTO m_p (
-			id_miembro, id_categoria
-		) SELECT v_id_miembro, id_categoria
-		FROM categoria
-		WHERE id_categoria2 = v_id_categoria;		
-		
+				SELECT id_categoria INTO v_id_categoria FROM public.categoria WHERE rama = v_nt_area[i];
+
+				INSERT INTO m_p (
+					id_miembro, id_categoria
+				) SELECT v_miembro.id_miembro, id_categoria
+				FROM categoria
+				WHERE id_categoria2 = v_id_categoria;		
+
+			END LOOP;
+		end if;
 	END LOOP;
-
     COMMIT;
 end;$$
 
 --PRUEBA
-call actualizar_mp(id_miembro);
+call actualizar_mp();
+
