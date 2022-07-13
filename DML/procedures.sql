@@ -201,3 +201,32 @@ end;$$
 --PRUEBA
 call actualizar_mp();
 
+
+-----------------------------------------------
+-- ASIGNAR PRESENTADORES DE PREMIOS EN LA GALA
+-----------------------------------------------
+
+CREATE OR replace procedure asignar_presentadores_gala(
+)
+
+LANGUAGE PLPGSQL    
+AS $$
+DECLARE 
+	v_id_gala integer;
+BEGIN
+	
+	SELECT ano INTO v_id_gala FROM gala WHERE ano =(SELECT max(ano)-1  FROM gala);
+
+	INSERT INTO presentador (
+					id_gala, doc_identidad, id_categoria
+				) SELECT nominadas.ano_oscar,
+			PPP.doc_identidad, PPP.id_categoria
+	FROM nominadas 
+	INNER JOIN postuladas_p_pers PPP ON PPP.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+	WHERE nominadas.ano_oscar = v_id_gala AND ganador = 'si';
+
+    COMMIT;
+end;$$
+
+-- PRUEBA
+call asignar_presentadores_gala();

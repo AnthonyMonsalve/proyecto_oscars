@@ -37,7 +37,7 @@ INSERT INTO public.nominadas(
 
 INSERT INTO public.nominadas(
     id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria)
-    VALUES (10, 'no', 11, 1986, 27);
+    VALUES (10, 'si', 11, 1986, 27);
 
 INSERT INTO public.nominadas(
     id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria)
