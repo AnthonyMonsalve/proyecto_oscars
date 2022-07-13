@@ -312,9 +312,9 @@ END; $$
 -- PRUEBA
 CALL actualizar_area_nt_membresia(doc_identidad);
 
+
 ---------------------------------------------------------------------------------------------
 -- ACTUALIZAR M_P DE MEMBRESÍA
-
 
 CREATE OR replace procedure actualizar_mp(
 	v_id_miembro integer
