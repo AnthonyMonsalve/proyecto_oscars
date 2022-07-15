@@ -107,16 +107,25 @@
     );
 
     -- LISTO
+     
      CREATE TABLE public.postuladas_p_pers(
         id_postuladas_p_pers SERIAL NOT NULL,
         ano_oscar INT NOT NULL,
         id_categoria INT NOT NULL REFERENCES categoria(id_categoria),
+		empate varchar(2) not null check (empate in('si','no')),
+		 terminada varchar(2) not null check(terminada in ('si','no')),
+		 ronda_emp int not null;
+         cant_votos int not null,
+		 num_post_emp integer,
         id_rol INT,
-        doc_identidad BIGINT,
+        doc_identidad INT,
         id_audiovi INT,
+		
         id_audiovi2 INT REFERENCES audiovisual(id_audiovi),
-        CONSTRAINT FK_rol_pel_pers FOREIGN KEY (id_rol, id_audiovi, doc_identidad) REFERENCES rol_pel_pers(id_rol, id_audiovi, doc_identidad),
-        CONSTRAINT PK_portuladas_p_pers PRIMARY KEY (id_postuladas_p_pers, ano_oscar, id_categoria)
+		 
+        CONSTRAINT llave_rol_pel_pers FOREIGN KEY (id_rol, id_audiovi, doc_identidad) REFERENCES rol_pel_pers(id_rol, id_audiovi, doc_identidad),
+        CONSTRAINT primary_key_portuladas_p_pers PRIMARY KEY (id_postuladas_p_pers, ano_oscar, id_categoria),
+		constraint unicidad_clave_foranea unique (ano_oscar,id_categoria,id_rol, id_audiovi, doc_identidad,id_audiovi2)
     );
 
     -- LISTO
@@ -126,9 +135,11 @@
         id_postuladas_p_pers INT NOT NULL,
         ano_oscar SMALLINT NOT NULL,
         id_categoria INT NOT NULL,
+		cant_votos int,
         CONSTRAINT PK_nominadas PRIMARY KEY (id_nominada, id_postuladas_p_pers, ano_oscar, id_categoria),
         CONSTRAINT FK_postuladas_p_pers FOREIGN KEY ( id_postuladas_p_pers, ano_oscar, id_categoria) REFERENCES postuladas_p_pers(id_postuladas_p_pers, ano_oscar, id_categoria)
     );
+
 
     -- LISTO
     CREATE TABLE public.organizacion (
@@ -151,7 +162,7 @@
     CREATE TABLE public.votos (
         id_voto SERIAL PRIMARY KEY NOT NULL,
         fecha_hora TIMESTAMP NOT NULL,
-        tipo_voto VARCHAR(8) NOT NULL CHECK(tipo_voto IN ('ganadora','nominada')),
+        tipo_voto VARCHAR(8) NOT NULL CHECK(tipo_voto IN ('postulado','nominado')),
         id_miembro INT NOT NULL REFERENCES miembro(id_miembro),
         id_nominada INT,
         id_categoria INT,
