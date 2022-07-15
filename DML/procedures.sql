@@ -301,9 +301,9 @@ end;$$
 -----Prueba
 call gestion_nominados(2001,19);
 
+
 ---------------------------------------------------------------------------
 -- ACTUALIZAR NT_AREA MEMBRESÍA
-
 
 CREATE OR REPLACE PROCEDURE actualizar_area_nt_membresia()
 LANGUAGE PLPGSQL
@@ -369,7 +369,13 @@ FOR v_persona IN EXECUTE query_persona LOOP
 		UPDATE public.miembro SET area_nt = null WHERE doc_identidad = v_persona.doc_identidad;
 	end if;
 	
+	
+	
 end loop;
+
+update public.miembro set vitalicio= 'si' where id_miembro in(select id_miembro from public.miembro 
+where extract(days from (now()-fecha_inicio))/365.25>=15 and fecha_fin is null);
+
 COMMIT;	
 
 END; $$
