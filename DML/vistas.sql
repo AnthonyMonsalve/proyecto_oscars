@@ -4,7 +4,7 @@ CREATE OR replace FUNCTION ficha_pelicula (
 RETURNS TABLE (
 	titulo_espanol VARCHAR, titulo_original VARCHAR, 
     sinopsis VARCHAR, fecha_estreno_cine VARCHAR, 
-    --pais VARCHAR(20)[3],  
+    pais VARCHAR(20)[3],  
     distribucion_va VARCHAR(50)[3], censura VARCHAR, 
     duracion_min VARCHAR, genero_va VARCHAR(15)[5],
     directores VARCHAR, dir_artistica VARCHAR,
@@ -21,7 +21,7 @@ BEGIN
 	for v_registro IN (
         SELECT audiovisual.titulo_espanol,
         audiovisual.titulo_original,  audiovisual.sinopsis,  audiovisual.fecha_estreno_cine, 
-        --pais,  
+        audiovisual.pais,  
         audiovisual.distribucion_va,  audiovisual.censura,  audiovisual.duracion_min,  audiovisual.genero_va
         FROM public.audiovisual 
 	        WHERE id_audiovi = p_id_audiovi
