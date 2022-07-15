@@ -18,6 +18,18 @@ INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (2, 2, 12545, NULL);
 
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (8, 1, 2525, 'Bebesita');
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (10, 10, 21065, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (5, 1, 2015, NULL);
+
 --Guionista
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
@@ -174,7 +186,7 @@ INSERT INTO public.rol_pel_pers(
 --Banda sonora
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
-	VALUES (2525, '	Elisha', 'Vanslyck', 'Cook', 'M', '1909-04-04', '1926-08-14', 'Jr.', NULL, NULL, NULL);
+	VALUES (2525, 'Elisha', 'Vanslyck', 'Cook', 'M', '1909-04-04', '1926-08-14', 'Jr.', NULL, NULL, NULL);
 
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
@@ -220,6 +232,10 @@ INSERT INTO public.persona(
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (1, 5, 3548, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (4, 1, 3548, NULL);
 
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
@@ -274,6 +290,11 @@ INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (2, 9, 4004, NULL);
 
+	INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (3, 1, 4004, NULL);
+
+
 --------------------------------------------------
 -- Relacionadas al audiovisual "Work Experience"
 
@@ -283,7 +304,7 @@ INSERT INTO public.persona(
 	VALUES (21065, 'Steven', 'Alexander', 'Wright', 'M', '1933-03-30', '1955-04-15', 'Gerald', NULL, NULL, NULL);
 
 
-INSERT INTO public.rol_pel_pers(
+	INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (2, 10, 21065, NULL);
 	
