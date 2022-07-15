@@ -360,7 +360,7 @@ CREATE OR REPLACE FUNCTION arcoexclusivo_postuladas_p_pers()
 			END IF;
 			
 			
-			RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
+			RAISE EXCEPTION 'Debe ingresar los datos de una pelicula o de rol_pel_pers';
 	END;
 $BODY$;
 
@@ -389,7 +389,7 @@ CREATE OR REPLACE FUNCTION arcoexclusivo_votos()
 				END IF;
 				Return new;
 			END IF;
-			RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una postulacion o de una nominacion';
+			RAISE EXCEPTION 'Debe ingresar o los datos de una postulacion o de una nominacion';
 	END;
 $BODY$;
 
