@@ -458,3 +458,46 @@ end;$$
 
 -- PRUEBA
 call asignar_presentadores_gala();
+
+----------------Actualizar historico de premio
+
+create or replace procedure Actualizar_Premio(
+   v_id_categoria integer,
+	v_titulo varchar(70),
+	v_cant_nom integer
+)
+language plpgsql    
+as $$
+Declare 
+	v_ult_reg integer;
+	v_numero_votos integer;
+begin
+	
+	WITH list AS
+	 (SELECT 
+			UNNEST(hist_premio_nt) AS row_result
+	  FROM   public.categoria
+	  WHERE  id_categoria= v_id_categoria)
+	select   
+		   count(*) into v_ult_reg
+
+	FROM     list;
+	
+	
+	--Para modificar un registro en particular de nuestro  array, este se utilizara para colocar la fecha de fin a 
+	--nuestro registro
+
+	UPDATE public.categoria SET hist_premio_nt[v_ult_reg] = (hist_premio_nt[v_ult_reg].fecha_ini, now(), hist_premio_nt[v_ult_reg].nombre, hist_premio_nt[v_ult_reg].cantidad_nom)::hist_premio
+	WHERE id_categoria = v_id_categoria;
+
+	--insert historicos de los premios
+	UPDATE public.categoria 
+	SET hist_premio_nt = hist_premio_nt || (now(),NULL,v_titulo,v_cant_nom)::hist_premio
+	WHERE id_categoria = v_id_categoria;
+    commit;
+end;$$
+
+--------------------------Prueba
+
+call Actualizar_Premio(19,'Mejor pelicula',2);
+
