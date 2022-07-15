@@ -342,6 +342,12 @@ FOR v_persona IN EXECUTE query_persona LOOP
 					v_area_nt = concat (v_area_nt,','); 
 					v_area_nt = concat (v_area_nt,v_rama.rama); 
 				end if;
+				
+				IF not EXISTS (SELECT * FROM public.miembro WHERE doc_identidad = v_persona.doc_identidad) then
+					INSERT INTO public.miembro(
+					 fecha_inicio, vitalicio, doc_identidad, fecha_fin, area_nt)
+					VALUES ( now(), 'no', v_persona.doc_identidad, null, null);
+				end if;
 			ELSE	
 				SELECT COUNT(ganador) INTO v_cont2
 				FROM postuladas_p_pers INNER JOIN nominadas ON postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
@@ -357,6 +363,11 @@ FOR v_persona IN EXECUTE query_persona LOOP
 						v_area_nt = concat (v_area_nt,','); 
 						v_area_nt = concat (v_area_nt,v_rama.rama); 
 					end if;
+					IF not EXISTS (SELECT * FROM public.miembro WHERE doc_identidad = v_persona.doc_identidad) then
+						INSERT INTO public.miembro(
+						 fecha_inicio, vitalicio, doc_identidad, fecha_fin, area_nt)
+						VALUES ( now(), 'no', v_persona.doc_identidad, null, null);
+					end if;
 				END IF;
 			END IF;
 	end loop;
@@ -368,9 +379,6 @@ FOR v_persona IN EXECUTE query_persona LOOP
 	else 
 		UPDATE public.miembro SET area_nt = null WHERE doc_identidad = v_persona.doc_identidad;
 	end if;
-	
-	
-	
 end loop;
 
 update public.miembro set vitalicio= 'si' where id_miembro in(select id_miembro from public.miembro 
