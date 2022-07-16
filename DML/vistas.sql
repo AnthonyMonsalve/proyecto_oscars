@@ -171,3 +171,87 @@ BEGIN
 END; $$ 
 
 --SELECT  * FROM ficha_pelicula(1);
+
+--------------------------------------------------------------------------
+
+CREATE OR replace FUNCTION ficha_premios_pelicula (
+    p_id_premio INT,
+    p_ano_gala INT
+) 
+RETURNS TABLE (
+	premio VARCHAR,
+	presentador VARCHAR,
+	pelicula VARCHAR, 
+    titulo_original VARCHAR,
+    resultado VARCHAR
+) 
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+    v_registro record;
+    v_estatus_premio VARCHAR;
+    v_contenido VARCHAR;
+BEGIN
+	for v_registro IN (
+        SELECT 
+        nombre
+        FROM public.categoria 
+	        WHERE id_categoria = p_id_premio
+    ) LOOP  
+		v_contenido = concat(v_contenido, 'Oscar a ');
+        v_contenido = concat(v_contenido, v_registro.nombre);
+	END LOOP;
+    premio := v_contenido;
+
+	
+	v_registro := NULL;
+	v_contenido = '';
+	
+	for v_registro IN (
+        SELECT
+		primer_nom,
+		primer_ape
+        FROM public.presentador 
+		INNER JOIN persona PER ON PER.doc_identidad = presentador.doc_identidad
+	        WHERE id_gala = p_ano_gala AND id_categoria = p_id_premio
+    ) LOOP  
+        v_contenido = concat(v_contenido, v_registro.primer_nom);
+		v_contenido = concat(v_contenido, ' ');
+		v_contenido = concat(v_contenido, v_registro.primer_ape);
+	END LOOP;
+	presentador := v_contenido;
+
+	RETURN NEXT;
+	
+	v_registro := NULL;
+	v_contenido = '';
+	
+	for v_registro IN (
+		SELECT
+		postuladas_p_pers.id_postuladas_p_pers,
+		NOM.ganador,
+		AUD.titulo_espanol,
+		AUD.titulo_original
+		FROM public.postuladas_p_pers 
+		INNER JOIN nominadas NOM ON 
+		NOM.id_postuladas_p_pers = postuladas_p_pers.id_postuladas_p_pers
+		INNER JOIN audiovisual AUD ON
+		AUD.id_audiovi = postuladas_p_pers.id_audiovi OR AUD.id_audiovi = postuladas_p_pers.id_audiovi2
+		WHERE postuladas_p_pers.ano_oscar = p_ano_gala AND postuladas_p_pers.id_categoria = p_id_premio
+    ) LOOP  
+        pelicula := v_registro.titulo_espanol;
+		titulo_original := v_registro.titulo_original;
+		presentador := null;
+		premio := null;
+		IF v_registro.ganador = 'si' THEN
+			resultado := 'Ganadora';
+		ELSE
+			resultado := 'Candidata';
+		END IF;
+		RETURN NEXT;
+	END LOOP;
+	
+END; $$ 
+
+--SELECT  * FROM ficha_premios_pelicula(28,1986);
+--DROP FUNCTION ficha_premios_pelicula(integer, integer);
