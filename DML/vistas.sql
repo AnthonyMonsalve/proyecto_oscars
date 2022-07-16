@@ -170,4 +170,4 @@ BEGIN
 	RETURN NEXT;
 END; $$ 
 
-SELECT  * FROM ficha_pelicula(1);
+--SELECT  * FROM ficha_pelicula(1);

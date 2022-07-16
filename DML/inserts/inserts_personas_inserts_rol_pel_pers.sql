@@ -18,18 +18,6 @@ INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (2, 2, 12545, NULL);
 
-INSERT INTO public.rol_pel_pers(
-	id_rol, id_audiovi, doc_identidad, cancion_titulo)
-	VALUES (8, 1, 2525, 'Bebesita');
-
-INSERT INTO public.rol_pel_pers(
-	id_rol, id_audiovi, doc_identidad, cancion_titulo)
-	VALUES (10, 10, 21065, NULL);
-
-INSERT INTO public.rol_pel_pers(
-	id_rol, id_audiovi, doc_identidad, cancion_titulo)
-	VALUES (5, 1, 2015, NULL);
-
 --Guionista
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
@@ -190,6 +178,10 @@ INSERT INTO public.persona(
 
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (8, 1, 2525, 'Bebesita');
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (8, 3, 2525, 'Bebesita');
 --Vestuario
 INSERT INTO public.persona(
@@ -263,6 +255,10 @@ INSERT INTO public.rol_pel_pers(
 
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (5, 1, 2015, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (5, 5, 2015, NULL);
 
 --------------------------------------------------
@@ -307,6 +303,10 @@ INSERT INTO public.persona(
 	INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (2, 10, 21065, NULL);
+
+	INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (10, 10, 21065, NULL);
 	
 	INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
