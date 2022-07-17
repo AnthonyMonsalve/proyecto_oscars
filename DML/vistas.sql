@@ -317,3 +317,36 @@ END; $$;
 
 -- DROP FUNCTION ficha_oscar_totales(INT);
 -- SELECT * FROM ficha_oscar_totales(1985);
+
+
+CREATE OR REPLACE FUNCTION ficha_miembro_area (IN in_area VARCHAR)
+    RETURNS TABLE (
+        doc_identidad BIGINT,
+        primer_nom VARCHAR,
+        primer_ape VARCHAR
+    )
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_contenido VARCHAR;
+    BEGIN
+
+        FOR v_registro IN(
+            SELECT persona.doc_identidad, persona.primer_nom, persona.primer_ape FROM persona 
+            JOIN  miembro 
+            ON miembro.doc_identidad = persona.doc_identidad
+            WHERE  in_area = ANY (miembro.area_nt)
+        )
+        LOOP
+            doc_identidad := v_registro.doc_identidad;
+            primer_nom := v_registro.primer_nom;
+            primer_ape := v_registro.primer_ape;
+            RETURN NEXT;
+        END LOOP;
+        
+        RETURN;
+    END; $$;
+
+-- DROP FUNCTION ficha_miembro_area(VARCHAR);
+-- SELECT * FROM ficha_miembro_area('actor');
