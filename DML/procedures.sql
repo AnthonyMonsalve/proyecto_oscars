@@ -1,6 +1,7 @@
 
 -----------------------------------Procedimiento calculo de votos postulados e insercion en nominados------------------
 
+
 create or replace procedure gestion_postulados(
    v_ano_oscar integer,
 	v_id_categoria integer
@@ -14,6 +15,7 @@ Declare
 	v_message text;
 	v_votos_empate integer;
 	v_record RECORD;
+	v_record2 RECORD;
 	v_query text;
 	v_length_temp_emp int;
 	v_empate varchar(4);
@@ -50,10 +52,14 @@ begin
 		id_categoria integer,
 		id_postulado integer,
 		cant_votos integer,
+		id_audiovi integer,
+		id_audiovi2 integer,
 		ganador varchar(2)
 	);
 	
-	insert into tmp_votos2 select ano_oscar1, id_categoria1, id_postuladas_p_pers1, count(*)  
+	insert into tmp_votos2 
+	select ano_oscar1, id_categoria1, id_postuladas_p_pers1, count(*)
+	
 	from public.votos 
 	inner join public.postuladas_p_pers on votos.id_postuladas_p_pers1=postuladas_p_pers.id_postuladas_p_pers
 	where ano_oscar1=v_ano_oscar and id_categoria1=v_id_categoria and terminada= 'no'
@@ -69,16 +75,18 @@ begin
 	
 	delete from tmp_votos2;
 	
-	insert into tmp_votos2 select ano_oscar1, id_categoria1, id_postuladas_p_pers1, count(*)  
+	insert into tmp_votos2 select ano_oscar1, id_categoria1, id_postuladas_p_pers1, count(*), postuladas_p_pers.id_audiovi, postuladas_p_pers.id_audiovi2
 	from public.votos 
 	inner join public.postuladas_p_pers on votos.id_postuladas_p_pers1=postuladas_p_pers.id_postuladas_p_pers
 	where ano_oscar1=v_ano_oscar and id_categoria1=v_id_categoria and terminada= 'no'
-	group by ano_oscar1, id_categoria1,id_postuladas_p_pers1
+	group by ano_oscar1, id_categoria1,id_postuladas_p_pers1, postuladas_p_pers.id_audiovi, postuladas_p_pers.id_audiovi2
 	order by 4 DESC
 	fetch first v_cantidad_max_nom rows with ties;
 	if not found then
 		RAISE EXCEPTION 'No se han introducido ni un voto dentro de esta categoria';
 	end if;
+	
+	
 	
 	update tmp_votos2 set ganador= 'no';
 	
@@ -107,7 +115,11 @@ begin
 		ganador, id_postuladas_p_pers, ano_oscar, id_categoria)
 		select  ganador, id_postulado, ano_oscar, id_categoria from tmp_votos2 where cant_votos<>v_votos_empate;
 		
-		----insercion de las nuevas nominaciones
+		for v_record2 in 
+		select  id_audiovi,id_audiovi2 from tmp_votos2 where cant_votos<>v_votos_empate loop
+			update public.audiovisual set total_nomi=total_nomi+1 where id_audiovi=v_record2.id_audiovi or id_audiovi=v_record2.id_audiovi2;
+		end loop;
+	----insercion de las nuevas postulaciones
 		
 		CREATE temp TABLE c_postuladas_p_pers(
 			id_postuladas_p_pers int,
@@ -130,7 +142,11 @@ begin
 		id_rol, doc_identidad, id_audiovi, id_audiovi2,ronda_emp+1 from public.postuladas_p_pers
 		where id_postuladas_p_pers in (select id_postulado from tmp_votos2 where cant_votos=v_votos_empate);
 		
+		
+		
 		update c_postuladas_p_pers set empate='si' and cant_votos =0;
+		
+		
 		
 		select count(*) into v_length_temp_emp from c_postuladas_p_pers;
 		
@@ -156,147 +172,19 @@ begin
 	update public.postuladas_p_pers set terminada='si' where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria;
 	
 	INSERT INTO public.nominadas(
-	ganador, id_postuladas_p_pers, ano_oscar, id_categoria)
-	select  ganador, id_postulado, ano_oscar, id_categoria from tmp_votos2;
+	ganador, id_postuladas_p_pers, ano_oscar, id_categoria,empate, ronda_emp, terminada,cant_votos)
+	select  ganador, id_postulado, ano_oscar, id_categoria,'no',0,'no',0 from tmp_votos2;
 
+	for v_record2 in 
+	select  id_audiovi,id_audiovi2 from tmp_votos2 loop
+		update public.audiovisual set total_nomi=total_nomi+1 where id_audiovi=v_record2.id_audiovi or id_audiovi=v_record2.id_audiovi2;
+	end loop;
+
+	
 	drop table tmp_votos2;
     commit;
 end;$$
 
------Prueba
-call gestion_postulados(2001,19);
-
-
-
------------------------------------Procedimiento calculo de votos nominados actualizacion de ganador------------------
-
-create or replace procedure gestion_nominados(
-   v_ano_oscar integer,
-	v_id_categoria integer
-)
-language plpgsql    
-as $$
-Declare 
-	v_id_ganador integer;
-	v_numero_votos integer;
-	v_empate varchar(2);
-	v_record RECORD;
-	v_message text;
-	v_query varchar (250);
-	v_length_temp integer;
-	v_votos_empate integer;
-	v_votos integer;
-begin
-
-	select empate into v_empate from public.nominadas where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria and terminada='no';
-	if not found then
-		RAISE EXCEPTION 'Las votaciones de este ano para esta categoria ya han acabado';
-	end if;
-	
-	
-	----Calculo de votos
-	
-	CREATE TEMP TABLE tmp_votos (
-		id_nominada integer,
-		id_categoria integer,
-		ano_oscar integer,
-		id_postulado integer,
-		cant_votos integer,
-		ganador varchar(2)
-	);
-	
-	insert into tmp_votos(id_nominada,id_categoria,ano_oscar,id_postulado,cant_votos)  
-	select votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers, count(*)  
-	from public.votos 
-	inner join public.nominadas on votos.id_nominada=nominadas.id_nominada
-	where votos.ano_oscar=v_ano_oscar and votos.id_categoria=v_id_categoria and nominadas.terminada= 'no'
-	group by votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers;
-	
-		for v_record 
-		in select * from tmp_votos 
-		loop
-			update public.nominadas set cant_votos= v_record.cant_votos where id_nominada= v_record.id_nominada;
-		end loop;
-		
-		v_record=null;
-	
-	delete from tmp_votos;
-	
-	insert into tmp_votos(id_nominada,id_categoria,ano_oscar,id_postulado,cant_votos)  
-	select votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers, count(*)  
-	from public.votos 
-	inner join public.nominadas on votos.id_nominada=nominadas.id_nominada
-	where votos.ano_oscar=v_ano_oscar and votos.id_categoria=v_id_categoria and nominadas.terminada= 'no'
-	group by votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers
-	order by 5 DESC
-	fetch first 1 rows with ties;
-	if not found then
-		RAISE EXCEPTION 'No se han introducido ni un voto dentro de esta categoria';
-	end if;
-	----Comprobar Empate
-	
-	select count(*) into v_length_temp from  tmp_votos;
-	if(v_length_temp> 1) then 
-		------------------Caso Empate--------------------
-		
-		--------------------Generar Mensaje Empate------------------------
-		v_message= 'Se genero un empate en las votaciones por el ganador de premio, se debera realizar el proceso de votacion nuevamente con las siguientes nominaciones para determinar el ganador: ';
-		select cant_votos into v_votos_empate from tmp_votos order by 1 asc limit 1;
-		for v_record IN 
-		select id_nominada from tmp_votos where cant_votos=v_votos_empate 
-		LOOP
-			v_message= concat (v_message,v_record.id_nominada);
-			v_message= concat (v_message,' ');
-		end loop;
-		
-		----modificacion de la antiguas postulaciones
-		
-		update public.nominadas set terminada='si' where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria;
-		
-		----insercion de las nuevas nominaciones
-		
-		CREATE temp TABLE c_nominadas(
-			id_nominada int,
-			ganador varchar(2),
-			id_postuladas_p_pers INT,
-			ano_oscar int,
-			id_categoria int,
-			empate varchar(2),
-			 terminada varchar(2),
-			ronda_emp int,
-			cant_votos int
-		);
-
-		INSERT INTO c_nominadas(
-		id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp)
-		SELECT id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp+1
-		from public.nominadas
-		where id_nominada in (select id_nominada from tmp_votos);
-		update c_nominadas set empate='si', terminada='no',cant_votos=0;
-		
-		
-		INSERT INTO public.nominadas(
-		ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp,cant_votos)
-		SELECT ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp, cant_votos
-		from c_nominadas;
-		
-		---------------------------Notificar Usuario--------------------------
-		v_message= concat(v_message,'. Los postulados han sido nuevamente ingresados en el sistema para una votacion de desempate');
-		raise notice '%', v_message;
-		drop table c_nominadas;
-		drop table tmp_votos;
-		return;
-	end if;
-	
-	----Modificamos el parametro ganador
-	
-	update public.nominadas set ganador= 'si' where id_nominada in (select id_nominada from tmp_votos); 
-	/*select cant_votos into v_votos from tmp_votos;*/
-	update public.nominadas set terminada='si' /*and cant_votos= v_votos*/ where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria;
-	
-	drop table tmp_votos;
-    commit;
-end;$$
 
 -----Prueba
 call gestion_nominados(2001,19);
@@ -511,7 +399,257 @@ begin
     commit;
 end;$$
 
+
+
+
 --------------------------Prueba
 
 call Actualizar_Premio(19,'Mejor pelicula',2);
 
+
+---------------------------Postular-------------------------------------------
+
+create or replace procedure postular_pelicula(
+    v_ano_oscar integer,
+	v_id_miembro integer,
+	v_audiovisual integer
+)
+language plpgsql    
+as $$
+Declare 
+	v_id_ganador integer;
+	v_numero_votos integer;
+	v_cont int;
+	v_fecha_fin date;
+	v_vitalicio varchar(2);
+begin
+
+-------verificar permisos de miembro
+
+	v_fecha_fin= null;
+	select vitalicio, fecha_fin into v_vitalicio, v_fecha_fin  from miembro where id_miembro=v_id_miembro;
+	if v_fecha_fin is not null then 
+		RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido caancelada, por ende, no puede participar en la votaciones';	
+	end if;
+	perform from public.gala where ano=v_ano_oscar;
+	if not found then
+		RAISE EXCEPTION 'No existe ninguna gala vinculada a ese anio';
+	end if;
+	
+	v_cont=0;
+	select count(*) into v_cont from public.postulado_votos 
+	where id_miembro=v_id_miembro and fecha_ano=v_ano_oscar;
+	if v_cont>=2 then 
+		RAISE EXCEPTION 'Ya alcanzo el numero maximo de postulaciones para este anio, siga participando el anio que viene';
+	end if;
+	
+	perform from public.postulado_votos 
+	where id_audiovi=v_audiovisual and id_miembro=v_id_miembro and fecha_ano=v_ano_oscar;
+	if found then
+		RAISE EXCEPTION 'No puede postular dos veces a la misma pelicula';
+	end if;
+	
+	
+---------- ingresar la postulacion------
+
+	INSERT INTO public.postulado_votos(
+	id_audiovi, id_miembro, fecha_ano)
+	VALUES (v_audiovisual, v_id_miembro, v_ano_oscar);
+
+    commit;
+end;$$
+
+------Prueba 
+
+call postular_pelicula(2001,20,13);
+
+
+----------------------Gestion automatica de los postulados------------------
+
+create or replace procedure gestion_postulados(
+   v_ano_oscar integer
+)
+language plpgsql    
+as $$
+Declare 
+	v_id_ganador integer;
+	v_numero_votos integer;
+	v_categoria integer;
+	v_record_categoria RECORD;
+	v_record_categoria2 RECORD;
+	v_record_roles RECORD;
+	v_genero varchar(2);
+begin
+
+--------------------Creacion de tablas temporales-------------------
+
+	create temp table tmp_postu(
+		ano_oscar int,
+		id_categoria int,
+		id_rol int,
+		doc_identidad int,
+		id_audiovi int,
+		id_audiovi2 int, 
+		empate varchar(2),
+		num_post_emp int,
+		terminada varchar(2),
+		ronda_emp int,
+		cant_votos int
+	);
+	
+	create temp table tmp_roles(
+		id_audiovi int,
+		nombre varchar(60),
+		id_rol int,
+		doc_identidad int,
+		id_audivisual_pel int
+	);
+	
+	insert into tmp_roles (nombre,id_rol,id_audiovi,doc_identidad)
+	select Distinct rol.nombre, rol_pel_pers.id_rol, rol_pel_pers.id_audiovi, rol_pel_pers.doc_identidad 
+	from postulado_votos 
+	inner join public.rol_pel_pers on rol_pel_pers.id_audiovi=postulado_votos.id_audiovi
+	inner join public.rol on rol_pel_pers.id_rol=rol.id_rol where postulado_votos.fecha_ano = v_ano_oscar;
+	
+	insert into tmp_roles (id_audivisual_pel)
+	select Distinct postulado_votos.id_audiovi 
+	from postulado_votos 
+	where postulado_votos.fecha_ano = v_ano_oscar;
+	
+	----Calculo de Postulaciones
+	
+	--------------------------Caso Audiovisual (Cortometraje, Largometraje, documental)-------------
+	
+				for v_record_roles in 
+				select audiovisual.id_audiovi ,clas_audiovisual, duracion_min
+				from tmp_roles 
+				inner join public.audiovisual on audiovisual.id_audiovi=tmp_roles.id_audivisual_pel
+				where id_audivisual_pel is not null loop
+					v_categoria=0;
+					if v_record_roles.clas_audiovisual='largometraje' then
+						INSERT INTO tmp_postu(
+						ano_oscar, id_categoria, id_rol,
+						doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+						VALUES ( v_ano_oscar,17, null, 
+								null,null, v_record_roles.id_audiovi, 'no', 0, 'no', 0, 0);
+					else
+						if v_record_roles.clas_audiovisual='cortometraje' then
+							INSERT INTO tmp_postu(
+							ano_oscar, id_categoria, id_rol,
+							doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+							VALUES ( v_ano_oscar,25, null, 
+									null,null,  v_record_roles.id_audiovi, 'no', 0, 'no', 0, 0);
+						else
+							if v_record_roles.clas_audiovisual='documental' then
+								
+								if v_record_roles.duracion_min<60 then
+									INSERT INTO tmp_postu(
+									ano_oscar, id_categoria, id_rol,
+									doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+									VALUES ( v_ano_oscar,33, null, 
+											null,null,  v_record_roles.id_audiovi, 'no', 0, 'no', 0, 0);
+									
+								else 
+									INSERT INTO tmp_postu(
+									ano_oscar, id_categoria, id_rol,
+									doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+									VALUES ( v_ano_oscar,34, null, 
+											null,null,  v_record_roles.id_audiovi, 'no', 0, 'no', 0, 0);
+									
+								end if;
+							end if;
+						end if;
+						
+					end if;
+					
+				end loop;
+	
+	for v_record_categoria in 
+	select id_categoria, rama from public.categoria where id_categoria2 is null
+	loop
+		if v_record_categoria.id_categoria=3 then
+			---------------------------Caso Actor------------------
+			
+			for v_record_roles in 
+			select * from tmp_roles 
+			where nombre='actor' or nombre='actor de reparto' 
+			loop
+				/*for v_record_categoria2 in 
+				select id_categoria from public.categoria where id_categoria2=v_record_categoria.id_categoria
+				loop*/
+				
+					if v_record_roles.nombre='actor' then
+						select sexo into v_genero from public.persona where doc_identidad=v_record_roles.doc_identidad;
+						if v_genero='M' then
+							INSERT INTO tmp_postu(
+							ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+							VALUES ( v_ano_oscar, 19, v_record_roles.id_rol,
+									v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+						end if;
+						if v_genero='F' then
+							INSERT INTO tmp_postu(
+							ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+							VALUES ( v_ano_oscar, 20, v_record_roles.id_rol,
+									v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+						end if;
+					end if;
+					if v_record_roles.nombre='actor de reparto' then
+						select sexo into v_genero from public.persona where doc_identidad=v_record_roles.doc_identidad;
+						if v_genero='M' then
+							INSERT INTO tmp_postu(
+							ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+							VALUES ( v_ano_oscar, 29, v_record_roles.id_rol,
+									v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+						end if;
+						if v_genero='F' then
+							INSERT INTO tmp_postu(
+							ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+							VALUES ( v_ano_oscar, 30, v_record_roles.id_rol,
+									v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+						end if;
+					
+					end if;
+				/*end loop;*/
+			end loop;
+			
+			
+		else
+			if v_record_categoria.id_categoria in (1,8,12) then
+				--------------------------Para que no entre cuando hay un audiovisual-------------
+				
+				
+			else
+				----------------------------Caso Por defecto --------------------------------------
+				for v_record_roles in 
+				select * from tmp_roles 
+				where nombre=v_record_categoria.rama 
+				loop
+					for v_record_categoria2 in 
+					select id_categoria from public.categoria where id_categoria2=v_record_categoria.id_categoria
+					loop
+						INSERT INTO tmp_postu(
+						ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+						VALUES ( v_ano_oscar, v_record_categoria2.id_categoria, v_record_roles.id_rol, v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+					end loop;
+				end loop;
+			end if;
+		end if;
+	end loop;
+	
+	--------------------Insetar en Postulados
+	
+	INSERT INTO public.postuladas_p_pers(
+	ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+	select ano_oscar,id_categoria,id_rol,doc_identidad,id_audiovi,id_audiovi2,empate,num_post_emp, terminada, ronda_emp, cant_votos
+	from tmp_postu;
+	
+	
+	DROP table tmp_postu;
+	DROP table tmp_roles;
+    commit;
+end;$$
+
+-----------Prueba
+
+
+call gestion_postulados(2001);
