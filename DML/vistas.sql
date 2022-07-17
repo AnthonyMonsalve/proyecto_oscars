@@ -4,9 +4,9 @@ CREATE OR replace FUNCTION ficha_pelicula (
 RETURNS TABLE (
 	titulo_espanol VARCHAR, titulo_original VARCHAR, 
     sinopsis VARCHAR, fecha_estreno_cine VARCHAR, 
-    pais VARCHAR(20)[3],  
-    distribucion_va VARCHAR(50)[3], censura VARCHAR, 
-    duracion_min VARCHAR, genero_va VARCHAR(15)[5],
+    pais VARCHAR,  
+    distribucion_va VARCHAR, censura VARCHAR, 
+    duracion_min VARCHAR, genero_va VARCHAR,
     directores VARCHAR, dir_artistica VARCHAR,
 	productores VARCHAR, guionistas VARCHAR, 
 	musica VARCHAR,	fotografia VARCHAR,
@@ -30,12 +30,12 @@ BEGIN
         titulo_original := v_registro.titulo_original; 
         sinopsis := v_registro.sinopsis; 
         fecha_estreno_cine := v_registro.fecha_estreno_cine;  
-        distribucion_va := v_registro.distribucion_va; 
+        distribucion_va := array_to_string(v_registro.distribucion_va, ' ; '); 
         censura := v_registro.censura; 
         duracion_min := v_registro.duracion_min; 
-        genero_va := v_registro.genero_va;
+        genero_va := array_to_string(v_registro.genero_va, ' ; ');
         foto := v_registro.fotos;
-        pais := v_registro.pais;
+        pais := array_to_string(v_registro.pais, ' ; ');
 	END LOOP;
     
 	v_registro := NULL;
