@@ -132,8 +132,8 @@
      CREATE TABLE public.nominadas (
         id_nominada SERIAL NOT NULL,
         ganador CHAR(2) NOT NULL CHECK(ganador IN ('si','no')),
-		empate varchar(2) not null check(empate IN ('si','no')); /*default no*/
-		ronda_emp int not null; /*default 0*/
+		empate varchar(2) not null check(empate IN ('si','no')), /*default no*/
+		ronda_emp int not null, /*default 0*/
         id_postuladas_p_pers INT NOT NULL,
         ano_oscar SMALLINT NOT NULL,
         id_categoria INT NOT NULL,
