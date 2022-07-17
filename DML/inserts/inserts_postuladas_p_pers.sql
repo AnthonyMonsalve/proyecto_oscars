@@ -83,10 +83,6 @@
     INSERT INTO public.postuladas_p_pers(
 	    id_postuladas_p_pers, ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, empate, terminada, ronda_emp, cant_votos, num_post_emp)
 	    VALUES (21, 1986, 21, 2, 12545, 2, 'no', 'no', 0, 0, 0);
-
-    INSERT INTO public.postuladas_p_pers(
-	    id_postuladas_p_pers, ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, empate, terminada, ronda_emp, cant_votos, num_post_emp)
-	    VALUES (21, 1986, 21, 2, 12545, 2, 'no', 'no', 0, 0, 0);
 -- FIN POSTULADAS_P_PERS
 
 
