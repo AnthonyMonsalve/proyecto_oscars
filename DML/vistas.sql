@@ -352,3 +352,105 @@ CREATE OR REPLACE FUNCTION ficha_miembro_area (IN in_area VARCHAR)
     
 -- DROP FUNCTION ficha_miembro_area(VARCHAR);
 -- SELECT * FROM ficha_miembro_area('actor');
+
+CREATE OR REPLACE FUNCTION ficha_actor(IN in_doc_identidad BIGINT)
+    RETURNS TABLE (
+        nombre VARCHAR,
+        fecha_nac VARCHAR,
+        lugar_nac VARCHAR,
+        roles VARCHAR, 
+        biografia VARCHAR
+    )
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE
+        v_registro record;
+    BEGIN
+        FOR v_registro IN(
+            SELECT persona.primer_nom, persona.primer_ape, persona.segundo_nom, persona.segundo_ape, persona.fecha_nac, persona.a_lugar_nac FROM persona
+            WHERE persona.doc_identidad = in_doc_identidad
+        )
+        LOOP
+            nombre := concat(nombre,'Nombre Real:');
+            nombre := concat(nombre,' ');
+            nombre := concat(nombre, v_registro.primer_nom);
+            nombre := concat(nombre,' ');
+            IF v_registro.segundo_nom IS NOT NULL THEN
+                nombre := concat(nombre, v_registro.segundo_nom);
+                nombre := concat(nombre,' ');
+            END IF;
+            nombre := concat(nombre, v_registro.primer_ape);
+            nombre := concat(nombre,' ');
+            nombre := concat(nombre, v_registro.segundo_ape);
+            fecha_nac := concat(fecha_nac, 'Nacimiento: ');
+            fecha_nac := concat(fecha_nac, EXTRACT(DAY FROM v_registro.fecha));
+            fecha_nac := concat(fecha_nac, ' de ');
+            fecha_nac := concat(fecha_nac, to_char(v_registro.fecha, 'MM'));
+            fecha_nac := concat(fecha_nac, ' de ');
+            fecha_nac := concat(fecha_nac, EXTRACT(YEAR FROM v_registro.fecha));
+            lugar_nac := v_registro.a_lugar_nac;
+            biografia := v_registro.a_biografia;
+        END LOOP;
+        RETURN NEXT;
+    END; $$;
+
+
+CREATE OR REPLACE FUNCTION ficha_actor(IN in_doc_identidad BIGINT)
+    RETURNS TABLE (
+        nombre VARCHAR,
+        fecha_nac VARCHAR,
+        lugar_nac VARCHAR,
+        roles VARCHAR, 
+        biografia VARCHAR
+    )
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE
+        v_registro record;
+    BEGIN
+        FOR v_registro IN(
+            SELECT persona.primer_nom, persona.primer_ape, 
+			persona.segundo_nom, persona.segundo_ape, 
+			persona.fecha_nac, persona.a_lugar_nac,
+			persona.a_biografia FROM persona
+            WHERE persona.doc_identidad = in_doc_identidad
+        )
+        LOOP
+            nombre := concat(nombre,'Nombre Real:');
+            nombre := concat(nombre,' ');
+            nombre := concat(nombre, v_registro.primer_nom);
+            nombre := concat(nombre,' ');
+            IF v_registro.segundo_nom IS NOT NULL THEN
+                nombre := concat(nombre, v_registro.segundo_nom);
+                nombre := concat(nombre,' ');
+            END IF;
+            nombre := concat(nombre, v_registro.primer_ape);
+            nombre := concat(nombre,' ');
+            nombre := concat(nombre, v_registro.segundo_ape);
+            fecha_nac := concat(fecha_nac, 'Nacimiento: ');
+            fecha_nac := concat(fecha_nac, EXTRACT(DAY FROM v_registro.fecha_nac));
+            fecha_nac := concat(fecha_nac, ' de ');
+            fecha_nac := concat(fecha_nac, to_char(v_registro.fecha_nac, 'MM'));
+            fecha_nac := concat(fecha_nac, ' de ');
+            fecha_nac := concat(fecha_nac, EXTRACT(YEAR FROM v_registro.fecha_nac));
+            lugar_nac := v_registro.a_lugar_nac;
+            biografia := v_registro.a_biografia;
+        END LOOP;
+		
+		v_registro = NULL;
+		
+		FOR v_registro IN (
+			SELECT DISTINCT rol.nombre FROM rol_pel_pers
+			JOIN rol
+			ON rol.id_rol = rol_pel_pers.id_rol
+			WHERE rol_pel_pers.doc_identidad = in_doc_identidad 
+		)
+		LOOP
+			roles := concat(roles,v_registro.nombre);
+			roles := concat(roles,'; ');
+		END LOOP;
+        RETURN NEXT;
+    END; $$;
+	
+DROP FUNCTION ficha_actor(BIGINT);
+SELECT * FROM ficha_actor(9525);
