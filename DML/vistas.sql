@@ -254,4 +254,5 @@ BEGIN
 END; $$ 
 
 --SELECT  * FROM ficha_premios_pelicula(28,1986);
+--SELECT  * FROM ficha_premios_pelicula(17,1985);
 --DROP FUNCTION ficha_premios_pelicula(integer, integer);
