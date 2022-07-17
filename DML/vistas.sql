@@ -10,7 +10,8 @@ RETURNS TABLE (
     directores VARCHAR, dir_artistica VARCHAR,
 	productores VARCHAR, guionistas VARCHAR, 
 	musica VARCHAR,	fotografia VARCHAR,
-	montaje VARCHAR, reparto VARCHAR
+	montaje VARCHAR, reparto VARCHAR,
+    foto VARCHAR
 ) 
 LANGUAGE plpgsql
 AS $$
@@ -21,7 +22,7 @@ BEGIN
 	for v_registro IN (
         SELECT audiovisual.titulo_espanol,
         audiovisual.titulo_original,  audiovisual.sinopsis,  audiovisual.fecha_estreno_cine, 
-        audiovisual.pais,  
+        audiovisual.pais, audiovisual.fotos, 
         audiovisual.distribucion_va,  audiovisual.censura,  audiovisual.duracion_min,  audiovisual.genero_va
         FROM public.audiovisual 
 	        WHERE id_audiovi = p_id_audiovi
@@ -33,6 +34,8 @@ BEGIN
         censura := v_registro.censura; 
         duracion_min := v_registro.duracion_min; 
         genero_va := v_registro.genero_va;
+        foto := v_registro.fotos;
+        pais := v_registro.pais;
 	END LOOP;
     
 	v_registro := NULL;
