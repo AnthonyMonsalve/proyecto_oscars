@@ -277,7 +277,7 @@ BEGIN
 
     FOR v_registro IN (
         SELECT gala.ano, gala.fecha, gala.numero_edicion, gala.lugar FROM public.gala
-        WHERE gala.ano = 1986
+        WHERE gala.ano = in_id_gala
     
     ) LOOP
         v_contenido = concat(v_contenido,'Premios Oscars de ');
