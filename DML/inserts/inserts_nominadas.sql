@@ -1,9 +1,5 @@
 -- INI NOMINADAS
 INSERT INTO public.nominadas(
-	id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, ronda_emp)
-	VALUES (1, 'no', 1, 1985, 18, 'no', 0);
-
-INSERT INTO public.nominadas(
     id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, ronda_emp)
     VALUES (2, 'no', 2, 1985, 19, 'no', 0);
 
@@ -51,20 +47,7 @@ INSERT INTO public.nominadas(
 
 INSERT INTO public.nominadas(
     id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, ronda_emp)
-    VALUES (14, 'si', 21, 1985, 17, 'no', 0);
-
-INSERT INTO public.nominadas(
-    id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, ronda_emp)
-    VALUES (15, 'no', 25, 1986, 28, 'no', 0);
-
-INSERT INTO public.nominadas(
-    id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, ronda_emp)
     VALUES (16, 'si', 1, 1985, 17, 'no', 0);
-
-INSERT INTO public.nominadas(
-    id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, ronda_emp)
-    VALUES (17, 'si', 20, 1986, 28, 'no', 0);
-
 
 -------------- NOMINADOS DEL AÑO 1985
 INSERT INTO public.nominadas(id_nominada, ganador, empate, ronda_emp, id_postuladas_p_pers, ano_oscar, id_categoria) VALUES (21, 'no', 'no', 0, 30, 1985, 23);
