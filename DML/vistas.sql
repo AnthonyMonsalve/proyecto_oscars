@@ -255,3 +255,65 @@ END; $$
 
 --SELECT  * FROM ficha_premios_pelicula(28,1986);
 --DROP FUNCTION ficha_premios_pelicula(integer, integer);
+
+--  FICHA DE LOS TOTALES 
+CREATE OR REPLACE FUNCTION ficha_oscar_totales(IN in_id_gala INT)
+    RETURNS TABLE (
+        ficha VARCHAR,
+        titulo_espanol VARCHAR,
+        titulo_original VARCHAR,
+        nominaciones INT,
+        premios INT
+    )
+    LANGUAGE plpgsql
+AS $$
+DECLARE 
+    v_registro record;
+    v_contenido VARCHAR;
+BEGIN
+
+    FOR v_registro IN (
+        SELECT gala.ano, gala.fecha, gala.numero_edicion, gala.lugar FROM public.gala
+        WHERE gala.ano = 1986
+    
+    ) LOOP
+        v_contenido = concat(v_contenido,'Premios Oscars de ');
+        v_contenido = concat(v_contenido, v_registro.ano);
+        v_contenido = concat(v_contenido, ' (');
+        v_contenido = concat(v_contenido, v_registro.numero_edicion);
+        v_contenido = concat(v_contenido, 'º ceremonia, ');
+        v_contenido = concat(v_contenido, EXTRACT(DAY FROM v_registro.fecha));
+		v_contenido = concat(v_contenido, ' de ');
+		v_contenido = concat(v_contenido, to_char(v_registro.fecha, 'MM'));
+		v_contenido = concat(v_contenido, ' de ');
+		v_contenido = concat(v_contenido, EXTRACT(YEAR FROM v_registro.fecha));
+        v_contenido = concat(v_contenido,', ');
+        v_contenido = concat(v_contenido, v_registro.lugar);
+        v_contenido = concat(v_contenido, ').');
+		
+    END LOOP;
+    ficha := v_contenido;
+	RETURN NEXT;
+   
+    v_registro = NULL;
+	ficha := NULL;
+	
+    FOR v_registro IN(
+		SELECT DISTINCT audiovisual.titulo_espanol, audiovisual.titulo_original,
+		audiovisual.total_nomi, audiovisual.total_ganador FROM nominadas JOIN postuladas_p_pers
+		ON postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+		JOIN audiovisual 
+		ON audiovisual.id_audiovi = postuladas_p_pers.id_audiovi
+		WHERE nominadas.ano_oscar = in_id_gala 
+	)
+    LOOP
+		titulo_espanol = v_registro.titulo_espanol;
+        titulo_original = v_registro.titulo_original;
+        nominaciones = v_registro.total_nomi;
+        premios = v_registro.total_ganador;
+		RETURN NEXT;
+    END LOOP;
+END; $$;
+
+-- DROP FUNCTION ficha_oscar_totales(INT);
+-- SELECT * FROM ficha_oscar_totales(1985);
