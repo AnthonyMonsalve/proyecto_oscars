@@ -4,9 +4,9 @@ CREATE OR replace FUNCTION ficha_pelicula (
 RETURNS TABLE (
 	titulo_espanol VARCHAR, titulo_original VARCHAR, 
     sinopsis VARCHAR, fecha_estreno_cine VARCHAR, 
-    pais VARCHAR(20)[3],  
-    distribucion_va VARCHAR(50)[3], censura VARCHAR, 
-    duracion_min VARCHAR, genero_va VARCHAR(15)[5],
+    pais VARCHAR,  
+    distribucion_va VARCHAR, censura VARCHAR, 
+    duracion_min VARCHAR, genero_va VARCHAR,
     directores VARCHAR, dir_artistica VARCHAR,
 	productores VARCHAR, guionistas VARCHAR, 
 	musica VARCHAR,	fotografia VARCHAR,
@@ -30,12 +30,12 @@ BEGIN
         titulo_original := v_registro.titulo_original; 
         sinopsis := v_registro.sinopsis; 
         fecha_estreno_cine := v_registro.fecha_estreno_cine;  
-        distribucion_va := v_registro.distribucion_va; 
+        distribucion_va := array_to_string(v_registro.distribucion_va, ' ; '); 
         censura := v_registro.censura; 
         duracion_min := v_registro.duracion_min; 
-        genero_va := v_registro.genero_va;
+        genero_va := array_to_string(v_registro.genero_va, ' ; ');
         foto := v_registro.fotos;
-        pais := v_registro.pais;
+        pais := array_to_string(v_registro.pais, ' ; ');
 	END LOOP;
     
 	v_registro := NULL;
@@ -367,48 +367,6 @@ CREATE OR REPLACE FUNCTION ficha_actor(IN in_doc_identidad BIGINT)
         v_registro record;
     BEGIN
         FOR v_registro IN(
-            SELECT persona.primer_nom, persona.primer_ape, persona.segundo_nom, persona.segundo_ape, persona.fecha_nac, persona.a_lugar_nac FROM persona
-            WHERE persona.doc_identidad = in_doc_identidad
-        )
-        LOOP
-            nombre := concat(nombre,'Nombre Real:');
-            nombre := concat(nombre,' ');
-            nombre := concat(nombre, v_registro.primer_nom);
-            nombre := concat(nombre,' ');
-            IF v_registro.segundo_nom IS NOT NULL THEN
-                nombre := concat(nombre, v_registro.segundo_nom);
-                nombre := concat(nombre,' ');
-            END IF;
-            nombre := concat(nombre, v_registro.primer_ape);
-            nombre := concat(nombre,' ');
-            nombre := concat(nombre, v_registro.segundo_ape);
-            fecha_nac := concat(fecha_nac, 'Nacimiento: ');
-            fecha_nac := concat(fecha_nac, EXTRACT(DAY FROM v_registro.fecha));
-            fecha_nac := concat(fecha_nac, ' de ');
-            fecha_nac := concat(fecha_nac, to_char(v_registro.fecha, 'MM'));
-            fecha_nac := concat(fecha_nac, ' de ');
-            fecha_nac := concat(fecha_nac, EXTRACT(YEAR FROM v_registro.fecha));
-            lugar_nac := v_registro.a_lugar_nac;
-            biografia := v_registro.a_biografia;
-        END LOOP;
-        RETURN NEXT;
-    END; $$;
-
-
-CREATE OR REPLACE FUNCTION ficha_actor(IN in_doc_identidad BIGINT)
-    RETURNS TABLE (
-        nombre VARCHAR,
-        fecha_nac VARCHAR,
-        lugar_nac VARCHAR,
-        roles VARCHAR, 
-        biografia VARCHAR
-    )
-    LANGUAGE plpgsql
-    AS $$
-    DECLARE
-        v_registro record;
-    BEGIN
-        FOR v_registro IN(
             SELECT persona.primer_nom, persona.primer_ape, 
 			persona.segundo_nom, persona.segundo_ape, 
 			persona.fecha_nac, persona.a_lugar_nac,
@@ -433,6 +391,9 @@ CREATE OR REPLACE FUNCTION ficha_actor(IN in_doc_identidad BIGINT)
             fecha_nac := concat(fecha_nac, to_char(v_registro.fecha_nac, 'MM'));
             fecha_nac := concat(fecha_nac, ' de ');
             fecha_nac := concat(fecha_nac, EXTRACT(YEAR FROM v_registro.fecha_nac));
+            fecha_nac := concat(fecha_nac, '  (');
+            fecha_nac := concat(fecha_nac, EXTRACT(YEAR from age(current_date, v_registro.fecha_nac)));
+            fecha_nac := concat(fecha_nac, ' años)');
             lugar_nac := v_registro.a_lugar_nac;
             biografia := v_registro.a_biografia;
         END LOOP;
