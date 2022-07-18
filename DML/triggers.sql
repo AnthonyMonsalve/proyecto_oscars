@@ -462,3 +462,24 @@ BEFORE INSERT OR UPDATE
 ON public.votos FOR EACH ROW
 EXECUTE PROCEDURE validar_votos();
 
+CREATE OR REPLACE FUNCTION validar_critica() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+AS $BODY$
+DECLARE
+v_mensaje varchar(50);
+BEGIN
+	select ano into v_ano from public.gala where ano= NEW.donacion_nt[i].ano;
+	if not found then
+		v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.donacion_nt[i].ano,'.');
+		RAISE EXCEPTION using message=v_mensaje;
+	END IF;
+	RETURN NEW;
+END;
+$BODY$;
+
+CREATE TRIGGER validar_critica
+BEFORE INSERT OR UPDATE
+ON public.critica FOR EACH ROW
+EXECUTE PROCEDURE validar_critica();
+
