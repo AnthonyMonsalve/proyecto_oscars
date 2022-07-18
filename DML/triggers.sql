@@ -471,3 +471,5 @@ CREATE TRIGGER validar_critica
 
 
 
+
+
