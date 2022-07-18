@@ -452,5 +452,5 @@ CREATE OR REPLACE FUNCTION ficha_actor(IN in_doc_identidad BIGINT)
         RETURN NEXT;
     END; $$;
 	
-DROP FUNCTION ficha_actor(BIGINT);
-SELECT * FROM ficha_actor(9525);
+-- DROP FUNCTION ficha_actor(BIGINT);
+-- SELECT * FROM ficha_actor(9525);
