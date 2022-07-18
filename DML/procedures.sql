@@ -1,3 +1,145 @@
+-----------------------------------Procedimiento calculo de votos nominados actualizacion de ganador------------------
+
+create or replace procedure gestion_nominados(
+   v_ano_oscar integer,
+	v_id_categoria integer
+)
+language plpgsql    
+as $$
+Declare 
+	v_id_ganador integer;
+	v_numero_votos integer;
+	v_empate varchar(2);
+	v_record RECORD;
+	v_record2 RECORD;
+	v_message text;
+	v_query varchar (250);
+	v_length_temp integer;
+	v_votos_empate integer;
+	v_votos integer;
+begin
+
+	select empate into v_empate from public.nominadas where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria and terminada='no';
+	if not found then
+		RAISE EXCEPTION 'Las votaciones de este ano para esta categoria ya han acabado';
+	end if;
+	
+	
+	----Calculo de votos
+	
+	CREATE TEMP TABLE tmp_votos (
+		id_nominada integer,
+		id_categoria integer,
+		ano_oscar integer,
+		id_postulado integer,
+		cant_votos integer,
+		id_audiovi integer,
+		id_audiovi2 integer,
+		ganador varchar(2)
+	);
+	
+	insert into tmp_votos(id_nominada,id_categoria,ano_oscar,id_postulado,cant_votos)  
+	select votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers, count(*)  
+	from public.votos 
+	inner join public.nominadas on votos.id_nominada=nominadas.id_nominada
+	where votos.ano_oscar=v_ano_oscar and votos.id_categoria=v_id_categoria and nominadas.terminada= 'no'
+	group by votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers;
+	
+		for v_record 
+		in select * from tmp_votos 
+		loop
+			update public.nominadas set cant_votos= v_record.cant_votos where id_nominada= v_record.id_nominada;
+		end loop;
+		
+		v_record=null;
+	
+	delete from tmp_votos;
+	
+	insert into tmp_votos(id_nominada,id_categoria,ano_oscar,id_postulado,cant_votos,id_audiovi,id_audiovi2)  
+	select votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers, count(*),postuladas_p_pers.id_audiovi, postuladas_p_pers.id_audiovi2  
+	from public.votos 
+	inner join public.nominadas on votos.id_nominada=nominadas.id_nominada
+	inner join public.postuladas_p_pers on postuladas_p_pers.id_postuladas_p_pers=nominadas.id_postuladas_p_pers
+	where votos.ano_oscar=v_ano_oscar and votos.id_categoria=v_id_categoria and nominadas.terminada= 'no'
+	group by votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers,postuladas_p_pers.id_audiovi, postuladas_p_pers.id_audiovi2
+	order by 5 DESC
+	fetch first 1 rows with ties;
+	if not found then
+		RAISE EXCEPTION 'No se han introducido ni un voto dentro de esta categoria';
+	end if;
+	----Comprobar Empate
+	
+	select count(*) into v_length_temp from  tmp_votos;
+	if(v_length_temp> 1) then 
+		------------------Caso Empate--------------------
+		
+		--------------------Generar Mensaje Empate------------------------
+		v_message= 'Se genero un empate en las votaciones por el ganador de premio, se debera realizar el proceso de votacion nuevamente con las siguientes nominaciones para determinar el ganador: ';
+		select cant_votos into v_votos_empate from tmp_votos order by 1 asc limit 1;
+		for v_record IN 
+		select id_nominada from tmp_votos where cant_votos=v_votos_empate 
+		LOOP
+			v_message= concat (v_message,v_record.id_nominada);
+			v_message= concat (v_message,' ');
+		end loop;
+		
+		----modificacion de la antiguas postulaciones
+		
+		update public.nominadas set terminada='si' where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria;
+		
+		----insercion de las nuevas nominaciones
+		
+		CREATE temp TABLE c_nominadas(
+			id_nominada int,
+			ganador varchar(2),
+			id_postuladas_p_pers INT,
+			ano_oscar int,
+			id_categoria int,
+			empate varchar(2),
+			 terminada varchar(2),
+			ronda_emp int,
+			cant_votos int
+		);
+
+		INSERT INTO c_nominadas(
+		id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp)
+		SELECT id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp+1
+		from public.nominadas
+		where id_nominada in (select id_nominada from tmp_votos);
+		update c_nominadas set empate='si', terminada='no',cant_votos=0;
+		
+		
+		INSERT INTO public.nominadas(
+		ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp,cant_votos)
+		SELECT ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp, cant_votos
+		from c_nominadas;
+		
+		---------------------------Notificar Usuario--------------------------
+		v_message= concat(v_message,'. Los postulados han sido nuevamente ingresados en el sistema para una votacion de desempate');
+		raise notice '%', v_message;
+		drop table c_nominadas;
+		drop table tmp_votos;
+		return;
+	end if;
+	
+	----Modificamos el parametro ganador
+	
+	update public.nominadas set ganador= 'si' where id_nominada in (select id_nominada from tmp_votos); 
+	/*select cant_votos into v_votos from tmp_votos;*/
+	update public.nominadas set terminada='si' /*and cant_votos= v_votos*/ where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria;
+	
+	for v_record2 in 
+	select  id_audiovi,id_audiovi2 from tmp_votos loop
+		update public.audiovisual set total_ganador=total_ganador+1 where id_audiovi=v_record2.id_audiovi or id_audiovi=v_record2.id_audiovi2;
+	end loop;
+	
+	drop table tmp_votos;
+    commit;
+end;$$
+
+-----Prueba
+call gestion_nominados(2001,19);
+
 
 -----------------------------------Procedimiento calculo de votos postulados e insercion en nominados------------------
 
@@ -632,3 +774,93 @@ create or replace procedure gestion_postulados(v_ano_oscar integer)
 
 -----------Prueba
 -- call gestion_postulados(2001);
+
+---------Procedimiento para comprobar si un actor no tiene una biografia o un lugar de nacimiento
+create or replace procedure validar_actor()
+language plpgsql    
+as $$
+declare
+v_record RECORD;
+v_message text;
+begin
+	v_message='Los actores que carecen de biografia o lugar de nacimiento son los siguientes: ';
+	for v_record in
+		select persona.doc_identidad,a_lugar_nac, a_biografia,primer_nom,primer_ape, segundo_ape 
+		from public.persona
+		inner join public.rol_pel_pers on rol_pel_pers.doc_identidad= persona.doc_identidad 
+		where id_rol=1 and (a_biografia is not null or a_lugar_nac is not null)
+	loop
+		v_message=v_message || v_record.primer_nom || ' ' || v_record.primer_ape || '(' || v_record.doc_identidad || ') ';
+	end loop;
+	if not found then 
+		raise notice 'Todos los actores tienen sus datos correctamente colocados';
+		return;
+	end if;
+	
+	
+	raise notice '%', v_message;
+end;$$
+ -------Prueba---------
+ call validar_actor();
+ 
+ 
+ declare 
+v_id_categoria integer;
+v_ano_oscar integer;
+v_id_postulado integer;
+begin
+	select id_categoria, id_postuladas_p_pers, ano_oscar into v_id_categoria, v_id_postulado, v_ano_oscar from public.nominadas where id_nominada=v_id_nominado;
+	if found then
+		INSERT INTO public.votos(
+		fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar, id_categoria1, id_postuladas_p_pers1, ano_oscar1)
+		VALUES (now(), 'nominado', v_id_miembro,v_id_nominado, v_id_categoria,v_id_postulado, v_ano_oscar,null, null, null);
+	else
+		raise exception 'El id de nominado ingresado no esta registrado en el sistema';
+	end if;
+end;
+
+
+---------------------------Votar Nominado------------
+create or replace procedure votar_nominados(
+	v_id_nominado integer,
+	v_id_miembro integer
+)
+language plpgsql    
+as $$
+declare 
+v_id_categoria integer;
+v_ano_oscar integer;
+v_id_postulado integer;
+begin
+	select id_categoria, id_postuladas_p_pers, ano_oscar into v_id_categoria, v_id_postulado, v_ano_oscar from public.nominadas where id_nominada=v_id_nominado;
+	if found then
+		INSERT INTO public.votos(
+		fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar, id_categoria1, id_postuladas_p_pers1, ano_oscar1)
+		VALUES (now(), 'nominado', v_id_miembro,v_id_nominada, v_id_categoria,v_id_postulado, v_ano_oscar,null, null, null);
+	else
+		raise exception 'El id de nominado ingresado no esta registrado en el sistema';
+	end if;
+end;$$
+
+select * from public.nominadas;
+--------------------------Votar Postulados
+
+create or replace procedure votar_postulados(
+	v_id_postulado integer,
+	v_id_miembro integer
+)
+language plpgsql    
+as $$
+declare 
+v_id_categoria integer;
+v_ano_oscar integer;
+begin
+	select id_categoria, ano_oscar into v_id_categoria, v_ano_oscar from public.postuladas_p_pers where id_postuladas_p_pers=v_id_postulado;
+	if found then
+		INSERT INTO public.votos(
+		fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar, id_categoria1, id_postuladas_p_pers1, ano_oscar1)
+		VALUES (now(), 'postulado', v_id_miembro, null, null, null, null, v_id_categoria,v_id_postulado , v_ano_oscar);
+	else
+		raise exception 'El id de postulado ingresado no esta registrado en el sistema';
+	end if;
+end;$$
