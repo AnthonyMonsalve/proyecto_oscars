@@ -183,7 +183,8 @@ CREATE OR replace FUNCTION ficha_premios_pelicula (IN p_id_premio INT, IN p_ano_
         presentador VARCHAR,
         pelicula VARCHAR, 
         titulo_original VARCHAR,
-        resultado VARCHAR
+        resultado VARCHAR,
+        presentador_gala VARCHAR
     ) 
     LANGUAGE plpgsql
     AS $$
@@ -253,96 +254,150 @@ CREATE OR replace FUNCTION ficha_premios_pelicula (IN p_id_premio INT, IN p_ano_
         
     END; $$; 
 
-CREATE OR replace FUNCTION ficha_premios_nominados (
-    p_id_premio INT,
-    p_ano_gala INT
-) 
-RETURNS TABLE (
-	premio VARCHAR,
-	presentador VARCHAR,
-	pelicula VARCHAR, 
-    titulo_original VARCHAR,
-    resultado VARCHAR,
-    nombre_completo_id_nom VARCHAR,
-	id_nominada integer
-) 
-LANGUAGE plpgsql
-AS $$
-DECLARE 
-    v_registro record;
-    v_estatus_premio VARCHAR;
-    v_contenido VARCHAR;
-BEGIN
-	for v_registro IN (
-        SELECT 
-        nombre
-        FROM public.categoria 
-	        WHERE id_categoria = p_id_premio
-    ) LOOP  
-		v_contenido = concat(v_contenido, 'Oscar a ');
-        v_contenido = concat(v_contenido, v_registro.nombre);
-	END LOOP;
-    premio := v_contenido;
+CREATE OR replace FUNCTION ficha_premios_nominados (p_id_premio INT, p_ano_gala INT) 
+    RETURNS TABLE (
+        premio VARCHAR,
+        presentador VARCHAR,
+        pelicula VARCHAR, 
+        titulo_original VARCHAR,
+        resultado VARCHAR,
+        nombre_completo_id_nom VARCHAR,
+        id_nominada integer
+    ) 
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_estatus_premio VARCHAR;
+        v_contenido VARCHAR;
+    BEGIN
+        for v_registro IN (
+            SELECT 
+            nombre
+            FROM public.categoria 
+                WHERE id_categoria = p_id_premio
+        ) LOOP  
+            v_contenido = concat(v_contenido, 'Oscar a ');
+            v_contenido = concat(v_contenido, v_registro.nombre);
+        END LOOP;
+        premio := v_contenido;
 
-	
-	v_registro := NULL;
-	v_contenido = '';
-	
-	for v_registro IN (
-        SELECT
-		primer_nom,
-		primer_ape
-        FROM public.presentador 
+        
+        v_registro := NULL;
+        v_contenido = '';
+        
+        for v_registro IN (
+            SELECT
+            primer_nom,
+            primer_ape
+            FROM public.presentador 
 
-		INNER JOIN persona PER ON PER.doc_identidad = presentador.doc_identidad
-	        WHERE id_gala = p_ano_gala AND id_categoria = p_id_premio
-    ) LOOP  
-        v_contenido = concat(v_contenido, v_registro.primer_nom);
-		v_contenido = concat(v_contenido, ' ');
-		v_contenido = concat(v_contenido, v_registro.primer_ape);
-	END LOOP;
-	presentador := v_contenido;
+            INNER JOIN persona PER ON PER.doc_identidad = presentador.doc_identidad
+                WHERE id_gala = p_ano_gala AND id_categoria = p_id_premio
+        ) LOOP  
+            v_contenido = concat(v_contenido, v_registro.primer_nom);
+            v_contenido = concat(v_contenido, ' ');
+            v_contenido = concat(v_contenido, v_registro.primer_ape);
+        END LOOP;
+        presentador := v_contenido;
 
-	RETURN NEXT;
-	
-	v_registro := NULL;
-	v_contenido = '';
-	
-	for v_registro IN (
-        SELECT 
-        ganador,
-        PER.primer_nom ||' '|| PER.primer_ape /*||' (Nominado #'|| 
-        nominadas.id_nominada||')'*/  as "nombre_completo_id_nom",
-        AUD.titulo_espanol,
-        AUD.titulo_original,
-		nominadas.id_nominada
-        FROM nominadas 
-        INNER JOIN postuladas_p_pers PPP ON 
-        PPP.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
-        INNER JOIN persona PER ON
-        PER.doc_identidad = PPP.doc_identidad
-        INNER JOIN audiovisual AUD ON
-        AUD.id_audiovi = PPP.id_audiovi OR AUD.id_audiovi = PPP.id_audiovi2
-        WHERE nominadas.ano_oscar = p_ano_gala AND nominadas.id_categoria = p_id_premio and (nominadas.empate='no' or nominadas.ganador='si')
-    ) LOOP  
-        pelicula := v_registro.titulo_espanol;
-		titulo_original := v_registro.titulo_original;
-        nombre_completo_id_nom := v_registro.nombre_completo_id_nom;
-		presentador := null;
-		premio := null;
-		id_nominada := v_registro.id_nominada;
-		IF v_registro.ganador = 'si' THEN
-			resultado := 'Ganadora';
-		ELSE
-			resultado := 'Candidata';
-		END IF;
-		RETURN NEXT;
-	END LOOP;
-	
-END; $$
+        RETURN NEXT;
+        
+        v_registro := NULL;
+        v_contenido = '';
+        
+        for v_registro IN (
+            SELECT 
+            ganador,
+            PER.primer_nom ||' '|| PER.primer_ape /*||' (Nominado #'|| 
+            nominadas.id_nominada||')'*/  as "nombre_completo_id_nom",
+            AUD.titulo_espanol,
+            AUD.titulo_original,
+            nominadas.id_nominada
+            FROM nominadas 
+            INNER JOIN postuladas_p_pers PPP ON 
+            PPP.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+            INNER JOIN persona PER ON
+            PER.doc_identidad = PPP.doc_identidad
+            INNER JOIN audiovisual AUD ON
+            AUD.id_audiovi = PPP.id_audiovi OR AUD.id_audiovi = PPP.id_audiovi2
+            WHERE nominadas.ano_oscar = p_ano_gala AND nominadas.id_categoria = p_id_premio and (nominadas.empate='no' or nominadas.ganador='si')
+        ) LOOP  
+            pelicula := v_registro.titulo_espanol;
+            titulo_original := v_registro.titulo_original;
+            nombre_completo_id_nom := v_registro.nombre_completo_id_nom;
+            presentador := null;
+            premio := null;
+            id_nominada := v_registro.id_nominada;
+            IF v_registro.ganador = 'si' THEN
+                resultado := 'Ganadora';
+            ELSE
+                resultado := 'Candidata';
+            END IF;
+            RETURN NEXT;
+        END LOOP;
+        
+    END; $$
 
 --SELECT  * FROM ficha_premios_nominados(19,1985);
 --DROP FUNCTION ficha_premios_nominados(integer, integer);
+
+--------------------------------------------
+CREATE OR replace FUNCTION ficha_premios_postulados (p_id_premio INT, p_ano_gala INT) 
+    RETURNS TABLE (
+        premio VARCHAR,
+        pelicula VARCHAR, 
+        titulo_original VARCHAR,
+        nombre_completo_id_nom VARCHAR,
+    ) 
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_estatus_premio VARCHAR;
+        v_contenido VARCHAR;
+    BEGIN
+        for v_registro IN (
+            SELECT 
+            nombre
+            FROM public.categoria 
+                WHERE id_categoria = p_id_premio
+        ) LOOP  
+            v_contenido = concat(v_contenido, 'Oscar a ');
+            v_contenido = concat(v_contenido, v_registro.nombre);
+        END LOOP;
+        premio := v_contenido;
+
+        RETURN NEXT;
+        
+        v_registro := NULL;
+        v_contenido = '';
+        
+        for v_registro IN (
+            SELECT 
+            PER.primer_nom ||' '|| PER.primer_ape ||' (Postulado #'|| 
+            postuladas_p_pers.id_postuladas_p_pers||') ' as "nombre_completo_id_nom",
+            AUD.titulo_espanol,
+            AUD.titulo_original
+            FROM postuladas_p_pers 
+            INNER JOIN persona PER ON
+            PER.doc_identidad = postuladas_p_pers.doc_identidad
+            INNER JOIN audiovisual AUD ON
+            AUD.id_audiovi = postuladas_p_pers.id_audiovi OR AUD.id_audiovi = postuladas_p_pers.id_audiovi2
+            WHERE postuladas_p_pers.ano_oscar = 1985 AND postuladas_p_pers.id_categoria = 18 and postuladas_p_pers.empate='no'
+        ) LOOP  
+            pelicula := v_registro.titulo_espanol;
+            titulo_original := v_registro.titulo_original;
+            nombre_completo_id_nom := v_registro.nombre_completo_id_nom;
+            presentador := null;
+            premio := null;
+            RETURN NEXT;
+        END LOOP;
+        
+    END; $$
+
+--SELECT  * FROM ficha_premios_postulados(19,1985);
+--DROP FUNCTION ficha_premios_postulados(integer, integer);
 
 --  FICHA DE LOS TOTALES 
 CREATE OR REPLACE FUNCTION ficha_oscar_totales(IN in_id_gala INT)

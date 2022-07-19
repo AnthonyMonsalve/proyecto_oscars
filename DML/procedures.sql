@@ -323,7 +323,7 @@ create or replace procedure gestion_nominados(v_ano_oscar integer, v_id_categori
 
 
 -----Prueba
--- call gestion_nominados(2001,19);
+-- --call gestion_nominados(2001,19);
 
 
 ---------------------------------------------------------------------------
@@ -413,7 +413,7 @@ CREATE OR REPLACE PROCEDURE actualizar_area_nt_membresia()
 	END; $$;
 
 -- PRUEBA
--- CALL actualizar_area_nt_membresia();
+-- --call actualizar_area_nt_membresia();
 
 
 ---------------------------------------------------------------------------------------------
@@ -461,25 +461,25 @@ CREATE OR replace procedure actualizar_mp()
 	end;$$;
 
 --PRUEBA
--- call actualizar_mp();
+-- --call actualizar_mp();
 
 
 -----------------------------------------------
 -- ASIGNAR PRESENTADORES DE PREMIOS EN LA GALA
 -----------------------------------------------
 
-CREATE OR replace procedure asignar_presentadores_gala()
+CREATE OR replace procedure asignar_presentadores_gala(v_ano_oscar integer)
 	LANGUAGE PLPGSQL    
 	AS $$
 	DECLARE 
 		v_id_gala integer;
 	BEGIN
 		
-		SELECT ano INTO v_id_gala FROM gala WHERE ano =(SELECT max(ano)-1  FROM gala);
+		SELECT ano INTO v_id_gala FROM gala WHERE ano = v_ano_oscar-1;
 
 		INSERT INTO presentador (
 						id_gala, doc_identidad, id_categoria
-					) SELECT nominadas.ano_oscar,
+					) SELECT v_ano_oscar,
 				PPP.doc_identidad, PPP.id_categoria
 		FROM nominadas 
 		INNER JOIN postuladas_p_pers PPP ON PPP.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
@@ -489,7 +489,7 @@ CREATE OR replace procedure asignar_presentadores_gala()
 	end; $$;
 
 -- PRUEBA
--- call asignar_presentadores_gala();
+-- --call asignar_presentadores_gala();
 
 ----------------Actualizar historico de premio
 
@@ -526,7 +526,7 @@ create or replace procedure Actualizar_Premio(v_id_categoria integer, v_titulo v
 	end; $$;
 	
 	-- PREUBA
-	-- call Actualizar_Premio(19,'Mejor pelicula',2);
+	-- --call Actualizar_Premio(19,'Mejor pelicula',2);
 
 
 
@@ -587,7 +587,7 @@ create or replace procedure postular_pelicula(v_ano_oscar integer,v_id_miembro i
 	end;$$;
 
 ------ Arroglar para prueba:
--- call postular_pelicula(2001,20,13);
+-- --call postular_pelicula(2001,20,13);
 
 
 ----------------------Gestion automatica de los postulados------------------
@@ -774,7 +774,7 @@ create or replace procedure gestion_postulados(v_ano_oscar integer)
 	end; $$;
 
 -----------Prueba
--- call gestion_postulados(2001);
+-- --call gestion_postulados(2001);
 
 ---------Procedimiento para comprobar si un actor no tiene una biografia o un lugar de nacimiento
 create or replace procedure validar_actor()
@@ -802,25 +802,8 @@ create or replace procedure validar_actor()
 		raise notice '%', v_message;
 	end;$$;
  -------Prueba---------
- call validar_actor();
+ --call validar_actor();
  
- 
- declare 
-v_id_categoria integer;
-v_ano_oscar integer;
-v_id_postulado integer;
-begin
-	select id_categoria, id_postuladas_p_pers, ano_oscar into v_id_categoria, v_id_postulado, v_ano_oscar from public.nominadas where id_nominada=v_id_nominado;
-	if found then
-		INSERT INTO public.votos(
-		fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar, id_categoria1, id_postuladas_p_pers1, ano_oscar1)
-		VALUES (now(), 'nominado', v_id_miembro,v_id_nominado, v_id_categoria,v_id_postulado, v_ano_oscar,null, null, null);
-	else
-		raise exception 'El id de nominado ingresado no esta registrado en el sistema';
-	end if;
-end;
-
-
 ---------------------------Votar Nominado------------
 create or replace procedure votar_nominados(v_id_nominado integer,v_id_miembro integer)
 	language plpgsql    

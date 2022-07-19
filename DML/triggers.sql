@@ -290,41 +290,69 @@ CREATE TRIGGER validar_org
 
 ---------------------------Postulacion--------------------------------
 
-CREATE OR REPLACE FUNCTION validar_postulacion() 
-   RETURNS TRIGGER 
-   LANGUAGE PLPGSQL
-	AS $BODY$
-	Declare
-	v_nombre varchar(50);
-	v_mensaje varchar (50);
-	v_ano integer;
-	BEGIN
-		v_nombre=null;
-		perform from public.postuladas_p_pers 
-		where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and (id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi) or (new.id_rol is null and new.doc_identidad is null and new.id_audiovi is null) and (new.id_audiovi2 is null or id_audiovi2=new.id_audiovi2);
-		if found then
-			RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
-		END IF;
-		
-		select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
-		if not found then
-			RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
-		END IF;
-		select ano into v_ano from public.gala where ano= NEW.ano_oscar;
-		if not found then
-			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
-			RAISE EXCEPTION using message=v_mensaje;
-		END IF;
-		
-		RETURN NEW;
-	END;
-	$BODY$;
+-- FUNCTION: public.validar_postulacion_insert()
 
+-- DROP FUNCTION IF EXISTS public.validar_postulacion_insert();
 
-CREATE TRIGGER validar_postulacion
-	BEFORE INSERT OR UPDATE
-	ON public.postuladas_p_pers FOR EACH ROW
-	EXECUTE PROCEDURE validar_postulacion();
+CREATE OR REPLACE FUNCTION public.validar_postulacion_insert()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+Declare
+v_nombre varchar(50);
+v_mensaje varchar (50);
+v_ano integer;
+BEGIN
+	v_nombre=null;
+	perform from public.postuladas_p_pers 
+	where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and empate=new.empate and ronda_emp=new.ronda_emp and (id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi) or (new.id_rol is null and new.doc_identidad is null and new.id_audiovi is null) 
+	and (new.id_audiovi2 is null or id_audiovi2=new.id_audiovi2);
+	if found then
+		RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
+	END IF;
+	
+	RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.validar_postulacion_insert()
+    OWNER TO postgres;
+
+-- FUNCTION: public.validar_postulacion_update()
+
+-- DROP FUNCTION IF EXISTS public.validar_postulacion_update();
+
+CREATE OR REPLACE FUNCTION public.validar_postulacion_update()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+Declare
+v_nombre varchar(50);
+v_mensaje varchar (50);
+v_ano integer;
+BEGIN
+	v_nombre=null;
+	
+	select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
+	if not found then
+		RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
+	END IF;
+	select ano into v_ano from public.gala where ano= NEW.ano_oscar;
+	if not found then
+		v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
+		RAISE EXCEPTION using message=v_mensaje;
+	END IF;
+	
+	RETURN NEW;
+END;
+$BODY$;
+
+ALTER FUNCTION public.validar_postulacion_update()
+    OWNER TO postgres;
 
 
 -- Validar arco exclusivo de postu_p_pers
@@ -488,8 +516,3 @@ CREATE TRIGGER validar_critica
 	BEFORE INSERT OR UPDATE
 	ON public.critica FOR EACH ROW
 	EXECUTE PROCEDURE validar_critica();
-
-
-
-
-
