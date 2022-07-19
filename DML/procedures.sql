@@ -872,3 +872,16 @@ begin
 		raise exception 'El id de postulado ingresado no esta registrado en el sistema';
 	end if;
 end;$$
+
+
+------Cancelar Membresia
+
+CREATE OR REPLACE PROCEDURE public.cancelar_membresia(
+	v_id_miembro integer)
+LANGUAGE 'plpgsql'
+AS $BODY$
+BEGIN
+	update public.miembro set fecha_fin=now() where id_miembro=v_id_miembro;
+    COMMIT;
+end;
+$BODY$;
