@@ -70,6 +70,41 @@ INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
 	VALUES (6, 1, 9522, NULL);
 
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7135, 'Quincy', 'Maudling', 'Shiel', 'M', '1920-02-14', '1970-05-24', 'Field', 'New York', 'Technological Education Institute of Thessaloniki. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7547, 'Reynard', 'Beldon', 'Bacchus', 'M', '1931-05-17', '1977-01-16', null, 'Nevada', 'Ecole Supérieure de Chimie Physique Electronique de Lyon. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 1, 7547);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 1, 7135);	
+
+
+-- DIR ARTE
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 1, 4011);
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4011, 'Brnaby', 'Boij', 'Pickavance', 'M', '1920-01-27', '1980-04-14', 'Constantino', null, null);
+
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 1, 8591);
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8591, 'Erich', 'Drackford', 'Heskey', 'M', '1926-04-20', '1962-01-09', 'Harv', null, null);
+
+
+--- montaje
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4872, 'Cob', 'Cunnane', 'Kimpton', 'M', '1937-11-19', '1963-04-17', 'Wernher', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (6, 1, 4872);
+
+
 --------------------------------------------------
 -- Relacionadas al audiovisual "Aliens, el regreso"
 
@@ -169,7 +204,7 @@ INSERT INTO public.persona(
 
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
-	VALUES (1, 3, 7211, NULL);
+	VALUES (1, 1, 7211, NULL);
 
 --Banda sonora
 INSERT INTO public.persona(
@@ -178,7 +213,7 @@ INSERT INTO public.persona(
 
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
-	VALUES (8, 1, 2525, 'Bebesita');
+	VALUES (8, 1, 2525, 'La cancion mas linda del planeta');
 
 INSERT INTO public.rol_pel_pers(
 	id_rol, id_audiovi, doc_identidad, cancion_titulo)
@@ -338,6 +373,11 @@ INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
 	VALUES (2221, 'Sella', 'Penhall', 'Garriock', 'F', '1950-05-06', '1972-10-01', 'Josy', 'Nevada', 'Benedict College. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
 
+--PRESENTADOR DE GALA 1985
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (202020, 'Jack', 'Lemmon', 'Garriock', 'M', '1950-05-06', '1972-10-01', 'Josees');
+
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
 	VALUES (6583, 'Gilbertina', 'Lilie', 'Piff', 'F', '1920-12-29', '1965-03-11', null, 'Indiana', 'British Columbia Open University. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
@@ -358,9 +398,6 @@ INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
 	VALUES (8059, 'Caren', 'Levy', 'Christofor', 'F', '1925-11-07', '1978-07-28', null, 'California', 'University of Great Falls. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
 
-INSERT INTO public.persona(
-	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
-	VALUES (8591, 'Erich', 'Drackford', 'Heskey', 'M', '1926-04-20', '1962-01-09', 'Harv', null, null);
 
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
@@ -714,21 +751,10 @@ INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
 	VALUES (8078, 'Lynnelle', 'Zold', 'Benettini', 'F', '1954-03-07', '1978-02-26', 'Sonja', null, null);
 
-INSERT INTO public.persona(
-	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
-	VALUES (7135, 'Quincy', 'Maudling', 'Shiel', 'M', '1920-02-14', '1970-05-24', 'Field', 'New York', 'Technological Education Institute of Thessaloniki. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
-
-INSERT INTO public.persona(
-	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
-	VALUES (7547, 'Reynard', 'Beldon', 'Bacchus', 'M', '1931-05-17', '1977-01-16', null, 'Nevada', 'Ecole Supérieure de Chimie Physique Electronique de Lyon. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
-
-
 
 ---- MAS ROLES PEL PERS
 
 INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 9, 7135);
-
-INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (9, 14, 8320);
 
 INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 9, 3430);
 

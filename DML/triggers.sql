@@ -494,8 +494,3 @@ CREATE TRIGGER validar_critica
 	BEFORE INSERT OR UPDATE
 	ON public.critica FOR EACH ROW
 	EXECUTE PROCEDURE validar_critica();
-
-
-
-
-
