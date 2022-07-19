@@ -539,51 +539,59 @@ create or replace procedure Actualizar_Premio(v_id_categoria integer, v_titulo v
 
 ---------------------------Postular-------------------------------------------
 
-create or replace procedure postular_pelicula(v_ano_oscar integer, v_id_miembro integer, v_audiovisual integer)
-	language plpgsql    
-	as $$
-	Declare 
-		v_id_ganador integer;
-		v_numero_votos integer;
-		v_cont int;
-		v_fecha_fin date;
-		v_vitalicio varchar(2);
-	begin
+create or replace procedure postular_pelicula(
+    v_ano_oscar integer,
+	v_id_miembro integer,
+	v_audiovisual integer
+)
+language plpgsql    
+as $$
+Declare 
+	v_id_ganador integer;
+	v_numero_votos integer;
+	v_cont int;
+	v_fecha_fin date;
+	v_vitalicio varchar(2);
+begin
 
-	-------verificar permisos de miembro
+-------verificar permisos de miembro
 
-		v_fecha_fin= null;
-		select vitalicio, fecha_fin into v_vitalicio, v_fecha_fin  from miembro where id_miembro=v_id_miembro;
-		if v_fecha_fin is not null then 
-			RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido caancelada, por ende, no puede participar en la votaciones';	
-		end if;
-		perform from public.gala where ano=v_ano_oscar;
-		if not found then
-			RAISE EXCEPTION 'No existe ninguna gala vinculada a ese anio';
-		end if;
-		
-		v_cont=0;
-		select count(*) into v_cont from public.postulado_votos 
-		where id_miembro=v_id_miembro and fecha_ano=v_ano_oscar;
-		if v_cont>=2 then 
-			RAISE EXCEPTION 'Ya alcanzo el numero maximo de postulaciones para este anio, siga participando el anio que viene';
-		end if;
-		
-		perform from public.postulado_votos 
-		where id_audiovi=v_audiovisual and id_miembro=v_id_miembro and fecha_ano=v_ano_oscar;
-		if found then
-			RAISE EXCEPTION 'No puede postular dos veces a la misma pelicula';
-		end if;
-		
-		
-	---------- ingresar la postulacion------
+	v_fecha_fin= null;
+	select vitalicio, fecha_fin into v_vitalicio, v_fecha_fin  from miembro where id_miembro=v_id_miembro;
+	if v_fecha_fin is not null then 
+		RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido caancelada, por ende, no puede participar en la votaciones';	
+	end if;
+	perform from public.audiovisual where id_audiovi=v_audiovisual and extract(year from fecha_estreno_cine)=v_ano_oscar;
+	if not found then
+		RAISE EXCEPTION 'La pelicula que estas intentando ingresar fue estrenada en un anio diferente al de la gala, por lo tanto, no puede postularla para este anio';
+	end if;
+	perform from public.gala where ano=v_ano_oscar;
+	if not found then
+		RAISE EXCEPTION 'No existe ninguna gala vinculada a ese anio';
+	end if;
+	
+	v_cont=0;
+	select count(*) into v_cont from public.postulado_votos 
+	where id_miembro=v_id_miembro and fecha_ano=v_ano_oscar;
+	if v_cont>=2 then 
+		RAISE EXCEPTION 'Ya alcanzo el numero maximo de postulaciones para este anio, siga participando el anio que viene';
+	end if;
+	
+	perform from public.postulado_votos 
+	where id_audiovi=v_audiovisual and id_miembro=v_id_miembro and fecha_ano=v_ano_oscar;
+	if found then
+		RAISE EXCEPTION 'No puede postular dos veces a la misma pelicula';
+	end if;
+	
+	
+---------- ingresar la postulacion------
 
-		INSERT INTO public.postulado_votos(
-		id_audiovi, id_miembro, fecha_ano)
-		VALUES (v_audiovisual, v_id_miembro, v_ano_oscar);
+	INSERT INTO public.postulado_votos(
+	id_audiovi, id_miembro, fecha_ano)
+	VALUES (v_audiovisual, v_id_miembro, v_ano_oscar);
 
-		commit;
-	end; $$;
+    commit;
+end;$$
 
 ------ Arroglar para prueba:
 -- call postular_pelicula(2001,20,13);

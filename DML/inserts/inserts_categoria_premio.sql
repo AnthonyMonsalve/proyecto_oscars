@@ -146,11 +146,6 @@ INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, h
     ]);
 
 INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
-	VALUES (35, 'Mejor documental largo', '2', NULL, 12, array[
-        ('1943-01-01', NULL,'Mejor documental largo', 5)::hist_premio
-    ]);
-
-INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
 	VALUES (36, 'Mejor diseño de vestuario', '2', NULL, 13, array[
         ('1948-01-01', NULL,'Mejor diseño de vestuario', 5)::hist_premio
     ]);
