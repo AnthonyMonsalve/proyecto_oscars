@@ -66,7 +66,7 @@
     CREATE TABLE public.postulado_votos (
         id_audiovi INT NOT NULL,
         id_miembro INT NOT NULL,
-        fecha_ano DATE,
+        fecha_ano INT NOT NULL,
         CONSTRAINT PK_postulado_votos PRIMARY KEY (id_audiovi, id_miembro)
     );
 
