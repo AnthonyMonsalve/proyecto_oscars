@@ -392,6 +392,7 @@ CREATE OR REPLACE FUNCTION validar_votos()
    RETURNS TRIGGER 
    LANGUAGE PLPGSQL
 AS $BODY$
+
 Declare
 v_cantidad_max_nom integer;
 v_cant_nom integer;
@@ -405,13 +406,17 @@ BEGIN
 			RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido cancelada, por ende, no puede participar en la votaciones';	
 	end if;
 	
-	if v_vitalicio='no' or (new.id_categoria in(17,25,34,33) or new.id_categoria1 in(17,25,34,33)) then
-		v_id=null;
-		perform from public.m_p inner join public.miembro on m_p.id_miembro=miembro.id_miembro 
-		where m_p.id_miembro=new.id_miembro and (m_p.id_categoria=new.id_categoria or m_p.id_categoria=new.id_categoria1);
-		if not found is null then
-			RAISE EXCEPTION 'Usted no tiene los permisos necesarios para ingresar un voto en esta categoria, para votar en una categoria debe haber ganado en una vez en un premio relacionado o haber sido nominado dos veces a premios relacionados';
-		END IF;
+	if v_vitalicio='no' then
+        if new.id_categoria in(17,25,34,33) or new.id_categoria1 in(17,25,34,33) then
+        
+        else
+          v_id=null;
+          perform from public.m_p inner join public.miembro on m_p.id_miembro=miembro.id_miembro 
+          where m_p.id_miembro=new.id_miembro and (m_p.id_categoria=new.id_categoria or m_p.id_categoria=new.id_categoria1);
+          if not found is null then
+              RAISE EXCEPTION 'Usted no tiene los permisos necesarios para ingresar un voto en esta categoria, para votar en una categoria debe haber ganado en una vez en un premio relacionado o haber sido nominado dos veces a premios relacionados';
+          END IF;
+        end if;
 	end if;
 	
 	
