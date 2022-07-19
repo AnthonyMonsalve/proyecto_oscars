@@ -561,7 +561,7 @@ begin
 	if v_fecha_fin is not null then 
 		RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido caancelada, por ende, no puede participar en la votaciones';	
 	end if;
-	perform from public.audiovisual where id_audiovi=v_audiovisual and extract(year from fecha_estreno_cine)=v_ano_oscar;
+	perform from public.audiovisual where id_audiovi=v_audiovisual and extract(year from fecha_estreno_cine)=v_ano_oscar-1;
 	if not found then
 		RAISE EXCEPTION 'La pelicula que estas intentando ingresar fue estrenada en un anio diferente al de la gala, por lo tanto, no puede postularla para este anio';
 	end if;
