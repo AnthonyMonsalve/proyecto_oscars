@@ -263,7 +263,8 @@ RETURNS TABLE (
 	pelicula VARCHAR, 
     titulo_original VARCHAR,
     resultado VARCHAR,
-    nombre_completo_id_nom VARCHAR
+    nombre_completo_id_nom VARCHAR,
+	id_nominada integer
 ) 
 LANGUAGE plpgsql
 AS $$
@@ -292,6 +293,7 @@ BEGIN
 		primer_nom,
 		primer_ape
         FROM public.presentador 
+
 		INNER JOIN persona PER ON PER.doc_identidad = presentador.doc_identidad
 	        WHERE id_gala = p_ano_gala AND id_categoria = p_id_premio
     ) LOOP  
@@ -309,10 +311,11 @@ BEGIN
 	for v_registro IN (
         SELECT 
         ganador,
-        PER.primer_nom ||' '|| PER.primer_ape ||' (Nominado #'|| 
-        nominadas.id_nominada||') ' as "nombre_completo_id_nom",
+        PER.primer_nom ||' '|| PER.primer_ape /*||' (Nominado #'|| 
+        nominadas.id_nominada||')'*/  as "nombre_completo_id_nom",
         AUD.titulo_espanol,
-        AUD.titulo_original
+        AUD.titulo_original,
+		nominadas.id_nominada
         FROM nominadas 
         INNER JOIN postuladas_p_pers PPP ON 
         PPP.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
@@ -320,13 +323,14 @@ BEGIN
         PER.doc_identidad = PPP.doc_identidad
         INNER JOIN audiovisual AUD ON
         AUD.id_audiovi = PPP.id_audiovi OR AUD.id_audiovi = PPP.id_audiovi2
-        WHERE nominadas.ano_oscar = p_ano_gala AND nominadas.id_categoria = p_id_premio
+        WHERE nominadas.ano_oscar = p_ano_gala AND nominadas.id_categoria = p_id_premio and (nominadas.empate='no' or nominadas.ganador='si')
     ) LOOP  
         pelicula := v_registro.titulo_espanol;
 		titulo_original := v_registro.titulo_original;
         nombre_completo_id_nom := v_registro.nombre_completo_id_nom;
 		presentador := null;
 		premio := null;
+		id_nominada := v_registro.id_nominada;
 		IF v_registro.ganador = 'si' THEN
 			resultado := 'Ganadora';
 		ELSE
@@ -335,7 +339,7 @@ BEGIN
 		RETURN NEXT;
 	END LOOP;
 	
-END; $$ 
+END; $$
 
 --SELECT  * FROM ficha_premios_nominados(19,1985);
 --DROP FUNCTION ficha_premios_nominados(integer, integer);
