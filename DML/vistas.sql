@@ -183,7 +183,8 @@ CREATE OR replace FUNCTION ficha_premios_pelicula (IN p_id_premio INT, IN p_ano_
         presentador VARCHAR,
         pelicula VARCHAR, 
         titulo_original VARCHAR,
-        resultado VARCHAR
+        resultado VARCHAR,
+        presentador_gala VARCHAR
     ) 
     LANGUAGE plpgsql
     AS $$

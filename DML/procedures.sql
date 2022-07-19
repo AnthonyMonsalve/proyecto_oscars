@@ -478,11 +478,11 @@ CREATE OR replace procedure asignar_presentadores_gala(v_ano_oscar integer)
 		v_id_gala integer;
 	BEGIN
 		
-		SELECT ano INTO v_id_gala FROM gala WHERE ano = v_ano_oscar;
+		SELECT ano INTO v_id_gala FROM gala WHERE ano = v_ano_oscar-1;
 
 		INSERT INTO presentador (
 						id_gala, doc_identidad, id_categoria
-					) SELECT nominadas.ano_oscar,
+					) SELECT v_ano_oscar,
 				PPP.doc_identidad, PPP.id_categoria
 		FROM nominadas 
 		INNER JOIN postuladas_p_pers PPP ON PPP.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
