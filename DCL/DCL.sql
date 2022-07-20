@@ -48,14 +48,6 @@
     -- FIN DIRECTIVO
 
 
-
-    -- INI ADMINISTRADOR
-        CREATE ROLE administrador WITH LOGIN PASSWORD '1234';
-        GRANT SELECT ON TABLE audiovisual, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers TO administrador;
-        GRANT CREATE, DROP ON TABLE TO administrador;
-        -- GRANT EXECUTE (LOS PROGRAMAS ALMACENADOS)
-    -- FIN ADMINISTRADOR
-
     -- INI DESARROLLADOR
         CREATE ROLE desarrollador WITH CREATEDB LOGIN PASSWORD '1234';
     -- FIN DESARROLLADOR

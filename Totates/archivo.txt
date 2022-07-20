@@ -1,0 +1,3047 @@
+-- INI - TIPOS DE DATOS
+
+    -- LISTO
+    CREATE TYPE donacion AS(
+        ano SMALLINT,
+        porcentaje SMALLINT,
+        monto numeric(12,2)
+    );
+
+    -- LISTO
+    CREATE TYPE hist_premio AS(
+        fecha_ini DATE,
+        fecha_fin DATE,
+        nombre VARCHAR(50),
+        cantidad_nom SMALLINT
+    );
+
+-- FIN - TIPOS DE DATOS
+
+-- INI - TABLAS
+
+    -- LISTO
+    CREATE TABLE public.rol (
+        id_rol SERIAL PRIMARY KEY,
+        nombre VARCHAR(25) NOT NULL,
+        descripcion VARCHAR(250) NOT NULL
+    );
+
+    -- LISTO
+    CREATE TABLE public.persona (
+        doc_identidad BIGINT PRIMARY KEY NOT NULL,
+        primer_nom VARCHAR(50) NOT NULL, 
+        primer_ape VARCHAR(50) NOT NULL,
+        segundo_ape VARCHAR(50) NOT NULL,
+        sexo CHAR(1) NOT NULL CHECK(sexo IN ('M','F')),
+        fecha_nac DATE NOT NULL, 
+        fecha_ini_carrera DATE, 
+        segundo_nom VARCHAR(50),
+        a_lugar_nac VARCHAR(50),
+        a_biografia TEXT,
+        fecha_defuncion DATE,
+        CONSTRAINT fecha_nac_valida CHECK(fecha_ini_carrera>fecha_nac)
+    );
+
+    -- LISTO
+    CREATE TABLE public.audiovisual (
+        id_audiovi SERIAL PRIMARY KEY NOT NULL,
+        titulo_espanol VARCHAR(50) NOT NULL,
+        titulo_original VARCHAR(50) NOT NULL,
+        sinopsis TEXT NOT NULL,
+        fecha_estreno_cine DATE NOT NULL,
+        duracion_min SMALLINT NOT NULL,
+        pais VARCHAR(20)[3] NOT NULL,
+        distribucion_va VARCHAR(50)[3] NOT NULL,
+        censura VARCHAR(2) NOT NULL CHECk(censura IN ('AA','A','B','C','D')),
+        clas_audiovisual VARCHAR(15) NOT NULL CHECK(clas_audiovisual IN ('largometraje','cortometraje','documental')),
+        ano_realizacion SMALLINT NOT NULL,
+        genero_va VARCHAR(15)[5] NOT NULL,
+        fotos VARCHAR(255) NOT NULL,
+        total_nomi int NOT NULL,
+        total_postu int NOT NULL,
+        total_ganador int NOT NULL
+    );
+
+    -- LISTO
+    CREATE TABLE public.rol_pel_pers (
+        id_rol INT  NOT NULL REFERENCES rol(id_rol),
+        id_audiovi INT NOT NULL REFERENCES audiovisual(id_audiovi),
+        doc_identidad BIGINT NOT NULL REFERENCES persona(doc_identidad),
+        cancion_titulo VARCHAR(50),
+        CONSTRAINT PK_rol_pel_pers PRIMARY KEY (id_rol, id_audiovi, doc_identidad)
+    );
+
+    -- LISTO
+    CREATE TABLE public.miembro (
+        id_miembro SERIAL PRIMARY KEY NOT NULL,
+        fecha_inicio DATE NOT NULL,
+        vitalicio CHAR(2) NOT NULL CHECK(vitalicio IN ('si','no')),
+        doc_identidad BIGINT NOT NULL UNIQUE REFERENCES persona(doc_identidad),
+        fecha_fin DATE CHECK(fecha_inicio < fecha_fin),
+        area_nt VARCHAR(25)[]
+    );
+
+    -- LISTO
+    CREATE TABLE public.postulado_votos (
+        id_audiovi INT NOT NULL,
+        id_miembro INT NOT NULL,
+        fecha_ano INT NOT NULL,
+        CONSTRAINT PK_postulado_votos PRIMARY KEY (id_audiovi, id_miembro)
+    );
+
+    -- LISTO
+    CREATE TABLE public.gala (
+        ano SMALLINT PRIMARY KEY NOT NULL,
+        fecha DATE NOT NULL,
+        lugar VARCHAR(50) NOT NULL,
+        numero_edicion SMALLINT NOT NULL,
+        doc_identidad BIGINT NOT NULL REFERENCES persona(doc_identidad),
+        descripcion VARCHAR(250)
+    );
+
+    -- LISTO
+    CREATE TABLE public.categoria (
+        id_categoria SERIAL PRIMARY KEY,
+        nombre VARCHAR(50) NOT NULL,
+        nivel CHAR(1) NOT NULL CHECK(nivel IN ('1','2')),
+        rama VARCHAR(20) CHECK(rama IN ('actor','guionista','director','productor','fotografo','tecnico', 
+        'ing.sonido', 'musico', 'estilista', 'artista')),
+        id_categoria2 INT REFERENCES categoria(id_categoria),
+        hist_premio_nt hist_premio[]
+    );
+
+    -- LISTO
+    CREATE TABLE public.presentador (
+        id_gala INT NOT NULL REFERENCES gala(ano),
+        doc_identidad BIGINT NOT NULL REFERENCES persona(doc_identidad),
+        id_categoria INT NOT NULL REFERENCES categoria(id_categoria),
+        CONSTRAINT PK_prensentador PRIMARY KEY (id_gala, doc_identidad, id_categoria)
+    );
+
+    --LISTO
+    CREATE TABLE public.M_P (
+        id_miembro INT NOT NULL REFERENCES miembro(id_miembro),
+        id_categoria INT NOT NULL REFERENCES categoria(id_categoria),
+        CONSTRAINT PK_M_P PRIMARY KEY (id_miembro, id_categoria)
+    );
+
+    -- LISTO
+     
+     CREATE TABLE public.postuladas_p_pers(
+        id_postuladas_p_pers SERIAL NOT NULL,
+        ano_oscar INT NOT NULL,
+        id_categoria INT NOT NULL REFERENCES categoria(id_categoria),
+		empate varchar(2) not null check (empate in('si','no')),
+        terminada varchar(2) not null check(terminada in ('si','no')),
+        ronda_emp int not null,
+        cant_votos int not null,
+        num_post_emp integer,
+        id_rol INT,
+        doc_identidad INT,
+        id_audiovi INT,
+		
+        id_audiovi2 INT REFERENCES audiovisual(id_audiovi),
+		 
+        CONSTRAINT llave_rol_pel_pers FOREIGN KEY (id_rol, id_audiovi, doc_identidad) REFERENCES rol_pel_pers(id_rol, id_audiovi, doc_identidad),
+        CONSTRAINT primary_key_portuladas_p_pers PRIMARY KEY (id_postuladas_p_pers, ano_oscar, id_categoria),
+		constraint unicidad_clave_foranea unique (ano_oscar,id_categoria,id_rol, id_audiovi, doc_identidad,id_audiovi2)
+    );
+
+    -- LISTO
+   CREATE TABLE public.nominadas(
+        id_nominada SERIAL NOT NULL,
+        ganador character(2) COLLATE pg_catalog."default" NOT NULL,
+        id_postuladas_p_pers integer NOT NULL,
+        ano_oscar smallint NOT NULL,
+        id_categoria integer NOT NULL,
+        empate character varying(2) COLLATE pg_catalog."default",
+        ronda_emp integer,
+        terminada character varying(2) COLLATE pg_catalog."default",
+        cant_votos integer,
+        CONSTRAINT pk_nominadas PRIMARY KEY (id_nominada, id_postuladas_p_pers, ano_oscar, id_categoria),
+        CONSTRAINT fk_postuladas_p_pers FOREIGN KEY (ano_oscar, id_postuladas_p_pers, id_categoria)
+            REFERENCES public.postuladas_p_pers (ano_oscar, id_postuladas_p_pers, id_categoria) MATCH SIMPLE
+            ON UPDATE NO ACTION
+            ON DELETE NO ACTION,
+        CONSTRAINT nominadas_ganador_check CHECK (ganador = ANY (ARRAY['si'::bpchar, 'no'::bpchar]))
+    );
+
+
+    -- LISTO
+    CREATE TABLE public.organizacion (
+        id_organizacion SERIAL PRIMARY KEY,
+        nombre VARCHAR(50) NOT NULL,
+        mision TEXT NOT NULL, 
+        donacion_nt donacion[]
+    );
+
+    -- LISTO
+    CREATE TABLE public.critica (
+        id_critica SERIAL PRIMARY KEY,
+        ano SMALLINT NOT NULL,
+        tipo VARCHAR(50) CHECK(tipo in ('postulados', 'nominados', 'ganadores', 'gala')),
+        textocritica VARCHAR(255) NOT NULL,
+        negativa CHAR(2) NOT NULL CHECK(negativa in('si','no'))
+    );
+
+    -- LISTO 
+    CREATE TABLE public.votos (
+        id_voto SERIAL PRIMARY KEY NOT NULL,
+        fecha_hora TIMESTAMP NOT NULL,
+        tipo_voto VARCHAR(15) NOT NULL CHECK(tipo_voto IN ('postulado','nominado')),
+        id_miembro INT NOT NULL REFERENCES miembro(id_miembro),
+        id_nominada INT,
+        id_categoria INT,
+        id_postuladas_p_pers INT,
+        ano_oscar INT,
+        id_categoria1 INT,
+        id_postuladas_p_pers1 INT,
+        ano_oscar1 INT,
+        CONSTRAINT FK_postuladas_p_pers_votos FOREIGN KEY ( id_postuladas_p_pers1, ano_oscar1, id_categoria1) REFERENCES postuladas_p_pers(id_postuladas_p_pers, ano_oscar, id_categoria),
+        CONSTRAINT FK_nominada_votos FOREIGN KEY (id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar) REFERENCES nominadas(id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar)
+    );
+
+-- FIN - TABLAS
+
+
+
+-- INI VISTAS 
+
+CREATE OR replace FUNCTION ficha_pelicula (IN p_id_audiovi INT) 
+    RETURNS TABLE (
+        titulo_espanol VARCHAR, titulo_original VARCHAR, 
+        sinopsis VARCHAR, fecha_estreno_cine VARCHAR, 
+        pais VARCHAR,  
+        distribucion_va VARCHAR, censura VARCHAR, 
+        duracion_min VARCHAR, genero_va VARCHAR,
+        directores VARCHAR, dir_artistica VARCHAR,
+        productores VARCHAR, guionistas VARCHAR, 
+        musica VARCHAR,	fotografia VARCHAR,
+        montaje VARCHAR, reparto VARCHAR,
+        foto VARCHAR
+    ) 
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_nombre VARCHAR;
+    BEGIN
+        for v_registro IN (
+            SELECT audiovisual.titulo_espanol,
+            audiovisual.titulo_original,  audiovisual.sinopsis,  audiovisual.fecha_estreno_cine, 
+            audiovisual.pais, audiovisual.fotos, 
+            audiovisual.distribucion_va,  audiovisual.censura,  audiovisual.duracion_min,  audiovisual.genero_va
+            FROM public.audiovisual 
+                WHERE id_audiovi = p_id_audiovi
+        ) LOOP  titulo_espanol := v_registro.titulo_espanol;
+            titulo_original := v_registro.titulo_original; 
+            sinopsis := v_registro.sinopsis; 
+            fecha_estreno_cine := v_registro.fecha_estreno_cine;  
+            distribucion_va := array_to_string(v_registro.distribucion_va, ' ; '); 
+            censura := v_registro.censura; 
+            duracion_min := v_registro.duracion_min; 
+            genero_va := array_to_string(v_registro.genero_va, ' ; ');
+            foto := v_registro.fotos;
+            pais := array_to_string(v_registro.pais, ' ; ');
+        END LOOP;
+        
+        v_registro := NULL;
+        v_nombre = '';
+        
+        --DIRECTORES
+        for v_registro IN (
+            SELECT primer_nom, primer_ape
+            FROM public.audiovisual 
+            INNER JOIN rol_pel_pers RPP ON RPP.id_audiovi = p_id_audiovi AND RPP.id_rol = 3
+            INNER JOIN persona PER ON PER.doc_identidad = RPP.doc_identidad
+            WHERE audiovisual.id_audiovi = p_id_audiovi
+        ) LOOP  
+            v_nombre = concat(v_nombre, v_registro.primer_nom);
+            v_nombre = concat(v_nombre, ' ');
+            v_nombre = concat(v_nombre, v_registro.primer_ape);
+            v_nombre = concat(v_nombre, '; ');
+        END LOOP;
+        directores := v_nombre;
+        
+        v_nombre = '';
+        --DIRECCION ARTISTICA
+        for v_registro IN (
+            SELECT primer_nom, primer_ape
+            FROM public.audiovisual 
+            INNER JOIN rol_pel_pers RPP ON RPP.id_audiovi = p_id_audiovi AND RPP.id_rol = 10
+            INNER JOIN persona PER ON PER.doc_identidad = RPP.doc_identidad
+            WHERE audiovisual.id_audiovi = p_id_audiovi
+        ) LOOP  
+            v_nombre = concat(v_nombre, v_registro.primer_nom);
+            v_nombre = concat(v_nombre, ' ');
+            v_nombre = concat(v_nombre, v_registro.primer_ape);
+            v_nombre = concat(v_nombre, '; ');
+        END LOOP;
+        dir_artistica := v_nombre;
+        
+        
+        v_nombre := '';
+        --PRODUCTORES
+        for v_registro IN (
+            SELECT primer_nom, primer_ape
+            FROM public.audiovisual 
+            INNER JOIN rol_pel_pers RPP ON RPP.id_audiovi = p_id_audiovi AND RPP.id_rol = 4
+            INNER JOIN persona PER ON PER.doc_identidad = RPP.doc_identidad
+            WHERE audiovisual.id_audiovi = p_id_audiovi
+        ) LOOP  
+            v_nombre = concat(v_nombre, v_registro.primer_nom);
+            v_nombre = concat(v_nombre, ' ');
+            v_nombre = concat(v_nombre, v_registro.primer_ape);
+            v_nombre = concat(v_nombre, '; ');
+        END LOOP;
+        productores := v_nombre;
+
+        v_nombre := '';
+        --GUIONISTA
+        for v_registro IN (
+            SELECT primer_nom, primer_ape
+            FROM public.audiovisual 
+            INNER JOIN rol_pel_pers RPP ON RPP.id_audiovi = p_id_audiovi AND RPP.id_rol = 2
+            INNER JOIN persona PER ON PER.doc_identidad = RPP.doc_identidad
+            WHERE audiovisual.id_audiovi = p_id_audiovi
+        ) LOOP  
+            v_nombre = concat(v_nombre, v_registro.primer_nom);
+            v_nombre = concat(v_nombre, ' ');
+            v_nombre = concat(v_nombre, v_registro.primer_ape);
+            v_nombre = concat(v_nombre, '; ');
+        END LOOP;
+        guionistas := v_nombre;
+        
+        v_nombre := '';
+        --MUSICA
+        for v_registro IN (
+            SELECT primer_nom, primer_ape
+            FROM public.audiovisual 
+            INNER JOIN rol_pel_pers RPP ON RPP.id_audiovi = p_id_audiovi AND RPP.id_rol = 8
+            INNER JOIN persona PER ON PER.doc_identidad = RPP.doc_identidad
+            WHERE audiovisual.id_audiovi = p_id_audiovi
+        ) LOOP  
+            v_nombre = concat(v_nombre, v_registro.primer_nom);
+            v_nombre = concat(v_nombre, ' ');
+            v_nombre = concat(v_nombre, v_registro.primer_ape);
+            v_nombre = concat(v_nombre, '; ');
+        END LOOP;
+        musica := v_nombre;
+
+        v_nombre := '';
+        --MONTAJE
+        for v_registro IN (
+            SELECT primer_nom, primer_ape
+            FROM public.audiovisual 
+            INNER JOIN rol_pel_pers RPP ON RPP.id_audiovi = p_id_audiovi AND RPP.id_rol = 6
+            INNER JOIN persona PER ON PER.doc_identidad = RPP.doc_identidad
+            WHERE audiovisual.id_audiovi = p_id_audiovi
+        ) LOOP  
+            v_nombre = concat(v_nombre, v_registro.primer_nom);
+            v_nombre = concat(v_nombre, ' ');
+            v_nombre = concat(v_nombre, v_registro.primer_ape);
+            v_nombre = concat(v_nombre, '; ');
+        END LOOP;
+        montaje := v_nombre;
+
+        v_nombre := '';
+        --FOTOGRAFIA
+        for v_registro IN (
+            SELECT primer_nom, primer_ape
+            FROM public.audiovisual 
+            INNER JOIN rol_pel_pers RPP ON RPP.id_audiovi = p_id_audiovi AND RPP.id_rol = 5
+            INNER JOIN persona PER ON PER.doc_identidad = RPP.doc_identidad
+            WHERE audiovisual.id_audiovi = p_id_audiovi
+        ) LOOP  
+            v_nombre = concat(v_nombre, v_registro.primer_nom);
+            v_nombre = concat(v_nombre, ' ');
+            v_nombre = concat(v_nombre, v_registro.primer_ape);
+            v_nombre = concat(v_nombre, '; ');
+        END LOOP;
+        fotografia := v_nombre;
+        
+        v_nombre := '';
+        --REPARTO
+        for v_registro IN (
+            SELECT primer_nom, primer_ape
+            FROM public.audiovisual 
+            INNER JOIN rol_pel_pers RPP ON RPP.id_audiovi = p_id_audiovi 
+            AND RPP.id_rol = 1 OR RPP.id_rol = 11
+            INNER JOIN persona PER ON PER.doc_identidad = RPP.doc_identidad
+            WHERE audiovisual.id_audiovi = p_id_audiovi
+        ) LOOP  
+            v_nombre = concat(v_nombre, v_registro.primer_nom);
+            v_nombre = concat(v_nombre, ' ');
+            v_nombre = concat(v_nombre, v_registro.primer_ape);
+            v_nombre = concat(v_nombre, '; ');
+        END LOOP;
+        reparto := v_nombre;
+
+        RETURN NEXT;
+    END; $$;
+
+CREATE OR replace FUNCTION ficha_premios_pelicula (IN p_id_premio INT, IN p_ano_gala INT) 
+    RETURNS TABLE (
+        premio VARCHAR,
+        presentador VARCHAR,
+        pelicula VARCHAR, 
+        titulo_original VARCHAR,
+        resultado VARCHAR,
+        presentador_gala VARCHAR
+    ) 
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_estatus_premio VARCHAR;
+        v_contenido VARCHAR;
+    BEGIN
+        for v_registro IN (
+            SELECT 
+            nombre
+            FROM public.categoria 
+                WHERE id_categoria = p_id_premio
+        ) LOOP  
+            v_contenido = concat(v_contenido, 'Oscar a ');
+            v_contenido = concat(v_contenido, v_registro.nombre);
+        END LOOP;
+        premio := v_contenido;
+
+        
+        v_registro := NULL;
+        v_contenido = '';
+        
+        for v_registro IN (
+            SELECT
+            primer_nom,
+            primer_ape
+            FROM public.presentador 
+            INNER JOIN persona PER ON PER.doc_identidad = presentador.doc_identidad
+                WHERE id_gala = p_ano_gala AND id_categoria = p_id_premio
+        ) LOOP  
+            v_contenido = concat(v_contenido, v_registro.primer_nom);
+            v_contenido = concat(v_contenido, ' ');
+            v_contenido = concat(v_contenido, v_registro.primer_ape);
+        END LOOP;
+        presentador := v_contenido;
+
+        RETURN NEXT;
+        
+        v_registro := NULL;
+        v_contenido = '';
+        
+        for v_registro IN (
+            SELECT
+            postuladas_p_pers.id_postuladas_p_pers,
+            NOM.ganador,
+            AUD.titulo_espanol,
+            AUD.titulo_original
+            FROM public.postuladas_p_pers 
+            INNER JOIN nominadas NOM ON 
+            NOM.id_postuladas_p_pers = postuladas_p_pers.id_postuladas_p_pers
+            INNER JOIN audiovisual AUD ON
+            AUD.id_audiovi = postuladas_p_pers.id_audiovi OR AUD.id_audiovi = postuladas_p_pers.id_audiovi2
+            WHERE postuladas_p_pers.ano_oscar = p_ano_gala AND postuladas_p_pers.id_categoria = p_id_premio 
+            and postuladas_p_pers.empate='no'
+        ) LOOP  
+            pelicula := v_registro.titulo_espanol;
+            titulo_original := v_registro.titulo_original;
+            presentador := null;
+            premio := null;
+            IF v_registro.ganador = 'si' THEN
+                resultado := 'Ganadora';
+            ELSE
+                resultado := 'Candidata';
+            END IF;
+            RETURN NEXT;
+        END LOOP;
+        
+    END; $$;
+
+CREATE OR replace FUNCTION ficha_premios_nominados (p_id_premio INT, p_ano_gala INT) 
+    RETURNS TABLE (
+        premio VARCHAR,
+        presentador VARCHAR,
+        pelicula VARCHAR, 
+        titulo_original VARCHAR,
+        resultado VARCHAR,
+        nombre_completo_id_nom VARCHAR,
+        id_nominada integer
+    ) 
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_estatus_premio VARCHAR;
+        v_contenido VARCHAR;
+    BEGIN
+        for v_registro IN (
+            SELECT 
+            nombre
+            FROM public.categoria 
+                WHERE id_categoria = p_id_premio
+        ) LOOP  
+            v_contenido = concat(v_contenido, 'Oscar a ');
+            v_contenido = concat(v_contenido, v_registro.nombre);
+        END LOOP;
+        premio := v_contenido;
+
+        
+        v_registro := NULL;
+        v_contenido = '';
+        
+        for v_registro IN (
+            SELECT
+            primer_nom,
+            primer_ape
+            FROM public.presentador 
+
+            INNER JOIN persona PER ON PER.doc_identidad = presentador.doc_identidad
+                WHERE id_gala = p_ano_gala AND id_categoria = p_id_premio
+        ) LOOP  
+            v_contenido = concat(v_contenido, v_registro.primer_nom);
+            v_contenido = concat(v_contenido, ' ');
+            v_contenido = concat(v_contenido, v_registro.primer_ape);
+        END LOOP;
+        presentador := v_contenido;
+
+        RETURN NEXT;
+        
+        v_registro := NULL;
+        v_contenido = '';
+        
+        for v_registro IN (
+            SELECT 
+            ganador,
+            PER.primer_nom ||' '|| PER.primer_ape /*||' (Nominado #'|| 
+            nominadas.id_nominada||')'*/  as "nombre_completo_id_nom",
+            AUD.titulo_espanol,
+            AUD.titulo_original,
+            nominadas.id_nominada
+            FROM nominadas 
+            INNER JOIN postuladas_p_pers PPP ON 
+            PPP.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+            INNER JOIN persona PER ON
+            PER.doc_identidad = PPP.doc_identidad
+            INNER JOIN audiovisual AUD ON
+            AUD.id_audiovi = PPP.id_audiovi OR AUD.id_audiovi = PPP.id_audiovi2
+            WHERE nominadas.ano_oscar = p_ano_gala AND nominadas.id_categoria = p_id_premio and (nominadas.empate='no' or nominadas.ganador='si')
+        ) LOOP  
+            pelicula := v_registro.titulo_espanol;
+            titulo_original := v_registro.titulo_original;
+            nombre_completo_id_nom := v_registro.nombre_completo_id_nom;
+            presentador := null;
+            premio := null;
+            id_nominada := v_registro.id_nominada;
+            IF v_registro.ganador = 'si' THEN
+                resultado := 'Ganadora';
+            ELSE
+                resultado := 'Candidata';
+            END IF;
+            RETURN NEXT;
+        END LOOP;
+        
+    END; $$;
+
+CREATE OR replace FUNCTION ficha_premios_postulados (p_id_premio INT, p_ano_gala INT) 
+    RETURNS TABLE (
+        premio VARCHAR,
+        pelicula VARCHAR, 
+        titulo_original VARCHAR,
+        nombre_completo_id_nom VARCHAR,
+		presentador VARCHAR
+    ) 
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_estatus_premio VARCHAR;
+        v_contenido VARCHAR;
+    BEGIN
+        for v_registro IN (
+            SELECT 
+            nombre
+            FROM public.categoria 
+                WHERE id_categoria = p_id_premio
+        ) LOOP  
+            v_contenido = concat(v_contenido, 'Oscar a ');
+            v_contenido = concat(v_contenido, v_registro.nombre);
+        END LOOP;
+        premio := v_contenido;
+
+        RETURN NEXT;
+        
+        v_registro := NULL;
+        v_contenido = '';
+        
+        for v_registro IN (
+            SELECT 
+            PER.primer_nom ||' '|| PER.primer_ape ||' (Postulado #'|| 
+            postuladas_p_pers.id_postuladas_p_pers||') ' as "nombre_completo_id_nom",
+            AUD.titulo_espanol,
+            AUD.titulo_original
+            FROM postuladas_p_pers 
+            INNER JOIN persona PER ON
+            PER.doc_identidad = postuladas_p_pers.doc_identidad
+            INNER JOIN audiovisual AUD ON
+            AUD.id_audiovi = postuladas_p_pers.id_audiovi OR AUD.id_audiovi = postuladas_p_pers.id_audiovi2
+            WHERE postuladas_p_pers.ano_oscar = p_ano_gala AND postuladas_p_pers.id_categoria = p_id_premio and postuladas_p_pers.empate='no'
+        ) LOOP  
+            pelicula := v_registro.titulo_espanol;
+            titulo_original := v_registro.titulo_original;
+            nombre_completo_id_nom := v_registro.nombre_completo_id_nom;
+            presentador := null;
+            premio := null;
+            RETURN NEXT;
+        END LOOP;
+        
+    END; $$;
+
+CREATE OR REPLACE FUNCTION ficha_oscar_totales(IN in_id_gala INT)
+    RETURNS TABLE (
+        ficha VARCHAR,
+        titulo_espanol VARCHAR,
+        titulo_original VARCHAR,
+        nominaciones INT,
+        premios INT
+    )
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_contenido VARCHAR;
+    BEGIN
+
+        FOR v_registro IN (
+            SELECT gala.ano, gala.fecha, gala.numero_edicion, gala.lugar FROM public.gala
+            WHERE gala.ano = in_id_gala
+        
+        ) LOOP
+            v_contenido = concat(v_contenido,'Premios Oscars de ');
+            v_contenido = concat(v_contenido, v_registro.ano);
+            v_contenido = concat(v_contenido, ' (');
+            v_contenido = concat(v_contenido, v_registro.numero_edicion);
+            v_contenido = concat(v_contenido, 'º ceremonia, ');
+            v_contenido = concat(v_contenido, EXTRACT(DAY FROM v_registro.fecha));
+            v_contenido = concat(v_contenido, ' de ');
+            v_contenido = concat(v_contenido, to_char(v_registro.fecha, 'MM'));
+            v_contenido = concat(v_contenido, ' de ');
+            v_contenido = concat(v_contenido, EXTRACT(YEAR FROM v_registro.fecha));
+            v_contenido = concat(v_contenido,', ');
+            v_contenido = concat(v_contenido, v_registro.lugar);
+            v_contenido = concat(v_contenido, ').');
+            
+        END LOOP;
+        ficha := v_contenido;
+        RETURN NEXT;
+    
+        v_registro = NULL;
+        ficha := NULL;
+        
+        FOR v_registro IN(
+            SELECT DISTINCT audiovisual.titulo_espanol, audiovisual.titulo_original,
+            audiovisual.total_nomi, audiovisual.total_ganador FROM nominadas JOIN postuladas_p_pers
+            ON postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+            JOIN audiovisual 
+            ON audiovisual.id_audiovi = postuladas_p_pers.id_audiovi
+            WHERE nominadas.ano_oscar = in_id_gala 
+        )
+        LOOP
+            titulo_espanol = v_registro.titulo_espanol;
+            titulo_original = v_registro.titulo_original;
+            nominaciones = v_registro.total_nomi;
+            premios = v_registro.total_ganador;
+            RETURN NEXT;
+        END LOOP;
+    END; $$;
+
+CREATE OR REPLACE FUNCTION ficha_miembro_area (IN in_area VARCHAR)
+    RETURNS TABLE (
+        doc_identidad BIGINT,
+        primer_nom VARCHAR,
+        primer_ape VARCHAR
+    )
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+        v_contenido VARCHAR;
+    BEGIN
+
+        FOR v_registro IN(
+            SELECT persona.doc_identidad, persona.primer_nom, persona.primer_ape FROM persona 
+            JOIN  miembro 
+            ON miembro.doc_identidad = persona.doc_identidad
+            WHERE  in_area = ANY (miembro.area_nt)
+        )
+        LOOP
+            doc_identidad := v_registro.doc_identidad;
+            primer_nom := v_registro.primer_nom;
+            primer_ape := v_registro.primer_ape;
+            RETURN NEXT;
+        END LOOP;
+        
+        RETURN;
+    END; $$;
+
+CREATE OR REPLACE FUNCTION ficha_actor(IN in_doc_identidad BIGINT)
+    RETURNS TABLE (
+        nombre VARCHAR,
+        fecha_nac VARCHAR,
+        lugar_nac VARCHAR,
+        roles VARCHAR, 
+        biografia VARCHAR
+    )
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE
+        v_registro record;
+    BEGIN
+        FOR v_registro IN(
+            SELECT persona.primer_nom, persona.primer_ape, 
+			persona.segundo_nom, persona.segundo_ape, 
+			persona.fecha_nac, persona.a_lugar_nac,
+			persona.a_biografia FROM persona
+            WHERE persona.doc_identidad = in_doc_identidad
+        )
+        LOOP
+            nombre := concat(nombre,'Nombre Real:');
+            nombre := concat(nombre,' ');
+            nombre := concat(nombre, v_registro.primer_nom);
+            nombre := concat(nombre,' ');
+            IF v_registro.segundo_nom IS NOT NULL THEN
+                nombre := concat(nombre, v_registro.segundo_nom);
+                nombre := concat(nombre,' ');
+            END IF;
+            nombre := concat(nombre, v_registro.primer_ape);
+            nombre := concat(nombre,' ');
+            nombre := concat(nombre, v_registro.segundo_ape);
+            fecha_nac := concat(fecha_nac, 'Nacimiento: ');
+            fecha_nac := concat(fecha_nac, EXTRACT(DAY FROM v_registro.fecha_nac));
+            fecha_nac := concat(fecha_nac, ' de ');
+            fecha_nac := concat(fecha_nac, to_char(v_registro.fecha_nac, 'MM'));
+            fecha_nac := concat(fecha_nac, ' de ');
+            fecha_nac := concat(fecha_nac, EXTRACT(YEAR FROM v_registro.fecha_nac));
+            fecha_nac := concat(fecha_nac, '  (');
+            fecha_nac := concat(fecha_nac, EXTRACT(YEAR from age(current_date, v_registro.fecha_nac)));
+            fecha_nac := concat(fecha_nac, ' años)');
+            lugar_nac := v_registro.a_lugar_nac;
+            biografia := v_registro.a_biografia;
+        END LOOP;
+		
+		v_registro = NULL;
+		
+		FOR v_registro IN (
+			SELECT DISTINCT rol.nombre FROM rol_pel_pers
+			JOIN rol
+			ON rol.id_rol = rol_pel_pers.id_rol
+			WHERE rol_pel_pers.doc_identidad = in_doc_identidad 
+		)
+		LOOP
+			roles := concat(roles,v_registro.nombre);
+			roles := concat(roles,'; ');
+		END LOOP;
+        RETURN NEXT;
+    END; $$;
+
+-- FIN VISTAS
+
+-- INI PROCEDURES
+
+create or replace procedure gestion_nominados(v_ano_oscar integer,v_id_categoria integer)
+	language plpgsql    
+	as $$
+	Declare 
+		v_id_ganador integer;
+		v_numero_votos integer;
+		v_empate varchar(2);
+		v_record RECORD;
+		v_record2 RECORD;
+		v_message text;
+		v_query varchar (250);
+		v_length_temp integer;
+		v_votos_empate integer;
+		v_votos integer;
+	begin
+
+		select empate into v_empate from public.nominadas where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria and terminada='no';
+		if not found then
+			RAISE EXCEPTION 'Las votaciones de este ano para esta categoria ya han acabado';
+		end if;
+		
+		
+		----Calculo de votos
+		
+		CREATE TEMP TABLE tmp_votos (
+			id_nominada integer,
+			id_categoria integer,
+			ano_oscar integer,
+			id_postulado integer,
+			cant_votos integer,
+			id_audiovi integer,
+			id_audiovi2 integer,
+			ganador varchar(2)
+		);
+		
+		insert into tmp_votos(id_nominada,id_categoria,ano_oscar,id_postulado,cant_votos)  
+		select votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers, count(*)  
+		from public.votos 
+		inner join public.nominadas on votos.id_nominada=nominadas.id_nominada
+		where votos.ano_oscar=v_ano_oscar and votos.id_categoria=v_id_categoria and nominadas.terminada= 'no'
+		group by votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers;
+		
+			for v_record 
+			in select * from tmp_votos 
+			loop
+				update public.nominadas set cant_votos= v_record.cant_votos where id_nominada= v_record.id_nominada;
+			end loop;
+			
+			v_record=null;
+		
+		delete from tmp_votos;
+		
+		insert into tmp_votos(id_nominada,id_categoria,ano_oscar,id_postulado,cant_votos,id_audiovi,id_audiovi2)  
+		select votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers, count(*),postuladas_p_pers.id_audiovi, postuladas_p_pers.id_audiovi2  
+		from public.votos 
+		inner join public.nominadas on votos.id_nominada=nominadas.id_nominada
+		inner join public.postuladas_p_pers on postuladas_p_pers.id_postuladas_p_pers=nominadas.id_postuladas_p_pers
+		where votos.ano_oscar=v_ano_oscar and votos.id_categoria=v_id_categoria and nominadas.terminada= 'no'
+		group by votos.id_nominada, votos.id_categoria, votos.ano_oscar, votos.id_postuladas_p_pers,postuladas_p_pers.id_audiovi, postuladas_p_pers.id_audiovi2
+		order by 5 DESC
+		fetch first 1 rows with ties;
+		if not found then
+			RAISE EXCEPTION 'No se han introducido ni un voto dentro de esta categoria';
+		end if;
+		----Comprobar Empate
+		
+		select count(*) into v_length_temp from  tmp_votos;
+		if(v_length_temp> 1) then 
+			------------------Caso Empate--------------------
+			
+			--------------------Generar Mensaje Empate------------------------
+			v_message= 'Se genero un empate en las votaciones por el ganador de premio, se debera realizar el proceso de votacion nuevamente con las siguientes nominaciones para determinar el ganador: ';
+			select cant_votos into v_votos_empate from tmp_votos order by 1 asc limit 1;
+			for v_record IN 
+			select id_nominada from tmp_votos where cant_votos=v_votos_empate 
+			LOOP
+				v_message= concat (v_message,v_record.id_nominada);
+				v_message= concat (v_message,' ');
+			end loop;
+			
+			----modificacion de la antiguas postulaciones
+			
+			update public.nominadas set terminada='si' where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria;
+			
+			----insercion de las nuevas nominaciones
+			
+			CREATE temp TABLE c_nominadas(
+				id_nominada int,
+				ganador varchar(2),
+				id_postuladas_p_pers INT,
+				ano_oscar int,
+				id_categoria int,
+				empate varchar(2),
+				terminada varchar(2),
+				ronda_emp int,
+				cant_votos int
+			);
+
+			INSERT INTO c_nominadas(
+			id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp)
+			SELECT id_nominada, ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp+1
+			from public.nominadas
+			where id_nominada in (select id_nominada from tmp_votos);
+			update c_nominadas set empate='si', terminada='no',cant_votos=0;
+			
+			
+			INSERT INTO public.nominadas(
+			ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp,cant_votos)
+			SELECT ganador, id_postuladas_p_pers, ano_oscar, id_categoria, empate, terminada, ronda_emp, cant_votos
+			from c_nominadas;
+			
+			---------------------------Notificar Usuario--------------------------
+			v_message= concat(v_message,'. Los postulados han sido nuevamente ingresados en el sistema para una votacion de desempate');
+			raise notice '%', v_message;
+			drop table c_nominadas;
+			drop table tmp_votos;
+			return;
+		end if;
+		
+		----Modificamos el parametro ganador
+		
+		update public.nominadas set ganador= 'si' where id_nominada in (select id_nominada from tmp_votos); 
+		/*select cant_votos into v_votos from tmp_votos;*/
+		update public.nominadas set terminada='si' /*and cant_votos= v_votos*/ where ano_oscar=v_ano_oscar and id_categoria=v_id_categoria;
+		
+		for v_record2 in 
+		select  id_audiovi,id_audiovi2 from tmp_votos loop
+			update public.audiovisual set total_ganador=total_ganador+1 where id_audiovi=v_record2.id_audiovi or id_audiovi=v_record2.id_audiovi2;
+		end loop;
+		
+		drop table tmp_votos;
+		commit;
+	end;$$;
+
+CREATE OR REPLACE PROCEDURE actualizar_area_nt_membresia()
+	LANGUAGE PLPGSQL
+	AS 
+	$$
+	DECLARE
+		v_area_nt VARCHAR(255);
+		query_rama varchar (200);
+		query_persona varchar (200);
+		v_rama RECORD;
+		v_persona RECORD;
+		v_cont integer;
+		v_cont2 integer;
+		v_cont3 integer;
+	BEGIN
+	query_persona='select doc_identidad from public.persona';
+	FOR v_persona IN EXECUTE query_persona LOOP
+		v_cont3=0;
+		v_area_nt = '{';
+		
+		query_rama='select distinct rama from public.categoria where rama is not null';
+		FOR v_rama IN EXECUTE query_rama LOOP
+			v_cont=0;
+			v_cont2=0;
+				SELECT COUNT(C2.rama) INTO v_cont
+				FROM postuladas_p_pers INNER JOIN nominadas ON postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+				INNER JOIN categoria C1 ON C1.id_categoria = nominadas.id_categoria
+				INNER JOIN categoria C2 ON C2.id_categoria = C1.id_categoria2 
+				WHERE doc_identidad = v_persona.doc_identidad AND C2.rama = v_rama.rama and nominadas.empate='no'; 
+
+				IF v_cont > 1 THEN 
+					if (v_cont3=0) then
+						v_area_nt = concat (v_area_nt,v_rama.rama); 
+						v_cont3=v_cont3+1;
+					else
+						v_area_nt = concat (v_area_nt,','); 
+						v_area_nt = concat (v_area_nt,v_rama.rama); 
+					end if;
+					
+					IF not EXISTS (SELECT * FROM public.miembro WHERE doc_identidad = v_persona.doc_identidad) then
+						INSERT INTO public.miembro(
+						fecha_inicio, vitalicio, doc_identidad, fecha_fin, area_nt)
+						VALUES ( now(), 'no', v_persona.doc_identidad, null, null);
+					end if;
+				ELSE	
+					SELECT COUNT(ganador) INTO v_cont2
+					FROM postuladas_p_pers INNER JOIN nominadas ON postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+					INNER JOIN categoria C1 ON C1.id_categoria = nominadas.id_categoria
+					INNER JOIN categoria C2 ON C2.id_categoria = C1.id_categoria2 WHERE doc_identidad = v_persona.doc_identidad 
+					AND ganador = 'si' AND C2.rama = v_rama.rama;
+
+					IF v_cont2 > 0 THEN 
+						if (v_cont3=0) then
+							v_area_nt = concat (v_area_nt,v_rama.rama); 
+							v_cont3=v_cont3+1;
+						else
+							v_area_nt = concat (v_area_nt,','); 
+							v_area_nt = concat (v_area_nt,v_rama.rama); 
+						end if;
+						IF not EXISTS (SELECT * FROM public.miembro WHERE doc_identidad = v_persona.doc_identidad) then
+							INSERT INTO public.miembro(
+							fecha_inicio, vitalicio, doc_identidad, fecha_fin, area_nt)
+							VALUES ( now(), 'no', v_persona.doc_identidad, null, null);
+						end if;
+					END IF;
+				END IF;
+		end loop;
+
+
+		v_area_nt = concat (v_area_nt, '}');
+		if (v_area_nt<>'{}') then
+			UPDATE public.miembro SET area_nt = v_area_nt::VARCHAR[] WHERE doc_identidad = v_persona.doc_identidad;
+		else 
+			UPDATE public.miembro SET area_nt = null WHERE doc_identidad = v_persona.doc_identidad;
+		end if;
+	end loop;
+
+	update public.miembro set vitalicio= 'si' where id_miembro in(select id_miembro from public.miembro 
+	where extract(days from (now()-fecha_inicio))/365.25>=15 and fecha_fin is null);
+
+	COMMIT;	
+
+	END; $$;
+
+CREATE OR replace procedure actualizar_mp()
+	LANGUAGE PLPGSQL    
+	AS $$
+	DECLARE 
+		v_doc_identidad integer;
+		v_nt_area varchar[];
+		v_nt_area_length int;
+		v_id_categoria int;
+		v_miembro RECORD;
+		query_miembro varchar (100);
+	BEGIN
+		query_miembro='select id_miembro from public.miembro';
+		FOR v_miembro IN EXECUTE query_miembro LOOP
+			----
+			SELECT area_nt INTO v_nt_area FROM public.miembro 
+			WHERE id_miembro = v_miembro.id_miembro;
+
+			----
+			v_nt_area_length := array_length(v_nt_area, 1);
+
+			--
+			if v_nt_area_length is not null then
+				DELETE FROM public.m_p WHERE id_miembro = v_miembro.id_miembro;
+
+				FOR i IN 1..v_nt_area_length
+				LOOP
+
+					SELECT id_categoria INTO v_id_categoria FROM public.categoria WHERE rama = v_nt_area[i];
+
+					INSERT INTO m_p (
+						id_miembro, id_categoria
+					) SELECT v_miembro.id_miembro, id_categoria
+					FROM categoria
+					WHERE id_categoria2 = v_id_categoria;		
+
+				END LOOP;
+			end if;
+		END LOOP;
+		COMMIT;
+	end;$$;
+
+CREATE OR replace procedure asignar_presentadores_gala(v_ano_oscar integer)
+	LANGUAGE PLPGSQL    
+	AS $$
+	DECLARE 
+		v_id_gala integer;
+	BEGIN
+		
+		SELECT ano INTO v_id_gala FROM gala WHERE ano = v_ano_oscar-1;
+
+		INSERT INTO presentador (
+						id_gala, doc_identidad, id_categoria
+					) SELECT v_ano_oscar,
+				PPP.doc_identidad, PPP.id_categoria
+		FROM nominadas 
+		INNER JOIN postuladas_p_pers PPP ON PPP.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+		WHERE nominadas.ano_oscar = v_id_gala AND ganador = 'si';
+
+		COMMIT;
+	end; $$;
+
+create or replace procedure Actualizar_Premio(v_id_categoria integer, v_titulo varchar(70), v_cant_nom integer)
+	language plpgsql    
+	as $$
+	Declare 
+		v_ult_reg integer;
+		v_numero_votos integer;
+	begin
+		
+		WITH list AS
+		(SELECT 
+				UNNEST(hist_premio_nt) AS row_result
+		FROM   public.categoria
+		WHERE  id_categoria= v_id_categoria)
+		select   
+			count(*) into v_ult_reg
+
+		FROM     list;
+		
+		
+		--Para modificar un registro en particular de nuestro  array, este se utilizara para colocar la fecha de fin a 
+		--nuestro registro
+
+		UPDATE public.categoria SET hist_premio_nt[v_ult_reg] = (hist_premio_nt[v_ult_reg].fecha_ini, now(), hist_premio_nt[v_ult_reg].nombre, hist_premio_nt[v_ult_reg].cantidad_nom)::hist_premio
+		WHERE id_categoria = v_id_categoria;
+
+		--insert historicos de los premios
+		UPDATE public.categoria 
+		SET hist_premio_nt = hist_premio_nt || (now(),NULL,v_titulo,v_cant_nom)::hist_premio
+		WHERE id_categoria = v_id_categoria;
+		commit;
+	end; $$;
+
+create or replace procedure postular_pelicula(v_ano_oscar integer,v_id_miembro integer,v_audiovisual integer)
+	language plpgsql    
+	as $$
+	Declare 
+		v_id_ganador integer;
+		v_numero_votos integer;
+		v_cont int;
+		v_fecha_fin date;
+		v_vitalicio varchar(2);
+	begin
+
+	-------verificar permisos de miembro
+
+		v_fecha_fin= null;
+		select vitalicio, fecha_fin into v_vitalicio, v_fecha_fin  from miembro where id_miembro=v_id_miembro;
+		if v_fecha_fin is not null then 
+			RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido caancelada, por ende, no puede participar en la votaciones';	
+		end if;
+		perform from public.audiovisual where id_audiovi=v_audiovisual and extract(year from fecha_estreno_cine)=v_ano_oscar;
+		if not found then
+			RAISE EXCEPTION 'La pelicula que estas intentando ingresar fue estrenada en un anio diferente al de la gala, por lo tanto, no puede postularla para este anio';
+		end if;
+		perform from public.gala where ano=v_ano_oscar;
+		if not found then
+			RAISE EXCEPTION 'No existe ninguna gala vinculada a ese anio';
+		end if;
+		
+		v_cont=0;
+		select count(*) into v_cont from public.postulado_votos 
+		where id_miembro=v_id_miembro and fecha_ano=v_ano_oscar;
+		if v_cont>=2 then 
+			RAISE EXCEPTION 'Ya alcanzo el numero maximo de postulaciones para este anio, siga participando el anio que viene';
+		end if;
+		
+		perform from public.postulado_votos 
+		where id_audiovi=v_audiovisual and id_miembro=v_id_miembro and fecha_ano=v_ano_oscar;
+		if found then
+			RAISE EXCEPTION 'No puede postular dos veces a la misma pelicula';
+		end if;
+		
+		
+	---------- ingresar la postulacion------
+
+		INSERT INTO public.postulado_votos(
+		id_audiovi, id_miembro, fecha_ano)
+		VALUES (v_audiovisual, v_id_miembro, v_ano_oscar);
+
+		commit;
+	end;$$;
+
+create or replace procedure gestion_postulados(v_ano_oscar integer)
+	language plpgsql    
+	as $$
+	Declare 
+		v_id_ganador integer;
+		v_numero_votos integer;
+		v_categoria integer;
+		v_record_categoria RECORD;
+		v_record_categoria2 RECORD;
+		v_record_roles RECORD;
+		v_genero varchar(2);
+	begin
+
+	--------------------Creacion de tablas temporales-------------------
+
+		create temp table tmp_postu(
+			ano_oscar int,
+			id_categoria int,
+			id_rol int,
+			doc_identidad int,
+			id_audiovi int,
+			id_audiovi2 int, 
+			empate varchar(2),
+			num_post_emp int,
+			terminada varchar(2),
+			ronda_emp int,
+			cant_votos int
+		);
+		
+		create temp table tmp_roles(
+			id_audiovi int,
+			nombre varchar(60),
+			id_rol int,
+			doc_identidad int,
+			id_audivisual_pel int
+		);
+		
+		insert into tmp_roles (nombre,id_rol,id_audiovi,doc_identidad)
+		select Distinct rol.nombre, rol_pel_pers.id_rol, rol_pel_pers.id_audiovi, rol_pel_pers.doc_identidad 
+		from postulado_votos 
+		inner join public.rol_pel_pers on rol_pel_pers.id_audiovi=postulado_votos.id_audiovi
+		inner join public.rol on rol_pel_pers.id_rol=rol.id_rol where postulado_votos.fecha_ano = v_ano_oscar;
+		
+		insert into tmp_roles (id_audivisual_pel)
+		select Distinct postulado_votos.id_audiovi 
+		from postulado_votos 
+		where postulado_votos.fecha_ano = v_ano_oscar;
+		
+		----Calculo de Postulaciones
+		
+		--------------------------Caso Audiovisual (Cortometraje, Largometraje, documental)-------------
+		
+					for v_record_roles in 
+					select audiovisual.id_audiovi ,clas_audiovisual, duracion_min
+					from tmp_roles 
+					inner join public.audiovisual on audiovisual.id_audiovi=tmp_roles.id_audivisual_pel
+					where id_audivisual_pel is not null loop
+						v_categoria=0;
+						if v_record_roles.clas_audiovisual='largometraje' then
+							INSERT INTO tmp_postu(
+							ano_oscar, id_categoria, id_rol,
+							doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+							VALUES ( v_ano_oscar,17, null, 
+									null,null, v_record_roles.id_audiovi, 'no', 0, 'no', 0, 0);
+						else
+							if v_record_roles.clas_audiovisual='cortometraje' then
+								INSERT INTO tmp_postu(
+								ano_oscar, id_categoria, id_rol,
+								doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+								VALUES ( v_ano_oscar,25, null, 
+										null,null,  v_record_roles.id_audiovi, 'no', 0, 'no', 0, 0);
+							else
+								if v_record_roles.clas_audiovisual='documental' then
+									
+									if v_record_roles.duracion_min<60 then
+										INSERT INTO tmp_postu(
+										ano_oscar, id_categoria, id_rol,
+										doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+										VALUES ( v_ano_oscar,33, null, 
+												null,null,  v_record_roles.id_audiovi, 'no', 0, 'no', 0, 0);
+										
+									else 
+										INSERT INTO tmp_postu(
+										ano_oscar, id_categoria, id_rol,
+										doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+										VALUES ( v_ano_oscar,34, null, 
+												null,null,  v_record_roles.id_audiovi, 'no', 0, 'no', 0, 0);
+										
+									end if;
+								end if;
+							end if;
+							
+						end if;
+						
+					end loop;
+		
+		for v_record_categoria in 
+		select id_categoria, rama from public.categoria where id_categoria2 is null
+		loop
+			if v_record_categoria.id_categoria=3 then
+				---------------------------Caso Actor------------------
+				
+				for v_record_roles in 
+				select * from tmp_roles 
+				where nombre='actor' or nombre='actor de reparto' 
+				loop
+					/*for v_record_categoria2 in 
+					select id_categoria from public.categoria where id_categoria2=v_record_categoria.id_categoria
+					loop*/
+					
+						if v_record_roles.nombre='actor' then
+							select sexo into v_genero from public.persona where doc_identidad=v_record_roles.doc_identidad;
+							if v_genero='M' then
+								INSERT INTO tmp_postu(
+								ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+								VALUES ( v_ano_oscar, 19, v_record_roles.id_rol,
+										v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+							end if;
+							if v_genero='F' then
+								INSERT INTO tmp_postu(
+								ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+								VALUES ( v_ano_oscar, 20, v_record_roles.id_rol,
+										v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+							end if;
+						end if;
+						if v_record_roles.nombre='actor de reparto' then
+							select sexo into v_genero from public.persona where doc_identidad=v_record_roles.doc_identidad;
+							if v_genero='M' then
+								INSERT INTO tmp_postu(
+								ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+								VALUES ( v_ano_oscar, 29, v_record_roles.id_rol,
+										v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+							end if;
+							if v_genero='F' then
+								INSERT INTO tmp_postu(
+								ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+								VALUES ( v_ano_oscar, 30, v_record_roles.id_rol,
+										v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+							end if;
+						
+						end if;
+					/*end loop;*/
+				end loop;
+				
+				
+			else
+				if v_record_categoria.id_categoria in (1,8,12) then
+					--------------------------Para que no entre cuando hay un audiovisual-------------
+					
+					
+				else
+					----------------------------Caso Por defecto --------------------------------------
+					for v_record_roles in 
+					select * from tmp_roles 
+					where nombre=v_record_categoria.rama 
+					loop
+						for v_record_categoria2 in 
+						select id_categoria from public.categoria where id_categoria2=v_record_categoria.id_categoria
+						loop
+							INSERT INTO tmp_postu(
+							ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+							VALUES ( v_ano_oscar, v_record_categoria2.id_categoria, v_record_roles.id_rol, v_record_roles.doc_identidad,v_record_roles.id_audiovi, null, 'no', 0, 'no', 0, 0);
+						end loop;
+					end loop;
+				end if;
+			end if;
+		end loop;
+		
+		--------------------Insetar en Postulados
+		
+		INSERT INTO public.postuladas_p_pers(
+		ano_oscar, id_categoria, id_rol, doc_identidad, id_audiovi, id_audiovi2, empate, num_post_emp, terminada, ronda_emp, cant_votos)
+		select ano_oscar,id_categoria,id_rol,doc_identidad,id_audiovi,id_audiovi2,empate,num_post_emp, terminada, ronda_emp, cant_votos
+		from tmp_postu;
+		
+		
+		DROP table tmp_postu;
+		DROP table tmp_roles;
+		commit;
+	end; $$;
+
+create or replace procedure validar_actor()
+	language plpgsql    
+	as $$
+	declare
+	v_record RECORD;
+	v_message text;
+	begin
+		v_message='Los actores que carecen de biografia o lugar de nacimiento son los siguientes: ';
+		for v_record in
+			select persona.doc_identidad,a_lugar_nac, a_biografia,primer_nom,primer_ape, segundo_ape 
+			from public.persona
+			inner join public.rol_pel_pers on rol_pel_pers.doc_identidad= persona.doc_identidad 
+			where id_rol=1 and (a_biografia is not null or a_lugar_nac is not null)
+		loop
+			v_message=v_message || v_record.primer_nom || ' ' || v_record.primer_ape || '(' || v_record.doc_identidad || ') ';
+		end loop;
+		if not found then 
+			raise notice 'Todos los actores tienen sus datos correctamente colocados';
+			return;
+		end if;
+		
+		
+		raise notice '%', v_message;
+	end;$$;
+
+create or replace procedure votar_nominados(v_id_nominado integer,v_id_miembro integer)
+	language plpgsql    
+	as $$
+	declare 
+	v_id_categoria integer;
+	v_ano_oscar integer;
+	v_id_postulado integer;
+	begin
+		select id_categoria, id_postuladas_p_pers, ano_oscar into v_id_categoria, v_id_postulado, v_ano_oscar from public.nominadas where id_nominada=v_id_nominado;
+		if found then
+			INSERT INTO public.votos(
+			fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar, id_categoria1, id_postuladas_p_pers1, ano_oscar1)
+			VALUES (now(), 'nominado', v_id_miembro,v_id_nominada, v_id_categoria,v_id_postulado, v_ano_oscar,null, null, null);
+		else
+			raise exception 'El id de nominado ingresado no esta registrado en el sistema';
+		end if;
+	end;$$;
+
+create or replace procedure votar_postulados(v_id_postulado integer,v_id_miembro integer)
+	language plpgsql    
+	as $$
+	declare 
+	v_id_categoria integer;
+	v_ano_oscar integer;
+	begin
+		select id_categoria, ano_oscar into v_id_categoria, v_ano_oscar from public.postuladas_p_pers where id_postuladas_p_pers=v_id_postulado;
+		if found then
+			INSERT INTO public.votos(
+			fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar, id_categoria1, id_postuladas_p_pers1, ano_oscar1)
+			VALUES (now(), 'postulado', v_id_miembro, null, null, null, null, v_id_categoria,v_id_postulado , v_ano_oscar);
+		else
+			raise exception 'El id de postulado ingresado no esta registrado en el sistema';
+		end if;
+	end;$$;
+
+-- FIN PROCEDURES
+
+--INI PRIVILEGIO
+--INI SEGURIDAD
+    REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+
+    -- LISTO
+    -- INI VISITANTE 
+        CREATE ROLE visitante LOGIN PASSWORD '1234';
+        GRANT SELECT ON TABLE audiovisual, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers TO visitante;
+        GRANT EXECUTE ON FUNCTION ficha_actor(BIGINT), ficha_premios_pelicula(INT,INT), ficha_pelicula(INT), ficha_oscar_totales(INT) TO visitante;
+    -- FIN VISITANTE
+
+    -- LISTO
+    -- INI ANALISTA DE REDES
+        CREATE ROLE analista WITH LOGIN PASSWORD '1234';
+        GRANT SELECT ON TABLE audiovisual, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers TO analista;
+        GRANT SELECT, INSERT ON critica TO analista;
+        GRANT EXECUTE ON FUNCTION ficha_actor(BIGINT), ficha_premios_pelicula(INT,INT), ficha_pelicula(INT), ficha_oscar_totales(INT) TO analista;
+    -- FIN ANALISTA DE REDES
+    
+
+    -- INI MIEMBRO
+        CREATE ROLE miembro WITH LOGIN PASSWORD '1234';
+        GRANT SELECT ON TABLE audiovisual, votos, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers, miembro, m_p TO miembro;
+        GRANT INSERT ON TABLE postulado_votos, votos TO miembro;
+        GRANT EXECUTE ON FUNCTION ficha_actor(BIGINT), ficha_premios_pelicula(INT,INT), ficha_pelicula(INT), ficha_oscar_totales(INT) TO miembro;
+        GRANT EXECUTE ON PROCEDURE votar_nominados(INT, INT),  postular_pelicula(INT, INT, INT),votar_postulados(INT,INT) TO miembro;
+        GRANT ALL ON votos_id_voto_seq TO miembro;
+        
+    -- FIN MIEMBRO
+
+    -- INI DIRECTIVO
+        CREATE ROLE directivo WITH LOGIN PASSWORD '1234';
+        GRANT INSERT ON critica TO directivo;
+        GRANT SELECT, INSERT ON TABLE nominadas, miembro, M_P, postuladas_p_pers TO directivo;
+        GRANT SELECT, UPDATE, INSERT ON TABLE audiovisual, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, organizacion TO directivo;
+        GRANT EXECUTE ON FUNCTION  ficha_miembro_area(VARCHAR), ficha_actor(BIGINT), ficha_premios_pelicula(INT,INT), ficha_pelicula(INT), ficha_oscar_totales(INT) TO directivo; 
+		GRANT EXECUTE ON PROCEDURE gestion_postulados(INTEGER),gestion_nominados(INT,INT), actualizar_area_nt_membresia(), actualizar_mp(),asignar_presentadores_gala(INT) TO directivo;
+
+    -- INI DESARROLLADOR
+        CREATE ROLE desarrollador WITH CREATEDB LOGIN PASSWORD '1234';
+    -- FIN DESARROLLADOR
+
+    -- INI DBA
+        CREATE ROLE data_base_administrator WITH SUPERUSER LOGIN PASSWORD '1234';
+
+--FIN PRIVILEGIOS
+
+-- INI INSERTS 
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (1, 'actor', 'Un actor o actriz es una persona que interpreta a un personaje en una actuación');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (2, 'guionista', 'Un guionista es una persona encargada de escribir el guion de una producción cinematográfica');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (3, 'director', 'El director de cine o director cinematográfico (directora, en femenino) o cineasta es la persona que dirige la filmación de una película');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (4, 'productor', 'El productor de cine o productor cinematográfico es, en la industria cinematográfica, el representante legal de una obra cinematográfica');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (5, 'fotografo', 'Un fotógrafo o una fotógrafa es aquella persona cuya actividad artística u ocupación consiste en tomar fotografías mediante el uso de una cámara');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (6, 'tecnico', 'Persona con habilidades variadas en el mundo del cine');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (7, 'ing.sonido', 'Estudio del fenómeno sonoro, en todos los campos de aplicación del mismo');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (8, 'musico', 'Cualquiera que compone, dirige o interpreta música se denomina músico');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (9, 'estilista', 'Un estilista es un profesional que se dedica a asesorar sobre la vestimenta, el peinado y, en general, la imagen y estética');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (10, 'artista', 'Persona que participa profesionalmente en un espectáculo cinematográfico');
+
+INSERT INTO public.rol(id_rol, nombre, descripcion)
+	VALUES (11, 'actor de reparto', 'Un actor secundario, actor de reparto o personaje secundario es un actor que interpreta personajes en obras, películas o series de televisión, acompañando a los actores protagonistas');
+
+-------------- AUDIOVISUALES 1984 --------------
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (1,'Regreso al futuro', 'Back to the Future', 'Marty McFly (Michael J. Fox), un joven estudiante de Hill Valley High, es amigo de un excéntrico científico (Christopher Lloyd), que ha inventado una máquina sorprendente. Su objetivo es únicamente asistir a la primera prueba del invento, una máquina del tiempo con la sorprendente forma de un coche "DeLorean", pero son sorprendidos por unos terroristas árabes y es Marty quien se traslada la año 1955. En esa dimensión, conoce a una joven pareja, Lorraine Baines y George McFly, que, en el futuro, serán sus padres. La situación se complica cuando es su propia madre quien se enamora de él.', '1984-07-03', 116, '{"Universal Pictures"}', 'A', 1984, '{"Comedia","Ciencia Ficción"}','https://es.web.img3.acsta.net/pictures/14/03/11/10/30/351336.jpg','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (2,'Aliens, el regreso', 'Aliens', 'Después de flotar en el espacio durante 57 años, un equipo de rescate del espacio profundo encuentra el transbordador de la teniente Ripley (Sigourney Weaver). Al llegar a LV-426, los marines encuentran solo a un sobreviviente, una niña de nueve años llamada Newt (Carrie Henn). Pero incluso estos marines curtidos en la batalla con todo el armamento más moderno no son rival para los cientos de alienígenas que han invadido la colonia.', '1984-07-18', 137, '{"20th Century Fox"}', 'A', 1984, '{"Terror","Acción"}','https://es.web.img2.acsta.net/c_310_420/medias/nmedia/18/72/74/01/20076545.jpg','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (3,'Nacido para matar', 'Full Metal Jacket', 'Después de flotar en el espacio durante 57 años, un equipo de rescate del espacio profundo encuentra el transbordador de la teniente Ripley (Sigourney Weaver). Al llegar a LV-426, los marines encuentran solo a un sobreviviente, una niña de nueve años llamada Newt (Carrie Henn). Pero incluso estos marines curtidos en la batalla con todo el armamento más moderno no son rival para los cientos de alienígenas que han invadido la colonia.', '1984-06-01', 116, '{"Warner Bros"}', 'C', 1983, '{"Drama","Bélico"}','https://pics.filmaffinity.com/Nacido_para_matar-264101246-large.jpg','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (4,'Caracortada', 'Scarface', 'Después de obtener una tarjeta verde a cambio de asesinar a un funcionario del gobierno cubano, Tony Montana (Al Pacino) reclama el tráfico de drogas en Miami. Asesinando brutalmente a cualquiera que se interponga en su camino, Tony finalmente se convierte en el capo de la droga más grande del estado, controlando casi toda la cocaína que llega a Miami. Pero el aumento de la presión de la policía, las guerras con los cárteles de la droga colombianos y su propia paranoia alimentada por las drogas sirven para alimentar las llamas de su eventual caída.', '1984-12-09', 170, '{"Universal Pictures"}', 'C', 1983, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (7,'Anna & Bella', 'Anna & Bella', 'Anna & Bella es un cortometraje de animación holandés de 1984de los Países Bajos', '1984-11-10', 41 , '{"Cilia van Dijk"}', 'AA', 1984, '{"Familia"}','https://pics.filmaffinity.com/Anna_y_Bella_C-985633249-mmed.jpg','cortometraje', 0, 0, 0, '{"Estados Unidos"}');
+	
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (8,'Rays Male Heterosexual Dance Hall', 'Rays Male Heterosexual Dance Hall', 'Es un cortometraje de comedia estadounidense de 1987dirigido por Bryan Gordon', '1984-11-15', 44 , '{"Chanticleer Films", "Discovery Program"}', 'AA', 1983, '{"Comedia"}','https://pics.filmaffinity.com/Ray_s_Male_Heterosexual_Dance_Hall_S_C-809613519-mmed.jpg','cortometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+
+
+
+	-------------- DOCUMENTALES  1984 --------------
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (11,'Los tiempos de Harvey Milk', 'The Times of Harvey Milk', 'El documental presenta la carrera política de Harvey Milk, que fue el primer concejal de distrito abiertamente gay de San Francisco (California). El documental se centra principalmente en su vida desde su llegada a San Francisco y su elección como concejal del "Distrito 5" de dicha ciudad (en el cual se encuentra "El Castro", famoso barrio gay de la ciudad), su asesinato en el propio Ayuntamiento del que era concejal, hasta el juicio de Dan White y sus repercusiones', '1984-01-01', 90, '{"New Yorker Films
+", "Netflix"}', 'A', 1983, '{"Política"}','https://beersandpolitics.com/wp-content/uploads/2019/01/LostiemposdeHarveyMilk.jpg','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (12,'Arcoiris roto', 'Broken Rainbow', 'La película trata sobre la historia de los nativos americanos Navajo, centrándose en la reubicación impuesta por el gobierno de miles de Black Mesa en Arizona después de la Ley de Asentamiento de Tierras Navajo-Hopi de 1974. Según la película, los navajos fueron reubicados para ayudar a la especulación minera en un proceso que comenzó en 1964.', '1984-11-01', 70, '{"Earthworks Films"}', 'B', 1983, '{"Cultura"}','https://www.lavanguardia.com/peliculas-series/images/movie/poster/1985/5/w1280/jP4IVY3cR4g9cIC49cZlnD8FKMc.jpg','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (13,'Women – for America, for the World', 'Women – for America, for the World', 'Es un cortometraje documental estadounidense de 1986 dirigido por Vivienne Verdon-Roe sobre mujeres activistas antinucleares', '1984-10-11', 40, '{"TBS"}', 'B', 1983, '{"Cultura"}','https://sdi4.chrislands.com/sdi/978/07/85/8/9780785824909.jpg','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (14,'El festín de Babette', 'Babettes gæstebud', 'A diferencia del cuento de Blixen en el que el ágape2​ es una mera pincelada en el argumento, la película dedica un tercio de su metraje a uno de los menús cinematográficos más suculentos de la historia. Para Babette, nada es imposible, y se hará traer vinos, champanes, carnes, pescados, caviar, quesos, frutas de su añorada Francia. En las manos de Babette, esos productos se transformarán en un placer para los sentidos.', '1984-08-10', 40, '{"Nordisk Film"}', 'A', 1983, '{"Cultura"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbkxS2eS-BafH51uSWC6BAYSXS1W1oeTG300Aa_64IN_bnMAhi','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+
+
+
+	-- AUDIOVISUALES DE 1985
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (5,'Duro de matar', 'Die Hard', 'Die Hard sigue al oficial fuera de servicio del Departamento de Policía de Nueva York John McClane (Bruce Willis) mientras se enfrenta a un grupo de criminales altamente organizados liderados por Hans Gruber (Alan Rickman), que realizan un atraco en un rascacielos de Los Ángeles bajo el pretexto de un ataque terrorista utilizando a rehenes, incluyendo a la esposa de McClane, Holly Gennaro (Bonnie Bedelia), para mantener a raya a la policía', '1988-07-20', 131, '{"20th Century Fox"}', 'C', 1987, '{"Accion"}','https://static.wikia.nocookie.net/doblaje/images/f/f2/Durodematar.jpg/revision/latest?cb=20210525004313&path-prefix=es','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (6,'La sociedad de los poetas muertos', 'Dead Poets Society', 'Narra el encuentro de un profesor de literatura con un grupo de alumnos durante 1959 en la Welton Academy (Vermont), institución señera y prestigiosa.', '1989-05-20', 128 , '{"Buena Vista Pictures Distribution"}', 'A', 1987, '{"Drama"}','https://drive.google.com/drive/folders/','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+-------------- CORTOMETRAJES --------------
+	
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (9,'Los nombramientos de Dennis Jennings', 'The Appointments of Dennis Jennings', 'The Appointments of Dennis Jennings es un cortometraje de comedia estadounidense de 1988, protagonizado, coescrito y coproducido por Steven Wright', '1988-09-07', 41 , '{"HBO"}', 'A', 1987, '{"Comedia"}','https://pics.filmaffinity.com/The_Appointments_of_Dennis_Jennings-313589620-msmall.jpg','cortometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (10,'Work Experience', 'Work Experience', 'Is a 1989 British short comedy film directed by James Hendrie and starring Lenny Henry and Kathy Burke', '1989-09-07', 51 , '{"Channel Four Films"}', 'A', 1988, '{"Comedia"}','https://pics.filmaffinity.com/work_experience_s-370263560-msmall.jpg','cortometraje', 0, 0, 0, '{"Estados Unidos"}');
+	
+
+
+
+-------------------- PERSONAS --------------------
+-- Relacionadas al audiovisual "Regreso al futuro"
+
+--Director y Guionista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (12545, 'Robert', 'Zemeckis', 'Lee', 'M', '1945-12-12', '1972-05-05', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (3, 1, 12545, NULL);
+	
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (2, 1, 12545, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (2, 2, 12545, NULL);
+
+--Guionista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (7886, 'Mchael', 'Robert', 'Gale', 'M', '1930-10-07', '1965-01-24', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (2, 1, 7886, NULL);
+
+--Actores principales
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (7826, 'Michael', 'Fox', 'Andrew', 'M', '1970-12-12', '1977-02-04', 'Julio', 'Canada', 'Michael Andrew Fox OC (born June 9, 1961), known professionally as Michael J. Fox, is a Canadian-American retired actor. Beginning his career in the 1970s, he first rose to prominence for portraying Alex P. Keaton on the NBC sitcom Family Ties (1982–1989). Fox is most famous for his role as protagonist Marty McFly in the Back to the Future film trilogy (1985–1990), which became a critical and commercial success. He went on to headline several films throughout the 1980s and 1990s, including Teen Wolf (1985), The Secret of My Success (1987), Casualties of War (1989), Doc Hollywood (1991), and The Frighteners (1996). Fox returned to television on the ABC sitcom Spin City, in which he portrayed the lead role of Mike Flaherty from 1996 to 2000', NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (1, 1, 7826, NULL);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (9525, 'Christopher', 'Allen', 'Lloyd', 'M', '1925-04-04', '1938-10-22', NULL, 'Stamford, Connecticut, U.S.', 'Christopher Allen Lloyd (born October 22, 1938) is an American actor. He has appeared in many theater productions, films, and on television since the 1960s. He is known for portraying Dr. Emmett "Doc" Brown in the Back to the Future trilogy (1985–1990); and Jim Ignatowski in the comedy series Taxi (1978–1983), for which he won two Emmy Awards', NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (1, 1, 9525, NULL);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (3238, 'Walker', 'Steanyng', 'Geeritz', 'M', '1951-03-22', '1973-05-24', 'Gabriello', 'Illinois', 'Berklee College of Music. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (1, 1, 3238);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4315, 'Sidnee', 'Plaide', 'Kohring', 'M', '1932-06-01', '1966-04-12', null, 'UTAH JAZZ', 'Berklee College of Music. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (1, 1, 4315);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8623, 'Theresa', 'Wilsher', 'Melross', 'F', '1925-08-21', '1981-12-26', null, 'Illinois', 'Berklee College of Music. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (1, 1, 8623);
+
+	
+--Banda sonora
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (1525, 'Alan', 'Silvestri', 'Barrios', 'M', '1934-07-05', '1950-03-26', 'Anthony', NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (7, 1, 1525, NULL);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (7025, 'John', 'Victor', 'Colla', 'M', '1936-02-01', '1952-10-20', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (7, 1, 7025, NULL);
+
+--Asistente
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (9522, 'Pamela', 'Eilerson', 'Merbdel', 'M', '1922-08-07', '1954-10-20', 'Luis', NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (6, 1, 9522, NULL);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7135, 'Quincy', 'Maudling', 'Shiel', 'M', '1920-02-14', '1970-05-24', 'Field', 'New York', 'Technological Education Institute of Thessaloniki. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7547, 'Reynard', 'Beldon', 'Bacchus', 'M', '1931-05-17', '1977-01-16', null, 'Nevada', 'Ecole Supérieure de Chimie Physique Electronique de Lyon. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 1, 7547);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 1, 7135);	
+
+
+-- DIR ARTE
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4011, 'Brnaby', 'Boij', 'Pickavance', 'M', '1920-01-27', '1980-04-14', 'Constantino', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 1, 4011);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8591, 'Erich', 'Drackford', 'Heskey', 'M', '1926-04-20', '1962-01-09', 'Harv', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 1, 8591);
+
+
+--- montaje
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4872, 'Cob', 'Cunnane', 'Kimpton', 'M', '1937-11-19', '1963-04-17', 'Wernher', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (6, 1, 4872);
+
+--- ing sonido
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4804, 'Marijo', 'Delhanty', 'Horsefield', 'F', '1944-06-16', '1962-12-17', 'Melba', 'Michigan', 'Willamette University. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (7, 1, 4804);
+
+--estilista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (6207, 'Kyle', 'Bottinelli', 'Hulles', 'M', '1932-07-24', '1981-05-12', 'Nolly', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (9, 1, 6207);
+
+--- MAS REPARTO
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5336, 'Inger', 'Skae', 'Meysham', 'F', '1931-05-13', '1980-06-24', null, 'California', 'Dr. YS Parmar University of Horticulture and Forestry. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 1, 5336);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (3396, 'Suzi', 'Cuell', 'Suart', 'F', '1947-06-28', '1970-10-15', 'Galina', 'Missouri', 'Universidad de Quintana Roo. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 1, 3396);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (6472, 'Ertha', 'Readshall', 'Boorne', 'F', '1934-06-11', '1961-10-03', 'Lise', 'Florida', 'Samar State University. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 1, 6472);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8837, 'Carmine', 'Prest', 'Tschirschky', 'F', '1923-10-05', '1970-09-15', 'Katey', 'Virginia', 'Université Mouloud Mammeri de Tizi Ouzou. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 1, 8837);
+
+--------------------------------------------------
+-- Relacionadas al audiovisual "Aliens, el regreso"
+
+--Director y Guionista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (1665, 'James', 'Cameron', 'Francis', 'M', '1927-06-12', '1954-08-16', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (2, 2, 1665, NULL);
+	
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (3, 2, 1665, NULL);
+	
+--guionista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (4444, 'Walter', 'Hill', 'Hill', 'M', '1922-05-05', '1942-07-10', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (2, 2, 4444, NULL);
+
+--Actores principales
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (1122, 'Susan', 'Weaver', 'Alexandra', 'F', '1926-05-11', '1949-10-04', NULL, 'Nueva York, U.S.', 'Hija del presidente de NBC Sylvester Weaver y la actriz Elizabeth Weaver, Sigourney comienza a recibir clases de interpretación durante sus estudios de secundaria. Tras asistir a la Yale School of Drama de Nueva York, realiza sus primeros trabajos como actriz en televisión y en teatro aunque no es hasta 1977 cuando debuta en la gran pantalla bajo las órdenes del afamado director Woody Allen en el filme ‘Annie Hall’', NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (1, 2, 1122, NULL);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (2211, 'Michael', 'Biehn', 'Connell', 'M', '1920-10-09', '1956-07-31', NULL, 'Anniston, Alabama, U.S.', 'Michael Connell Biehn is an American actor, primarily known for his roles in science fiction films directed by James Cameron; as Sgt. Kyle Reese in The Terminator (1984), Cpl. Dwayne Hicks in Aliens (1986), and Lt. Coffey in The Abyss (1989). His other films include The Fan (1981)', NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (1, 2, 2211, NULL);
+--Banda sonora
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (8888, 'James', 'Roy', 'Horner', 'M', '1954-10-26', '1978-08-14', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (7, 2, 8888, 'Verano Azul');
+--Vestuario
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (9999, 'Emma', 'Porteous', 'Porteous', 'F', '1970-11-15', '1986-02-12', 'Emmits', NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (9, 2, 9999, NULL);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5294, 'Trstram', 'Imloch', 'Yakubov', 'M', '1928-04-09', '1965-05-13', 'Alfons', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (4, 2, 5294);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4716, 'Keriann', 'Berridge', 'Edeson', 'F', '1923-08-10', '1982-09-17', null, 'New York', 'Taipei Physical Education College. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (5, 2, 4716);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 2, 4716);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4060, 'Zorana', 'Cawker', 'Vannuchi', 'F', '1937-08-06', '1966-06-04', 'Selestina', 'California', 'Universitas Islam Sultan Agung. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 2, 4060);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (6, 2, 4060);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (10368, 'Filbert', 'Rampley', 'Verrick', 'M', '1929-03-06', '1966-11-01', null, 'South Carolina', null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (8, 2, 10368, 'La opera de los 3 mosqueteros parte 2');
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5310, 'Janet', 'Hayes', 'Clarae', 'F', '1959-11-20', '1966-08-03', 'Tabatha', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 2, 5310);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5363, 'Neilla', 'Blazejewski', 'Pipkin', 'F', '1951-02-18', '1975-04-03', 'Merrielle', 'New York', 'Niigata University of International and Information Studies. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7846, 'Kylen', 'Chadwyck', 'Belch', 'F', '1936-04-02', '1963-05-11', 'Shela', 'Indiana', 'Qingdao University of Science and Technology. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 2, 5363);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 2, 7846);
+
+--------------------------------------------------
+-- Relacionadas al audiovisual "Nacido para matar"
+
+--Director y Guionista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (2665, 'Robert', 'Wise', 'Earl ', 'M', '1915-11-03', '1934-05-22', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (2, 3, 2665, NULL);
+	
+	INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (3, 3, 2665, NULL);
+	
+--guionista
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (4044, 'Eve', 'Greene', 'Dopmos', 'F', '1890-01-01', '1906-04-21', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (2, 3, 4044, NULL);
+
+--Actores principales
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (3333, 'Lawrence', 'James', 'Tierney', 'M', '1917-09-17', '1943-11-04', NULL, 'Brooklyn, New York City, U.S.', 'Lawrence James Tierney (15 de marzo de 1919 - 26 de febrero de 2002) fue un actor de cine y televisión estadounidense mejor conocido por sus numerosas representaciones cinematográficas de mafiosos y tipos duros en una carrera que abarcó más de 50 años. Sus papeles reflejaron sus frecuentes roces con la ley. [1] En 2005, el crítico de cine David Kehr de The New York Times describió al "descomunal Tierney" como "no tanto un actor como una fuerza aterradora de la naturaleza"', NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (1, 3, 3333, NULL);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (7211, 'Claire', 'Trevor', 'Wemlinger', 'F', '1911-06-06', '1929-07-31', 'Felans', 'New York City, U.S.', 'actriz estadounidense. Apareció en 65 largometrajes entre 1933 y 1982, [2] ganando el Premio de la Academia a la Mejor Actriz de Reparto por su papel en Key Largo (1948), y recibió nominaciones por sus papeles en The High and the Mighty (1954) y Dead End . (1937). Trevor recibió la mejor facturación, por delante de John Wayne , por Stagecoach (1939)', NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (1, 3, 7211, NULL);
+
+--Banda sonora
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (2525, 'Elisha', 'Vanslyck', 'Cook', 'M', '1909-04-04', '1926-08-14', 'Jr.', NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (8, 1, 2525, 'La cancion mas linda del planeta');
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (8, 3, 2525, 'Bebesita');
+--Vestuario
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia, fecha_defuncion)
+	VALUES (2225, 'Azzedine', 'Alaïa', 'Baserj', 'M', '1968-03-24', '1980-02-12', NULL, NULL, NULL, NULL);
+
+INSERT INTO public.rol_pel_pers(
+	id_rol, id_audiovi, doc_identidad, cancion_titulo)
+	VALUES (9, 3, 2225, NULL);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7501, 'Evelin', 'Hubbuck', 'Enos', 'M', '1955-09-28', '1978-09-02', 'Randall', null, null);
+
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (6, 3, 7501);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (3903, 'Korey', 'MacCartan', 'Pearne', 'M', '1952-03-29', '1974-03-30', null, 'Virginia', 'Azerbaijan National Conservatorie. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+	INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 3, 3903);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (6941, 'Paul', 'Windress', 'Molineaux', 'M', '1939-08-25', '1974-09-23', 'Harmon', 'California', 'Glenville State College. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+	INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 3, 6941);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8955, 'Hazel', 'Camplin', 'Mellows', 'M', '1958-05-31', '1983-05-14', 'Laurent', 'Missouri', 'University of Brescia. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 3, 8955);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7373, 'Welch', 'Bortoluzzi', 'Jillings', 'M', '1932-06-12', '1971-10-24', 'Con', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (4, 3, 7373);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (6278, 'Bernadene', 'Gange', 'Tolotti', 'F', '1954-07-20', '1975-05-14', 'Layne', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (7, 3, 6278);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4037, 'Janifer', 'Kenton', 'Sheryn', 'F', '1958-09-27', '1964-03-07', 'Christiane', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (5, 3, 4037);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (89898, 'Welch', 'Bortoluzzi', 'Jillings', 'M', '1932-06-12', '1971-10-24', 'Con', null, null);
+
+	INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (8, 3, 89898);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (663324, 'Bernadene', 'Gange', 'Tolotti', 'F', '1954-07-20', '1975-05-14', 'Layne', null, null);
+
+	INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 3, 663324);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5782, 'Nariko', 'Kingzeth', 'Mulroy', 'F', '1956-02-01', '1971-12-06', 'Karyl', 'Connecticut', 'National Law School of India University. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 3, 5782);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (2747, 'Abigale', 'Perdue', 'Warde', 'F', '1949-12-27', '1977-05-20', null, 'Ohio', 'University of Chicago. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 3, 2747);
+
+--- SCARFACE
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (391113, 'Alfredo', 'Pacino', 'James', 'M', '1952-03-29', '1974-03-30', null, 'Virginia', 'Al Pacino, es un actor de cine, teatro y televisión estadounidense, habiéndose desempeñado ocasionalmente como guionista, director y productor. Su carrera abarca siete décadas, desde sus inicios en la escena teatral neoyorquina hasta su éxito en el cine, obteniendo numerosos premios y honores');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (1, 4, 391113);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (2699, 'Daisey', 'Upshall', 'Kynder', 'F', '1957-07-18', '1978-04-07', 'Perl', 'New York', 'Vilnius Academy of Arts. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (1, 4, 2699);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (2667, 'Ginger', 'McGonnell', 'Craigheid', 'F', '1938-04-07', '1979-08-05', 'Evangelina', 'Massachusetts', 'Hafencity Universität Hamburg. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (1, 4, 2667);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5321, 'Carce', 'Clausen', 'McLachlan', 'M', '1937-02-26', '1974-01-02', 'Claudio', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (2, 4, 5321);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8818, 'Billy', 'Kahane', 'Skough', 'F', '1945-12-02', '1983-02-21', 'Sephira', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (8, 4, 8818, 'El caballo blanco');
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (10893, 'Ainsley', 'Calabry', 'Siman', 'F', '1929-05-17', '1971-07-05', 'Marin', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (3, 4, 10893, null);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7735, 'Priscella', 'Ayton', 'Simonetti', 'F', '1931-05-28', '1964-04-08', null, null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (9, 4, 7735);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5165, 'Carleton', 'Karpfen', 'Gentry', 'M', '1920-07-24', '1978-09-03', null, 'Iowa', 'Royal College of Music, University of London. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+	INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 4, 5165);
+
+
+	INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7317, 'Bruce', 'Jenkins', 'Gatteridge', 'M', '1920-11-16', '1982-11-28', null, 'California', 'Pennsylvania State University at Harrisburg - The Capital College. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 4, 7317);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5195, 'Avery', 'Kermott', 'Margetson', 'M', '1937-10-24', '1979-10-31', 'Carr', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (4, 4, 5195);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8890, 'Alano', 'Edgeler', 'Presshaugh', 'M', '1928-01-03', '1976-10-08', null, 'Texas', 'Central Philippine University. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 4, 8890);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8989, 'Tedi', 'McKendry', 'Chalk', 'F', '1955-07-10', '1970-10-16', 'Adoree', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (7, 4, 8989);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (6309, 'Say', 'MacGaughie', 'Stillwell', 'M', '1929-05-26', '1970-04-17', 'Cletus', null, null);
+
+	INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 4, 6309);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8059, 'Caren', 'Levy', 'Christofor', 'F', '1925-11-07', '1978-07-28', null, 'California', 'University of Great Falls. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 4, 8059);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4414, 'Kristy', 'Fish', 'De Matteis', 'F', '1929-03-29', '1973-10-29', 'Helsa', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (6, 4, 4414, null);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4126, 'Manfred', 'Churchlow', 'Kydd', 'M', '1934-01-17', '1967-03-06', 'Waiter', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (5, 4, 4126, null);
+
+------ ANNA & BELLA
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (10220, 'Keven', 'Rummer', 'Firman', 'M', '1953-12-14', '1980-06-07', 'Ely', 'Indiana', 'National University of Samoa. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (1, 7, 10220);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (9975, 'Ernesta', 'Crichley', 'Danilenko', 'F', '1950-10-23', '1979-03-27', null, 'Indiana', 'Dar Al-Uloom Colleges. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (1, 7, 9975);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (10191, 'Tully', 'Give', 'Mac Geaney', 'M', '1952-12-21', '1964-08-06', 'Cale', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (7, 7, 10191);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (9733, 'Mata', 'Managh', 'Clawson', 'M', '1940-07-12', '1968-09-11', 'Sergeant', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (4, 7, 9733);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4582, 'Teddi', 'Gaitone', 'Leyland', 'F', '1923-02-27', '1983-05-18', 'Mignonne', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (3, 7, 4582);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5976, 'Dedra', 'Wall', 'Duligall', 'F', '1945-05-06', '1977-03-30', null, null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (5, 7, 5976);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (10786, 'Artemus', 'Pedrol', 'Monaghan', 'M', '1957-12-29', '1982-12-03', 'Ezri', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (8, 7, 10786, 'Mi niña bonita');
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (3587, 'Bron', 'Tripet', 'Arpin', 'M', '1921-07-18', '1982-05-16', 'Powell', 'California', 'Brandenburgische Technische Universität Cottbus. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 7, 3587);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8125, 'Forrest', 'Pilger', 'Avramovsky', 'M', '1927-03-26', '1979-10-02', 'Porter', 'Tennessee', 'Kent State University - Trumbull. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 7, 8125);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4461, 'Mada', 'Iddiens', 'Lowle', 'F', '1959-08-19', '1969-03-25', 'Ami', 'Pennsylvania', 'Matej Bel University in Banská Bystrica. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 7, 4461);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4725, 'Sonni', 'Havill', 'Shatford', 'F', '1937-10-30', '1976-12-27', 'Dre', 'Virginia', 'Technological University (Dawei). Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 7, 4725);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5923, 'Madlin', 'Boerder', 'Puttergill', 'F', '1922-12-21', '1982-02-26', 'Novelia', 'Alaska', 'National Academy of Fine Arts. Su carrera actoral ha sido una de las más importantes en la historia de Hollywood y Wollywood. Una amplia gama de audiovisuales cuentan con sus excelentes actuaciones');
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 7, 5923);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (2638, 'Clarey', 'Dartan', 'Mardlin', 'F', '1925-02-25', '1980-05-12', 'Winne', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (2, 7, 2638);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (10921, 'Torrance', 'Danielsson', 'Randalston', 'M', '1945-06-01', '1977-03-20', 'Ric', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 7, 10921);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8078, 'Lynnelle', 'Zold', 'Benettini', 'F', '1954-03-07', '1978-02-26', 'Sonja', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (9, 7, 8078);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (7911, 'Harrie', 'Tudge', 'Orcas', 'F', '1920-12-30', '1966-02-17', null, null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (6, 7, 7911, null);
+
+----- corto 8
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5192, 'Zorina', 'Faithfull', 'Mansour', 'F', '1952-04-26', '1977-10-26', 'Genia', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (2, 8, 5192);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (6522, 'Lesya', 'Petrichat', 'Mortel', 'F', '1928-04-22', '1962-03-26', 'Marci', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (3, 8, 6522);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (989898, 'Cornelle', 'Winny', 'Granger', 'F', '1936-08-10', '1967-08-17', 'Meriel', null, null);
+
+	INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (4, 8, 989898);
+
+-- documental 11
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (9442, 'Brodie', 'Kitchinham', 'Skyrm', 'M', '1939-04-08', '1962-02-25', null, null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (2, 11, 9442);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (8713, 'Lorant', 'Oager', 'Camili', 'M', '1957-08-04', '1975-11-19', 'Yankee', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (3, 11, 8713);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (5780, 'Jae', 'Ransley', 'Scolding', 'M', '1932-01-08', '1969-03-15', 'Mick', null, null);
+
+INSERT INTO public.rol_pel_pers(
+    id_rol, doc_identidad, id_audiovi)
+    VALUES (4, 5780, 11);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (4482, 'Giselle', 'Drinkall', 'Wildman', 'F', '1954-03-13', '1964-05-11', 'Letizia', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (7, 11, 4482);
+
+-- Documental 12
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (10833, 'Melony', 'Ricciardelli', 'Rhydderch', 'F', '1944-07-22', '1964-09-16', 'Crystie', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (2, 12, 10833);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (6537, 'Nata', 'McQuillen', 'Venney', 'F', '1922-07-11', '1970-05-04', 'Melony', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (3, 12, 6537);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
+	VALUES (11020, 'Yvon', 'Hartegan', 'Roelofs', 'M', '1933-08-20', '1964-12-31', 'Burty', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (4, 12, 11020);
+
+--13 documental
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (9271, 'Ab', 'German', 'Capitano', 'M', '1954-12-11', '1977-09-20', 'Randolf');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (8, 13, 9271, 'Bob marley this is love');
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (6842, 'Trisha', 'Loraine', 'Oag', 'F', '1946-05-31', '1973-07-29', 'Michaella');
+
+INSERT INTO public.rol_pel_pers(id_rol, doc_identidad, id_audiovi) VALUES (2, 6842, 13);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (6676, 'Maury', 'Gallafant', 'Ianelli', 'M', '1942-09-14', '1961-03-22', null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (4, 13, 6676);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (11004, 'Cordi', 'Soal', 'Mantrip', 'F', '1929-01-16', '1972-07-03', 'Tybi');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (6, 13, 11004);
+
+--14 documental
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (7193, 'Ivar', 'Baumert', 'Kynge', 'M', '1945-11-21', '1972-06-30', 'Addy');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (2, 14, 7193);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (6250, 'Nico', 'Mengue', 'Slessar', 'M', '1954-06-29', '1976-10-16', 'Eric');
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (4, 13, 6250);
+
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (8320, 'Frazier', 'Hulatt', 'Lowless', 'M', '1921-03-16', '1975-06-12', 'Neil');
+
+INSERT INTO public.rol_pel_pers(
+    id_rol, doc_identidad, id_audiovi)
+    VALUES (3, 8320, 14);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (3167, 'Birdie', 'Petrushkevich', 'Van de Velde', 'F', '1932-03-27', '1968-03-14', null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (6, 14, 3167);
+
+INSERT INTO public.persona(
+	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom) 
+	VALUES (202020, 'Jack', 'Lemmon', 'Garriock', 'M', '1950-05-06', '1972-10-01', 'Josees');
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (3511, 'Kassey', 'Kennelly', 'Crossman', 'F', '1954-04-19', '1975-04-12', null, null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (5261, 'Rori', 'Jepensen', 'Sawyer', 'F', '1933-06-18', '1967-06-25', null, null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (4635, 'Hilton', 'Griffey', 'Pursglove', 'M', '1942-04-27', '1981-08-31', null, null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (10955, 'Erl', 'Saddleton', 'Scedall', 'M', '1927-02-24', '1972-11-06', 'Dallis', null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (9822, 'Willamina', 'Norcliff', 'McKinless', 'F', '1931-11-09', '1964-01-21', 'Zaria', null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (9594, 'Ermin', 'Leveritt', 'Aleksankin', 'M', '1925-01-28', '1979-03-22', 'Duncan', null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (5185, 'Analise', 'De Vaux', 'Crufts', 'F', '1928-05-05', '1969-02-12', 'Cathleen', null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (3170, 'Sarajane', 'Durdle', 'Presland', 'F', '1923-06-03', '1967-02-01', null, null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (5853, 'Jethro', 'McCullouch', 'Gemmell', 'M', '1933-04-20', '1963-02-07', 'Eward', null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (5642, 'Paquito', 'Bampfield', 'Bohling', 'M', '1930-01-11', '1971-04-23', null, null, null);
+
+INSERT INTO public.persona(
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (4082, 'Harold', 'Bemwell', 'Brine', 'M', '1954-12-12', '1982-06-14', null, null, null);
+
+INSERT INTO public.gala(
+    ano, fecha, lugar, numero_edicion, doc_identidad, descripcion)
+    VALUES (1985, '1985-04-20', 'Dorothy Chandler Pavilion de Los Ángeles', 57, 202020, 'Los 57º Premios de la Academia se entregaron el 25 de marzo de 1985 en el Dorothy Chandler Pavilion de Los Ángeles. Jack Lemmon presidió las ceremonias');
+
+INSERT INTO public.gala(
+    ano, fecha, lugar, numero_edicion, doc_identidad, descripcion)
+    VALUES (1986, '1986-04-20', 'MGM', 51, 3167, 'Vendrán a cantar Nacho y Chino el tema Mi niña fea');
+
+INSERT INTO public.gala(
+	ano, fecha, lugar, numero_edicion, doc_identidad, descripcion)
+	VALUES (1987, '1987-04-20', 'Traki del recreo', 52, 3167, 'Viene a tocar coldplay');
+-------------- CATEGORIAS --------------
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (1, 'Largometrajes', '1', 'director', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (2, 'Dirección', '1', 'director', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (3, 'Actuación', '1', 'actor', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (4, 'Escritura', '1', 'guionista', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (5, 'Fotografía', '1', 'fotografo', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (6, 'Dirección de arte', '1', 'artista', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (7, 'Sonido', '1', 'ing.sonido', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (8, 'Cortometrajes', '1', 'director', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (9, 'Música', '1', 'musico', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (10, 'Edición', '1', 'tecnico', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (11, 'Efectos visuales', '1', 'tecnico', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (12, 'Documentales', '1', 'director', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (13, 'Vestuario', '1', 'estilista', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (14, 'Películas extranjeras', '1', 'director', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (15, 'Sonido', '1', 'director', NULL, NULL);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (16, 'Maquillaje', '1', 'artista', NULL, NULL);
+
+
+-------------- PREMIOS --------------
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (17, 'Mejor película', '2', NULL, 1, array[
+        ('1928-01-01', '1931-01-01','Producción Sobresaliente', 5)::hist_premio,
+        ('1932-01-01', '1932-12-31','Película mas Sobresaliente', 8)::hist_premio,
+        ('1933-01-01', '1943-12-31','Mejor película', 5)::hist_premio,
+        ('1944-01-01', NULL,'Mejor película', 10)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (18, 'Mejor director', '2', NULL, 2, array[
+        ('1928-01-01', '1931-01-01','Director sobresaliente', 5)::hist_premio,
+        ('1931-01-01', NULL,'Mejor director', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (19, 'Mejor actor', '2', NULL, 3, array[
+        ('1928-01-01', NULL,'Mejor actor', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (20, 'Mejor actriz', '2', NULL, 3, array[
+        ('1928-01-01', NULL,'Mejor actriz', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (21, 'Mejor guión adaptado', '2', NULL, 4, array[
+        ('1928-01-01', NULL,'Mejor guión adaptado', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (22, 'Mejor fotografía', '2', NULL, 5, array[
+        ('1928-01-01', NULL,'Mejor fotografía', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (23, 'Mejor dirección de arte ', '2', NULL, 6, array[
+        ('1928-01-01', NULL,'Mejor dirección de arte ', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (24, 'Mejor sonido', '2', NULL, 7, array[
+        ('1930-01-01', NULL,'Mejor sonido', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (25, 'Mejor cortometraje de ficción', '2', NULL, 8, array[
+        ('1931-01-01', NULL,'Mejor cortometraje de ficción', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (26, 'Mejor banda sonora', '2', NULL, 9, array[
+        ('1934-01-01', NULL,'Mejor banda sonora', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (27, 'Mejor canción original', '2', NULL, 9, array[
+        ('1934-01-01', NULL,'Mejor canción original', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (28, 'Mejor montaje', '2', NULL, 10, array[
+        ('1935-01-01', NULL,'Mejor montaje', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (29, 'Mejor actor de reparto', '2', NULL, 3, array[
+        ('1936-01-01', NULL,'Mejor actor de reparto', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (30, 'Mejor actriz de reparto', '2', NULL, 3, array[
+        ('1936-01-01', NULL,'Mejor actriz de reparto', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (31, 'Mejores efectos visuales', '2', NULL, 11, array[
+        ('1939-01-01', NULL,'Mejores efectos visuales', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (32, 'Mejor guión original', '2', NULL, 4, array[
+        ('1940-01-01', NULL,'Mejor guión original', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (33, 'Mejor documental corto', '2', NULL, 12, array[
+        ('1941-01-01', NULL,'Mejor documental corto', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (34, 'Mejor documental largo', '2', NULL, 12, array[
+        ('1943-01-01', NULL,'Mejor documental largo', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (36, 'Mejor diseño de vestuario', '2', NULL, 13, array[
+        ('1948-01-01', NULL,'Mejor diseño de vestuario', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (37, 'Mejor película de habla no inglesa', '2', NULL, 14, array[
+        ('1956-01-01', NULL,'Mejor película de habla no inglesa', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (38, 'Mejor edición de sonido', '2', NULL, 15, array[
+        ('1963-01-01', NULL,'Mejor edición de sonido', 5)::hist_premio
+    ]);
+
+INSERT INTO public.categoria(id_categoria, nombre, nivel, rama, id_categoria2, hist_premio_nt)
+	VALUES (39, 'Mejor maquillaje', '2', NULL, 16, array[
+        ('1981-01-01', NULL,'Mejor maquillaje', 5)::hist_premio
+    ]);
+
+--('postulacion', 'nominados', 'ganadores', 'gala')
+
+------------- AÑO 1985 -------------
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1985, 'nominados', 'Los nominados no fueron los mejores, los actores y productores hicieron un complot para dejar fuera mi pelicula', 'si');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1985, 'nominados', 'Estoy decepcionado de los nominados', 'si');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1985, 'gala', 'la gala fue un fiasco, no debieron invitar a Jackie chan', 'si');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1985, 'gala', 'El público se sintió agradecido con los premios otorgados, Dios bendiga a América', 'no');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1985, 'postulados', 'este año hubo una gran competitividad en todos los audiovisuales. Amo el cine', 'no');
+
+------------- AÑO 1986 -------------
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1986, 'nominados', 'Estoy feliz de poder disfrutar estos premios con mi familia. Los nominados han sido los mejores en décadas. Excelente', 'no');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1986, 'gala', 'Gracias a Dios que no invitaron a Jackie Chan, este año le doy 100 puntos a la gala', 'no');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1986, 'ganadores', 'Nada que reprocharle a los ganadores. Simplemente fueron los mejores', 'no');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1986, 'postulados', 'Dejaron por fuera la película de los 7 enanitos. Era era la mejor de este año. Muy mal', 'si');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1986, 'postulados', 'No postularon a la película de mi compadre. Que mal análisis', 'si');
+
+
+------------- AÑO 1987 -------------
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1987, 'nominados', 'Que viva el cine. Cada vezs más orgulloso de ser cineasta. Excelentes nominaciones', 'no');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1987, 'gala', 'Creo que esta será la mejor gala por siempre', 'no');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1987, 'ganadores', 'El premio a la mejor película no fue correcta. ¡Estafa!', 'si');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1987, 'postulados', 'Muy mal, esos postulados no eran correctos. Solo por hacer ganar a la película de la casa', 'no');
+
+INSERT INTO public.critica(
+	ano, tipo, textocritica, negativa)
+	VALUES (1987, 'postulados', 'No veo ningun inconveniente. Vamos bien', 'no');
+
+-------------- ORGANIZACIONES --------------
+
+INSERT INTO public.organizacion(
+	id_organizacion, nombre, mision, donacion_nt)
+	VALUES ( 1,'African Film Festival', 'African Film Festival, Inc. es una organización cultural sin ánimo de lucro estadounidense que presenta un festival de cine anual y programas comunitarios durante todo el año', array[('1985', 35, 1257.12)::donacion]);
+
+INSERT INTO public.organizacion(
+	id_organizacion, nombre, mision, donacion_nt)
+	VALUES ( 2,'The Film Foundation', 'The Film Foundation es una organización estadounidense sin ánimo de lucro dedicada a la conservación de películas y a la exhibición de cine clásico y restaurado. Fue fundada por el director Martin Scorsese y otros destacados cineastas', array[('1985', 10, 157.12)::donacion, ('1987', 12, 1505.10)::donacion]);
+
+INSERT INTO public.organizacion(
+	id_organizacion, nombre, mision, donacion_nt)
+	VALUES ( 3,'Martin Luther King Jr. Center', 'The Martin Luther King Jr. Center for Nonviolent Social Change, comúnmente conocido como The King Center, es una organización no gubernamental sin fines de lucro en Atlanta, Estados Unidos.', array[('1985', 10, 15007.27)::donacion, ('1986', 24, 10505.10)::donacion]);
+
+INSERT INTO public.organizacion(
+	id_organizacion, nombre, mision, donacion_nt)
+	VALUES ( 4,'Children’s Defense Fund', 'Fundado en 1973 por Marian Wright Edelman, Childrens Defense Fund se enfoca en los derechos de los niños. Fue inspirado por el trabajo de organizaciones de derechos civiles. A través de programas y defensa, CDF trabaja para poner fin a los ciclos de pobreza, proteger a los niños del abuso y asegurarse de que todos los niños reciban una educación. Esta ONG tiene su sede en Washington, DC con oficinas en todo el país.', array[('1986', 21, 500007.27)::donacion, ('1987', 10, 150505.10)::donacion]);
+
+INSERT INTO public.miembro(
+        fecha_inicio, vitalicio, doc_identidad, fecha_fin)
+        VALUES ('1979-11-09', 'si', 5261, NULL);
+
+    INSERT INTO public.miembro(
+        fecha_inicio, vitalicio, doc_identidad, fecha_fin)
+        VALUES ('1959-10-15', 'si', 4635, '1990-11-05');
+
+    INSERT INTO public.miembro(
+        fecha_inicio, vitalicio, doc_identidad, fecha_fin)
+        VALUES ('1969-12-05', 'si', 1122, '1989-09-15');
+
+    INSERT INTO public.miembro(
+        fecha_inicio, vitalicio, doc_identidad, fecha_fin)
+        VALUES ('1939-01-03', 'si', 2665, NULL);
+
+    INSERT INTO public.miembro(
+        fecha_inicio, vitalicio, doc_identidad, fecha_fin)
+        VALUES ('1931-05-28', 'si', 7211, NULL);
+
+    INSERT INTO public.miembro(
+        fecha_inicio, vitalicio, doc_identidad, fecha_fin)
+        VALUES ('1967-06-06', 'si', 10955, NULL);
+
+    INSERT INTO public.miembro(
+        fecha_inicio, vitalicio, doc_identidad, fecha_fin)
+        VALUES ('1981-01-02', 'si', 9822, NULL);
+
+-- FIN INSERTS
+
+-- INI TRIGGERS 
+
+CREATE OR REPLACE FUNCTION validar_insert_membresia() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+   AS $BODY$
+   DECLARE 
+   v_tmp_ganador INT;
+   v_tmp_nominado2veces INT;
+	BEGIN
+
+		CREATE TEMP TABLE tmp_ganador_nominado2veces(
+			ganador VARCHAR(2)
+		);
+				
+		INSERT INTO tmp_ganador_nominado2veces (
+			ganador
+		) SELECT ganador
+				
+		FROM postuladas_p_pers
+		INNER JOIN nominadas ON 
+		postuladas_p_pers.id_postuladas_p_pers = nominadas.id_postuladas_p_pers
+		WHERE doc_identidad = NEW.doc_identidad;
+		
+		SELECT COUNT(*) INTO v_tmp_nominado2veces FROM tmp_ganador_nominado2veces
+		WHERE ganador = 'no';
+		
+		SELECT COUNT(*) INTO v_tmp_ganador FROM tmp_ganador_nominado2veces
+		WHERE ganador = 'si';	
+		
+		IF v_tmp_nominado2veces < 2 AND v_tmp_ganador = 0 THEN
+			RAISE EXCEPTION 'No ha sido nominado dos veces ni ha ganado al menos una nominación';
+		END IF;
+
+		DROP TABLE tmp_ganador_nominado2veces;
+
+		RETURN NEW;
+	END;
+	$BODY$;
+CREATE TRIGGER validar_insert_membresia
+	BEFORE INSERT ON public.miembro FOR EACH ROW
+	EXECUTE PROCEDURE validar_insert_membresia();
+
+CREATE OR REPLACE FUNCTION validar_categoria_nivel_1() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	BEGIN
+		IF NEW.nivel = '1' THEN
+			IF NEW.rama IS NULL THEN
+				RAISE EXCEPTION 'Rama debe ser NOT NULL (obligatorio) cuando nivel de rama es 1';
+			ELSE
+				IF NEW.id_categoria2 IS NOT NULL THEN
+					RAISE EXCEPTION 'id_categoria2 debe ser NULL (vacio) cuando nivel de rama es 1';
+				ELSE
+					IF NEW.hist_premio_nt IS NOT NULL THEN
+						RAISE EXCEPTION 'hist_premio_nt debe ser NULL (vacio) cuando nivel de rama es 1';
+					END IF;
+				END IF;
+			END IF;		
+		END IF;
+		RETURN NEW;
+	END;
+	$BODY$;
+CREATE TRIGGER validar_categoria_nivel_1
+	BEFORE INSERT OR UPDATE
+	ON public.categoria FOR EACH ROW
+	EXECUTE PROCEDURE validar_categoria_nivel_1();
+
+CREATE OR REPLACE FUNCTION validar_categoria_nivel_2() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	DECLARE
+	v_nivel_padre char(1);  
+	v_hist_premio_nt_length int;
+	cont int;
+	BEGIN
+		cont=0;
+		IF NEW.nivel = '2' THEN
+			IF NEW.rama IS NOT NULL THEN
+				RAISE EXCEPTION 'Rama debe ser null (vacio) cuando nivel de rama es 2';
+			ELSE
+				IF NEW.id_categoria2 IS NULL THEN
+					RAISE EXCEPTION 'id_categoria2 debe ser NOT NULL (obligatorio) cuando nivel de rama es 2';
+				ELSE
+					SELECT nivel INTO v_nivel_padre 
+					FROM categoria 
+					WHERE id_categoria = NEW.id_categoria2;
+					
+					IF v_nivel_padre = '2' THEN
+						RAISE EXCEPTION 'El nivel del atributo asignado id_categoria2 debe igual a 1';
+					END IF;
+					
+				END IF;
+				
+				IF NEW.hist_premio_nt IS NULL THEN
+					RAISE EXCEPTION 'hist_premio_nt debe ser NOT NULL (obligatorio) cuando nivel de rama es 2';
+				ELSE
+					v_hist_premio_nt_length := array_length(NEW.hist_premio_nt,1);
+					cont=0;
+					FOR i IN 1..v_hist_premio_nt_length
+					LOOP
+						
+						IF NEW.hist_premio_nt[i].nombre IS NULL OR length(NEW.hist_premio_nt[i].nombre) < 1 THEN
+							RAISE EXCEPTION 'El hist_premio_nt.nombre deber ser NOT NULL (obligatorio) y tener más de 1 caracter';
+						END IF;
+						IF NEW.hist_premio_nt[i].cantidad_nom IS NULL OR NEW.hist_premio_nt[i].cantidad_nom < 1 THEN
+							RAISE EXCEPTION 'El hist_premio_nt.cantidad_nom deber ser NOT NULL (obligatorio) y mayor que 0';
+						END IF;
+						IF NEW.hist_premio_nt[i].fecha_ini IS NULL THEN
+							RAISE EXCEPTION 'hist_premio_nt.fecha_ini deber ser NOT NULL (obligatorio)';
+						ELSE
+							IF NEW.hist_premio_nt[i].fecha_fin IS NOT NULL AND NEW.hist_premio_nt[i].fecha_fin < NEW.hist_premio_nt[i].fecha_ini THEN
+								RAISE EXCEPTION 'hist_premio_nt.fecha_fin tiene que ser mayor que fecha_ini';
+							END IF;
+							IF NEW.hist_premio_nt[i].fecha_fin is null THEN
+								cont=cont+1;
+								IF cont > 1 THEN
+									RAISE EXCEPTION 'No pueden existir 2 premios del mismo tipo activos al mismo tiempo';
+								END IF;
+							END IF;
+						END IF;	
+						
+					END LOOP;
+				END IF;
+							
+			END IF;		
+		END IF;
+		RETURN NEW;
+	END;
+	$BODY$; 
+
+CREATE TRIGGER validar_categoria_nivel_2
+	BEFORE INSERT OR UPDATE
+	ON public.categoria FOR EACH ROW
+	EXECUTE PROCEDURE validar_categoria_nivel_2();
+
+    CREATE OR REPLACE FUNCTION validar_audiovisual() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	BEGIN
+		IF NEW.total_nomi != 0 THEN
+			RAISE EXCEPTION 'No se puede crear una pelicula que ya posea total nominaciones';
+		END IF;
+		IF NEW.total_postu != 0 THEN
+			RAISE EXCEPTION 'No se puede crear una pelicula que ya posea total postulaciones';
+		END IF;
+		IF NEW.total_ganador != 0 THEN
+			RAISE EXCEPTION 'No se puede crear una pelicula que ya posea total galardones';
+		END IF;
+		RETURN NEW;
+	END;
+	$BODY$;
+CREATE TRIGGER validar_audiovisual
+	BEFORE INSERT
+	ON public.audiovisual FOR EACH ROW
+	EXECUTE PROCEDURE validar_audiovisual();
+
+CREATE OR REPLACE FUNCTION validar_audiovisual_update() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	BEGIN
+		
+		IF NEW.duracion_min<40 then 
+			RAISE EXCEPTION 'La duracion de un producto audiovisual no puede ser menor a 40 minutos';
+		end if;
+		IF NEW.clas_audiovisual='cortometraje' and new.duracion_min>60 then 
+			RAISE EXCEPTION 'Un cortometraje debe estar entre 40 y 60 minutos de duracion';
+		end if;
+		IF NEW.clas_audiovisual='largometraje' and NEW.duracion_min<=60 then 
+			RAISE EXCEPTION 'Un largometraje debe durar mas de 60 minutos';
+		end if;
+		if new.fecha_estreno_cine>current_date then
+			RAISE EXCEPTION 'No se puede ingresar en el sistema una pelicula que todavia no se ha sido estrenada';
+		end if;
+		if new.ano_realizacion>extract(year from current_date) then
+			RAISE EXCEPTION 'El ano de produccion es mayor que el ano actual';
+		end if;
+		RETURN NEW;
+	END;
+	$BODY$;
+CREATE TRIGGER validar_audiovisual_update
+	BEFORE INSERT or update
+	ON public.audiovisual FOR EACH ROW
+	EXECUTE PROCEDURE validar_audiovisual_update();
+
+CREATE OR REPLACE FUNCTION validar_gala() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	BEGIN
+		if new.ano < 1900 or new.ano> 2200 then
+			RAISE EXCEPTION 'El año introducido no es valido';
+		end if;
+		if new.fecha< TO_DATE(new.ano::varchar(4),'YYYY') or new.fecha> TO_DATE((new.ano+1)::varchar(4),'YYYY') then
+			RAISE EXCEPTION 'La fecha de realizacion no concuerda con el ano de la gala';
+		end if;
+		RETURN NEW;
+	END;
+	$BODY$;
+
+CREATE TRIGGER validar_gala
+	BEFORE INSERT or update
+	ON public.gala FOR EACH ROW
+	EXECUTE PROCEDURE validar_gala();
+
+CREATE OR REPLACE FUNCTION validar_org() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	DECLARE
+		v_donacio_nt_length int;
+		v_ano int;
+		v_mensaje varchar(250);
+		v_suma int;
+		v_donacion donacion[];
+	BEGIN
+		v_suma = null;
+			IF NEW.donacion_nt IS NULL THEN
+				RAISE EXCEPTION 'No se puede registrar una organizacion sin ninguna donacion';
+			ELSE
+				v_donacio_nt_length := array_length(NEW.donacion_nt,1);
+				v_donacion= NEW.donacion_nt;
+					
+					FOR i IN 1..v_donacio_nt_length
+					LOOP
+						select ano into v_ano from public.gala where ano= NEW.donacion_nt[i].ano;
+						if not found then
+							v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.donacion_nt[i].ano,'.');
+							RAISE EXCEPTION using message=v_mensaje;
+						END IF;
+						
+						IF NEW.donacion_nt[i].porcentaje < 0 or NEW.donacion_nt[i].porcentaje > 100 THEN
+							RAISE EXCEPTION 'El porcentaje debe estar entre 0 y 100';
+						END IF;	
+						
+					END LOOP;
+				END IF;
+		
+		
+		RETURN NEW;
+	END;
+	$BODY$;
+CREATE TRIGGER validar_org
+	BEFORE INSERT OR UPDATE
+	ON public.organizacion FOR EACH ROW
+	EXECUTE PROCEDURE validar_org();
+
+CREATE OR REPLACE FUNCTION public.validar_postulacion_insert()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+	AS $BODY$
+	Declare
+	v_nombre varchar(50);
+	v_mensaje varchar (50);
+	v_ano integer;
+	BEGIN
+		v_nombre=null;
+		perform from public.postuladas_p_pers 
+		where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and empate=new.empate and ronda_emp=new.ronda_emp and (id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi) or (new.id_rol is null and new.doc_identidad is null and new.id_audiovi is null) 
+		and (new.id_audiovi2 is null or id_audiovi2=new.id_audiovi2);
+		if found then
+			RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
+		END IF;
+		
+		RETURN NEW;
+	END;
+	$BODY$;
+CREATE TRIGGER validar_postulacion_insert
+	BEFORE INSERT
+	ON public.postuladas_p_pers FOR EACH ROW
+	EXECUTE PROCEDURE validar_postulacion_insert();
+
+CREATE OR REPLACE FUNCTION public.validar_postulacion_update()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+	AS $BODY$
+	Declare
+	v_nombre varchar(50);
+	v_mensaje varchar (50);
+	v_ano integer;
+	BEGIN
+		v_nombre=null;
+		
+		select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
+		if not found then
+			RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
+		END IF;
+		select ano into v_ano from public.gala where ano= NEW.ano_oscar;
+		if not found then
+			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
+			RAISE EXCEPTION using message=v_mensaje;
+		END IF;
+		
+		RETURN NEW;
+	END;
+	$BODY$;
+CREATE TRIGGER validar_postulacion_update
+	BEFORE UPDATE
+	ON public.postuladas_p_pers FOR EACH ROW
+	EXECUTE PROCEDURE validar_postulacion_update();
+
+CREATE OR REPLACE FUNCTION arcoexclusivo_postuladas_p_pers()
+	RETURNS TRIGGER
+	LANGUAGE PLPGSQL
+	AS $BODY$
+		BEGIN
+			IF NEW.id_rol IS NOT NULL AND NEW.id_audiovi IS NOT NULL AND NEW.doc_identidad IS NOT NULL THEN
+				IF NEW.id_audiovi2 IS NOT NULL THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
+				END IF;
+				Return new;
+			END IF;
+			
+			IF NEW.id_audiovi2 IS NOT NULL THEN
+				IF NEW.id_rol IS NOT NULL or NEW.id_audiovi IS NOT NULL or NEW.doc_identidad IS NOT NULL THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una pelicula o de rol_pel_pers';
+				END IF;
+				Return new;
+			END IF;
+			
+			
+			RAISE EXCEPTION 'Debe ingresar los datos de una pelicula o de rol_pel_pers';
+	END;
+	$BODY$;
+CREATE TRIGGER arcoexclusivo_postu_p_pers 
+	BEFORE INSERT OR UPDATE ON
+	public.postuladas_p_pers FOR EACH ROW
+	EXECUTE PROCEDURE arcoexclusivo_postuladas_p_pers();
+
+CREATE OR REPLACE FUNCTION arcoexclusivo_votos()
+	RETURNS TRIGGER
+	LANGUAGE PLPGSQL
+	AS $BODY$
+		BEGIN
+			IF NEW.id_categoria1 IS NOT NULL AND NEW.id_postuladas_p_pers1 IS NOT NULL AND NEW.ano_oscar1 IS NOT NULL and new.tipo_voto='postulado' THEN
+				IF NEW.id_categoria IS NOT NULL or NEW.id_postuladas_p_pers IS NOT NULL or NEW.ano_oscar is not null or new.id_nominada is not null THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una nominacion o de una postulacion';
+				END IF;
+				Return new;
+			END IF;
+			
+			IF NEW.id_categoria IS NOT NULL and NEW.id_postuladas_p_pers IS NOT NULL and NEW.ano_oscar is not null and new.id_nominada is not null and new.tipo_voto='nominado' THEN
+				IF NEW.id_categoria1 IS NOT NULL or NEW.id_postuladas_p_pers1 IS NOT NULL or NEW.ano_oscar1 IS NOT NULL THEN
+					RAISE EXCEPTION 'El arco exclusivo no se cumple, debe ingresar o los datos de una nominacion o de una postulacion';
+				END IF;
+				Return new;
+			END IF;
+			RAISE EXCEPTION 'Debe ingresar o los datos de una postulacion o de una nominacion';
+	END;
+	$BODY$;
+CREATE TRIGGER arcoexclusivo_votos
+	BEFORE INSERT OR UPDATE ON
+	public.votos FOR EACH ROW
+	EXECUTE PROCEDURE arcoexclusivo_votos();
+
+ CREATE OR REPLACE FUNCTION validar_votos() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	Declare
+	v_cantidad_max_nom integer;
+	v_cant_nom integer;
+	v_vitalicio varchar(3);
+	v_id integer;
+	v_fecha_fin date;
+	BEGIN
+		v_fecha_fin= null;
+		select vitalicio, fecha_fin into v_vitalicio, v_fecha_fin  from miembro where id_miembro=new.id_miembro;
+		if v_fecha_fin is not null then 
+				RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido cancelada, por ende, no puede participar en la votaciones';	
+		end if;
+		
+		if v_vitalicio='no' or (new.id_categoria in(17,25,34,33) or new.id_categoria1 in(17,25,34,33)) then
+			v_id=null;
+			perform into v_id from public.m_p inner join public.miembro on m_p.id_miembro=miembro.id_miembro 
+			where m_p.id_miembro=new.id_miembro and (m_p.id_categoria=new.id_categoria or m_p.id_categoria=new.id_categoria1);
+			if not found is null then
+				RAISE EXCEPTION 'Usted no tiene los permisos necesarios para ingresar un voto en esta categoria, para votar en una categoria debe haber ganado en una vez en un premio relacionado o haber sido nominado dos veces a premios relacionados';
+			END IF;
+		end if;
+		
+		
+		v_cantidad_max_nom=-1;
+		WITH list AS
+		(SELECT 
+				UNNEST(hist_premio_nt) AS row_result
+		FROM   public.categoria
+		WHERE  id_categoria= new.id_categoria or id_categoria= new.id_categoria1)
+		SELECT   
+			(row_result).cantidad_nom into v_cantidad_max_nom FROM list where (row_result).fecha_fin is null;
+		if v_cantidad_max_nom is null then 
+			RAISE EXCEPTION 'No existe ningun historico de este premio activo, por favor revisar el premio en la tabla categoria';
+		end if;
+		if new.tipo_voto='nominado' then
+			perform from public.nominadas where id_nominada= new.id_nominada and terminada='no';
+			if not found then
+				RAISE EXCEPTION 'La nominacion a la cual esta intentando votar, ya no esta disponible';
+			end if;
+			select count(*) into v_cant_nom 
+			from public.votos
+			inner join public.nominadas on nominadas.id_nominada=votos.id_nominada
+			where votos.id_miembro=new.id_miembro and votos.ano_oscar=new.ano_oscar 
+			and votos.id_categoria=new.id_categoria and nominadas.terminada='no';
+			if v_cant_nom>0 then 
+				RAISE EXCEPTION 'Ya ingreso el maximo de votos posibleotoss para los nominados de este premio, el cual es %', v_cant_nom;
+			end if;
+		else		
+			perform from public.postuladas_p_pers where id_postuladas_p_pers=new.id_postuladas_p_pers1 and terminada='no';
+			if not found then
+				RAISE EXCEPTION 'La postulacion a la cual esta intentando votar, ya no esta disponible';
+			end if;
+			
+			perform from public.votos 
+			inner join public.postuladas_p_pers on votos.id_postuladas_p_pers1=postuladas_p_pers.id_postuladas_p_pers
+			where votos.id_postuladas_p_pers1=new.id_postuladas_p_pers1 and votos.id_miembro=new.id_miembro 
+			and postuladas_p_pers.terminada= 'no';
+			if found then 
+				RAISE EXCEPTION 'No puedes votar por la misma postulaciones dos veces';
+			end if;
+			select count(*) into v_cant_nom from public.votos 
+			inner join public.postuladas_p_pers on votos.id_postuladas_p_pers1=postuladas_p_pers.id_postuladas_p_pers
+			where votos.id_miembro=new.id_miembro and votos.ano_oscar1=new.ano_oscar1 and votos.id_categoria1=new.id_categoria1
+			and postuladas_p_pers.terminada='no';
+			if v_cant_nom>v_cantidad_max_nom-1 then 
+				RAISE EXCEPTION 'Ya ingreso el maximo de votos posibles para los postulados de este premio este premio, el cual es %', v_cant_nom;
+			end if;
+		end if;
+		
+		RETURN NEW;
+	END;
+	$BODY$;
+CREATE TRIGGER validar_votos
+	BEFORE INSERT OR UPDATE
+	ON public.votos FOR EACH ROW
+	EXECUTE PROCEDURE validar_votos();
+
+CREATE OR REPLACE FUNCTION validar_critica() 
+   RETURNS TRIGGER 
+   LANGUAGE PLPGSQL
+	AS $BODY$
+	DECLARE
+	v_mensaje varchar(50);
+	v_ano varchar;
+	BEGIN
+		select ano into v_ano from public.gala where ano= NEW.ano;
+		if not found then
+			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano,'.');
+			RAISE EXCEPTION using message=v_mensaje;
+		END IF;
+		RETURN NEW;
+	END;
+	$BODY$;
+
+CREATE TRIGGER validar_critica
+	BEFORE INSERT OR UPDATE
+	ON public.critica FOR EACH ROW
+	EXECUTE PROCEDURE validar_critica();
+
+-- FIN TRIGGERS

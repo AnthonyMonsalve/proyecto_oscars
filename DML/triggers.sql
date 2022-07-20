@@ -42,29 +42,6 @@ CREATE TRIGGER validar_insert_membresia
 	BEFORE INSERT ON public.miembro FOR EACH ROW
 	EXECUTE PROCEDURE validar_insert_membresia();
 
-
--- Validar crear_relacion_miembro_premios al crear una membresía
-CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
-	RETURNS TRIGGER
-	LANGUAGE PLPGSQL
-	AS $BODY$
-	DECLARE
-	v_area_nt TEXT;
-	BEGIN
-		--CALL public.atualizar_area_nt_membresia(NEW.doc_identidad);
-		RETURN NEW;
-	END;
-	$BODY$;
-
--- Validar crear_relacion_miembro_premios al crear una membresía
-CREATE TRIGGER crear_relacion_miembro_premios 
-	AFTER INSERT ON
-	public.miembro FOR EACH ROW
-	EXECUTE PROCEDURE crear_relacion_miembro_premios();
-
-
-
-
 -- LISTO CASO DE PRUEBA
 -- CATEGORIA: 1.1.- Validar que cuando nivel = 1:
 CREATE OR REPLACE FUNCTION validar_categoria_nivel_1() 
@@ -213,9 +190,6 @@ CREATE OR REPLACE FUNCTION validar_audiovisual_update()
 		RETURN NEW;
 	END;
 	$BODY$;
-
-
-
 CREATE TRIGGER validar_audiovisual_update
 	BEFORE INSERT or update
 	ON public.audiovisual FOR EACH ROW
@@ -282,7 +256,6 @@ CREATE OR REPLACE FUNCTION validar_org()
 		RETURN NEW;
 	END;
 	$BODY$;
-
 CREATE TRIGGER validar_org
 	BEFORE INSERT OR UPDATE
 	ON public.organizacion FOR EACH ROW
@@ -299,31 +272,27 @@ CREATE OR REPLACE FUNCTION public.validar_postulacion_insert()
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
-AS $BODY$
-Declare
-v_nombre varchar(50);
-v_mensaje varchar (50);
-v_ano integer;
-BEGIN
-	v_nombre=null;
-	perform from public.postuladas_p_pers 
-	where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and empate=new.empate and ronda_emp=new.ronda_emp and (id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi) or (new.id_rol is null and new.doc_identidad is null and new.id_audiovi is null) 
-	and (new.id_audiovi2 is null or id_audiovi2=new.id_audiovi2);
-	if found then
-		RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
-	END IF;
-	
-	RETURN NEW;
-END;
-$BODY$;
+	AS $BODY$
+	Declare
+	v_nombre varchar(50);
+	v_mensaje varchar (50);
+	v_ano integer;
+	BEGIN
+		v_nombre=null;
+		perform from public.postuladas_p_pers 
+		where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and empate=new.empate and ronda_emp=new.ronda_emp and (id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi) or (new.id_rol is null and new.doc_identidad is null and new.id_audiovi is null) 
+		and (new.id_audiovi2 is null or id_audiovi2=new.id_audiovi2);
+		if found then
+			RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
+		END IF;
+		
+		RETURN NEW;
+	END;
+	$BODY$;
 CREATE TRIGGER validar_postulacion_insert
 	BEFORE INSERT
 	ON public.postuladas_p_pers FOR EACH ROW
 	EXECUTE PROCEDURE validar_postulacion_insert();
-
-
-ALTER FUNCTION public.validar_postulacion_insert()
-    OWNER TO postgres;
 
 -- FUNCTION: public.validar_postulacion_update()
 
@@ -334,37 +303,31 @@ CREATE OR REPLACE FUNCTION public.validar_postulacion_update()
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
-AS $BODY$
-Declare
-v_nombre varchar(50);
-v_mensaje varchar (50);
-v_ano integer;
-BEGIN
-	v_nombre=null;
-	
-	select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
-	if not found then
-		RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
-	END IF;
-	select ano into v_ano from public.gala where ano= NEW.ano_oscar;
-	if not found then
-		v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
-		RAISE EXCEPTION using message=v_mensaje;
-	END IF;
-	
-	RETURN NEW;
-END;
-$BODY$;
-
+	AS $BODY$
+	Declare
+	v_nombre varchar(50);
+	v_mensaje varchar (50);
+	v_ano integer;
+	BEGIN
+		v_nombre=null;
+		
+		select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
+		if not found then
+			RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
+		END IF;
+		select ano into v_ano from public.gala where ano= NEW.ano_oscar;
+		if not found then
+			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
+			RAISE EXCEPTION using message=v_mensaje;
+		END IF;
+		
+		RETURN NEW;
+	END;
+	$BODY$;
 CREATE TRIGGER validar_postulacion_update
 	BEFORE UPDATE
 	ON public.postuladas_p_pers FOR EACH ROW
 	EXECUTE PROCEDURE validar_postulacion_update();
-
-
-ALTER FUNCTION public.validar_postulacion_update()
-    OWNER TO postgres;
-
 
 -- Validar arco exclusivo de postu_p_pers
 CREATE OR REPLACE FUNCTION arcoexclusivo_postuladas_p_pers()
@@ -426,88 +389,82 @@ CREATE TRIGGER arcoexclusivo_votos
 
 --------------------------------Votos---------------------------------------
 
-
 CREATE OR REPLACE FUNCTION validar_votos() 
    RETURNS TRIGGER 
    LANGUAGE PLPGSQL
-AS $BODY$
-
-Declare
-v_cantidad_max_nom integer;
-v_cant_nom integer;
-v_vitalicio varchar(3);
-v_id integer;
-v_fecha_fin date;
-BEGIN
-	v_fecha_fin= null;
-	select vitalicio, fecha_fin into v_vitalicio, v_fecha_fin  from miembro where id_miembro=new.id_miembro;
-	if v_fecha_fin is not null then 
-			RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido cancelada, por ende, no puede participar en la votaciones';	
-	end if;
-	
-	if v_vitalicio='no' then
-        if new.id_categoria in(17,25,34,33) or new.id_categoria1 in(17,25,34,33) then
-        
-        else
-          v_id=null;
-          perform from public.m_p inner join public.miembro on m_p.id_miembro=miembro.id_miembro 
-          where m_p.id_miembro=new.id_miembro and (m_p.id_categoria=new.id_categoria or m_p.id_categoria=new.id_categoria1);
-          if not found is null then
-              RAISE EXCEPTION 'Usted no tiene los permisos necesarios para ingresar un voto en esta categoria, para votar en una categoria debe haber ganado en una vez en un premio relacionado o haber sido nominado dos veces a premios relacionados';
-          END IF;
-        end if;
-	end if;
-	
-	
-	v_cantidad_max_nom=-1;
-	WITH list AS
-	 (SELECT 
-			UNNEST(hist_premio_nt) AS row_result
-	  FROM   public.categoria
-	  WHERE  id_categoria= new.id_categoria or id_categoria= new.id_categoria1)
-	SELECT   
-		   (row_result).cantidad_nom into v_cantidad_max_nom FROM list where (row_result).fecha_fin is null;
-	if v_cantidad_max_nom is null then 
-		RAISE EXCEPTION 'No existe ningun historico de este premio activo, por favor revisar el premio en la tabla categoria';
-	end if;
-	if new.tipo_voto='nominado' then
-		perform from public.nominadas where id_nominada= new.id_nominada and terminada='no';
-		if not found then
-			RAISE EXCEPTION 'La nominacion a la cual esta intentando votar, ya no esta disponible';
-		end if;
-		select count(*) into v_cant_nom 
-		from public.votos
-		inner join public.nominadas on nominadas.id_nominada=votos.id_nominada
-		where votos.id_miembro=new.id_miembro and votos.ano_oscar=new.ano_oscar 
-		and votos.id_categoria=new.id_categoria and nominadas.terminada='no';
-		if v_cant_nom>0 then 
-			RAISE EXCEPTION 'Ya ingreso el maximo de votos posibleotoss para los nominados de este premio, el cual es %', v_cant_nom;
-		end if;
-	else		
-		perform from public.postuladas_p_pers where id_postuladas_p_pers=new.id_postuladas_p_pers1 and terminada='no';
-		if not found then
-			RAISE EXCEPTION 'La postulacion a la cual esta intentando votar, ya no esta disponible';
+	AS $BODY$
+	Declare
+	v_cantidad_max_nom integer;
+	v_cant_nom integer;
+	v_vitalicio varchar(3);
+	v_id integer;
+	v_fecha_fin date;
+	BEGIN
+		v_fecha_fin= null;
+		select vitalicio, fecha_fin into v_vitalicio, v_fecha_fin  from miembro where id_miembro=new.id_miembro;
+		if v_fecha_fin is not null then 
+				RAISE EXCEPTION 'No posee una membresia o la que tiene ha sido cancelada, por ende, no puede participar en la votaciones';	
 		end if;
 		
-		perform from public.votos 
-		inner join public.postuladas_p_pers on votos.id_postuladas_p_pers1=postuladas_p_pers.id_postuladas_p_pers
-		where votos.id_postuladas_p_pers1=new.id_postuladas_p_pers1 and votos.id_miembro=new.id_miembro 
-		and postuladas_p_pers.terminada= 'no';
-		if found then 
-			RAISE EXCEPTION 'No puedes votar por la misma postulaciones dos veces';
+		if v_vitalicio='no' or (new.id_categoria in(17,25,34,33) or new.id_categoria1 in(17,25,34,33)) then
+			v_id=null;
+			perform into v_id from public.m_p inner join public.miembro on m_p.id_miembro=miembro.id_miembro 
+			where m_p.id_miembro=new.id_miembro and (m_p.id_categoria=new.id_categoria or m_p.id_categoria=new.id_categoria1);
+			if not found is null then
+				RAISE EXCEPTION 'Usted no tiene los permisos necesarios para ingresar un voto en esta categoria, para votar en una categoria debe haber ganado en una vez en un premio relacionado o haber sido nominado dos veces a premios relacionados';
+			END IF;
 		end if;
-		select count(*) into v_cant_nom from public.votos 
-		inner join public.postuladas_p_pers on votos.id_postuladas_p_pers1=postuladas_p_pers.id_postuladas_p_pers
-		where votos.id_miembro=new.id_miembro and votos.ano_oscar1=new.ano_oscar1 and votos.id_categoria1=new.id_categoria1
-		and postuladas_p_pers.terminada='no';
-		if v_cant_nom>v_cantidad_max_nom-1 then 
-			RAISE EXCEPTION 'Ya ingreso el maximo de votos posibles para los postulados de este premio este premio, el cual es %', v_cant_nom;
+		
+		
+		v_cantidad_max_nom=-1;
+		WITH list AS
+		(SELECT 
+				UNNEST(hist_premio_nt) AS row_result
+		FROM   public.categoria
+		WHERE  id_categoria= new.id_categoria or id_categoria= new.id_categoria1)
+		SELECT   
+			(row_result).cantidad_nom into v_cantidad_max_nom FROM list where (row_result).fecha_fin is null;
+		if v_cantidad_max_nom is null then 
+			RAISE EXCEPTION 'No existe ningun historico de este premio activo, por favor revisar el premio en la tabla categoria';
 		end if;
-	end if;
-	
-	RETURN NEW;
-END;
-$BODY$;
+		if new.tipo_voto='nominado' then
+			perform from public.nominadas where id_nominada= new.id_nominada and terminada='no';
+			if not found then
+				RAISE EXCEPTION 'La nominacion a la cual esta intentando votar, ya no esta disponible';
+			end if;
+			select count(*) into v_cant_nom 
+			from public.votos
+			inner join public.nominadas on nominadas.id_nominada=votos.id_nominada
+			where votos.id_miembro=new.id_miembro and votos.ano_oscar=new.ano_oscar 
+			and votos.id_categoria=new.id_categoria and nominadas.terminada='no';
+			if v_cant_nom>0 then 
+				RAISE EXCEPTION 'Ya ingreso el maximo de votos posibleotoss para los nominados de este premio, el cual es %', v_cant_nom;
+			end if;
+		else		
+			perform from public.postuladas_p_pers where id_postuladas_p_pers=new.id_postuladas_p_pers1 and terminada='no';
+			if not found then
+				RAISE EXCEPTION 'La postulacion a la cual esta intentando votar, ya no esta disponible';
+			end if;
+			
+			perform from public.votos 
+			inner join public.postuladas_p_pers on votos.id_postuladas_p_pers1=postuladas_p_pers.id_postuladas_p_pers
+			where votos.id_postuladas_p_pers1=new.id_postuladas_p_pers1 and votos.id_miembro=new.id_miembro 
+			and postuladas_p_pers.terminada= 'no';
+			if found then 
+				RAISE EXCEPTION 'No puedes votar por la misma postulaciones dos veces';
+			end if;
+			select count(*) into v_cant_nom from public.votos 
+			inner join public.postuladas_p_pers on votos.id_postuladas_p_pers1=postuladas_p_pers.id_postuladas_p_pers
+			where votos.id_miembro=new.id_miembro and votos.ano_oscar1=new.ano_oscar1 and votos.id_categoria1=new.id_categoria1
+			and postuladas_p_pers.terminada='no';
+			if v_cant_nom>v_cantidad_max_nom-1 then 
+				RAISE EXCEPTION 'Ya ingreso el maximo de votos posibles para los postulados de este premio este premio, el cual es %', v_cant_nom;
+			end if;
+		end if;
+		
+		RETURN NEW;
+	END;
+	$BODY$;
 CREATE TRIGGER validar_votos
 	BEFORE INSERT OR UPDATE
 	ON public.votos FOR EACH ROW

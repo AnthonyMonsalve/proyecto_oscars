@@ -106,16 +106,16 @@ INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 
 
 
 -- DIR ARTE
-INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 1, 4011);
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
 	VALUES (4011, 'Brnaby', 'Boij', 'Pickavance', 'M', '1920-01-27', '1980-04-14', 'Constantino', null, null);
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 1, 4011);
 
-
-INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 1, 8591);
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
 	VALUES (8591, 'Erich', 'Drackford', 'Heskey', 'M', '1926-04-20', '1962-01-09', 'Harv', null, null);
+
+INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (10, 1, 8591);
 
 
 --- montaje
@@ -278,7 +278,7 @@ INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (6, 2
 
 INSERT INTO public.persona(
 	doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) 
-	VALUES (10368, 'Filbert', 'Rampley', 'Verrick', 'M', '1929-03-06', '1966-11-01', null, 'South Carolina', null, null);
+	VALUES (10368, 'Filbert', 'Rampley', 'Verrick', 'M', '1929-03-06', '1966-11-01', null, 'South Carolina', null);
 
 INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (8, 2, 10368, 'La opera de los 3 mosqueteros parte 2');
 
