@@ -5,7 +5,7 @@
 
     INSERT INTO public.gala(
         ano, fecha, lugar, numero_edicion, doc_identidad, descripcion)
-        VALUES (1986, '1986-04-20', 'MGM', 51, 2015, 'Vendrán a cantar Nacho y Chino el tema Mi niña fea');
+        VALUES (1986, '1986-04-20', 'MGM theater', 58, 202020, 'Vendrán a cantar Nacho y Chino el tema Mi niña fea');
 
     INSERT INTO public.gala(
         ano, fecha, lugar, numero_edicion, doc_identidad, descripcion)

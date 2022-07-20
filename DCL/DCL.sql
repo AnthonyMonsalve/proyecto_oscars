@@ -19,7 +19,7 @@
 
     -- INI MIEMBRO
         CREATE ROLE miembro WITH LOGIN PASSWORD '1234';
-        GRANT SELECT ON TABLE audiovisual, votos, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers, miembro, m_p TO miembro;
+        GRANT SELECT ON TABLE audiovisual, postulado_votos, votos, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers, miembro, m_p TO miembro;
         GRANT INSERT ON TABLE postulado_votos, votos TO miembro;
         GRANT EXECUTE ON FUNCTION ficha_actor(BIGINT), ficha_premios_pelicula(INT,INT), ficha_pelicula(INT), ficha_oscar_totales(INT) TO miembro;
         GRANT EXECUTE ON PROCEDURE votar_nominados(INT, INT),  postular_pelicula(INT, INT, INT),votar_postulados(INT,INT) TO miembro;
@@ -29,12 +29,17 @@
 
     -- INI DIRECTIVO
         CREATE ROLE directivo WITH LOGIN PASSWORD '1234';
-        GRANT INSERT critica TO directivo;
+        GRANT INSERT ON TABLE critica, m_p TO directivo;
+        GRANT INSERT, SELECT postulado_votos TO directivo;
         GRANT SELECT, INSERT ON TABLE nominadas, miembro, M_P, postuladas_p_pers TO directivo;
         GRANT SELECT, UPDATE, INSERT ON TABLE audiovisual, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, organizacion TO directivo;
-        GRANT EXECUTE ON FUNCTION  ficha_miembro_area(VARCHAR), gestion_postulados(INT), 
-        gestion_nominados(INT,INT), gestion_ganadores(INT,INT), actualizar_area_nt_membresia(), actualizar_mp(),
-        asignar_presentadores_gala() TO directivo; 
+        GRANT EXECUTE ON FUNCTION  ficha_miembro_area(VARCHAR) TO directivo; 
+		GRANT EXECUTE ON PROCEDURE 
+		gestion_ganadores(INT,INT), 
+		actualizar_mp(), asignar_presentadores_gala(INT),
+		actualizar_area_nt_membresia(),
+		gestion_postulados(INT), gestion_nominados(INT,INT),
+		votar_postulados(INT,INT) TO miembro;
     -- FIN DIRECTIVO
 
 
