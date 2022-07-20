@@ -8,14 +8,14 @@ INSERT INTO public.persona(
     doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (4635, 'Hilton', 'Griffey', 'Pursglove', 'M', '1942-04-27', '1981-08-31', null, null, null);
 
 INSERT INTO public.persona(
-    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (9275, 'Anatol', 'Janoschek', 'Eary', 'M', '1934-02-08', '1965-12-06', 'Timoteo', null, null);
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (1122, 'Anatol', 'Janoschek', 'Eary', 'M', '1934-02-08', '1965-12-06', 'Timoteo', null, null);
 
 INSERT INTO public.persona(
-    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (1890, 'Chen', 'Bazoche', 'Karolyi', 'M', '1954-08-27', '1978-08-16', null, null, null);
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (2665, 'Chen', 'Bazoche', 'Karolyi', 'M', '1954-08-27', '1978-08-16', null, null, null);
 
 
 INSERT INTO public.persona(
-    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (4240, 'Jemima', 'Shutt', 'Tong', 'F', '1937-01-29', '1976-03-02', null, null, null);
+    doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (7211, 'Jemima', 'Shutt', 'Tong', 'F', '1937-01-29', '1976-03-02', null, null, null);
 
 INSERT INTO public.persona(
     doc_identidad, primer_nom, primer_ape, segundo_ape, sexo, fecha_nac, fecha_ini_carrera, segundo_nom, a_lugar_nac, a_biografia) values (10955, 'Erl', 'Saddleton', 'Scedall', 'M', '1927-02-24', '1972-11-06', 'Dallis', null, null);
