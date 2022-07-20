@@ -29,7 +29,7 @@
 
     -- INI DIRECTIVO
         CREATE ROLE directivo WITH LOGIN PASSWORD '1234';
-        GRANT INSERT critica TO directivo;
+        GRANT INSERT ON critica TO directivo;
         GRANT SELECT, INSERT ON TABLE nominadas, miembro, M_P, postuladas_p_pers TO directivo;
         GRANT SELECT, UPDATE, INSERT ON TABLE audiovisual, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, organizacion TO directivo;
         GRANT EXECUTE ON FUNCTION  ficha_miembro_area(VARCHAR), gestion_postulados(INT), 
@@ -42,8 +42,7 @@
     -- INI ADMINISTRADOR
         CREATE ROLE administrador WITH LOGIN PASSWORD '1234';
         GRANT SELECT ON TABLE audiovisual, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers TO administrador;
-        -- GRANT 
-        -- GRANT EXECUTE (LOS PROGRAMAS ALMACENADOS)
+
     -- FIN ADMINISTRADOR
 
     -- INI DESARROLLADOR
