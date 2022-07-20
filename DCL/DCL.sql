@@ -19,11 +19,12 @@
 
     -- INI MIEMBRO
         CREATE ROLE miembro WITH LOGIN PASSWORD '1234';
-        GRANT SELECT ON TABLE audiovisual, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers, miembro, m_p TO miembro;
+        GRANT SELECT ON TABLE audiovisual, votos, persona, rol, rol_pel_pers, gala, presentador, categoria, nominadas, postuladas_p_pers, miembro, m_p TO miembro;
         GRANT INSERT ON TABLE postulado_votos, votos TO miembro;
         GRANT EXECUTE ON FUNCTION ficha_actor(BIGINT), ficha_premios_pelicula(INT,INT), ficha_pelicula(INT), ficha_oscar_totales(INT) TO miembro;
-		GRANT EXECUTE ON PROCEDURE votar_nominados(INT, INT),  postular_pelicula(INT, INT, INT),votar_postulados(INT,INT) TO miembro;
-		
+        GRANT EXECUTE ON PROCEDURE votar_nominados(INT, INT),  postular_pelicula(INT, INT, INT),votar_postulados(INT,INT) TO miembro;
+        GRANT ALL ON votos_id_voto_seq TO miembro;
+        
     -- FIN MIEMBRO
 
     -- INI DIRECTIVO
