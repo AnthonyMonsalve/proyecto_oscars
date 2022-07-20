@@ -349,6 +349,7 @@ CREATE OR replace FUNCTION ficha_premios_postulados (p_id_premio INT, p_ano_gala
         pelicula VARCHAR, 
         titulo_original VARCHAR,
         nombre_completo_id_nom VARCHAR,
+		presentador VARCHAR
     ) 
     LANGUAGE plpgsql
     AS $$

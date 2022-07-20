@@ -316,6 +316,11 @@ BEGIN
 	RETURN NEW;
 END;
 $BODY$;
+CREATE TRIGGER validar_postulacion_insert
+	BEFORE INSERT
+	ON public.postuladas_p_pers FOR EACH ROW
+	EXECUTE PROCEDURE validar_postulacion_insert();
+
 
 ALTER FUNCTION public.validar_postulacion_insert()
     OWNER TO postgres;
@@ -350,6 +355,12 @@ BEGIN
 	RETURN NEW;
 END;
 $BODY$;
+
+CREATE TRIGGER validar_postulacion_update
+	BEFORE UPDATE
+	ON public.postuladas_p_pers FOR EACH ROW
+	EXECUTE PROCEDURE validar_postulacion_update();
+
 
 ALTER FUNCTION public.validar_postulacion_update()
     OWNER TO postgres;
@@ -502,10 +513,11 @@ CREATE OR REPLACE FUNCTION validar_critica()
 	AS $BODY$
 	DECLARE
 	v_mensaje varchar(50);
+	v_ano varchar;
 	BEGIN
-		select ano into v_ano from public.gala where ano= NEW.donacion_nt[i].ano;
+		select ano into v_ano from public.gala where ano= NEW.ano;
 		if not found then
-			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.donacion_nt[i].ano,'.');
+			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano,'.');
 			RAISE EXCEPTION using message=v_mensaje;
 		END IF;
 		RETURN NEW;
