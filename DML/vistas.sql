@@ -337,7 +337,7 @@ CREATE OR replace FUNCTION ficha_premios_nominados (p_id_premio INT, p_ano_gala 
             RETURN NEXT;
         END LOOP;
         
-    END; $$
+    END; $$;
 
 --SELECT  * FROM ficha_premios_nominados(19,1985);
 --DROP FUNCTION ficha_premios_nominados(integer, integer);
@@ -395,7 +395,7 @@ CREATE OR replace FUNCTION ficha_premios_postulados (p_id_premio INT, p_ano_gala
             RETURN NEXT;
         END LOOP;
         
-    END; $$
+    END; $$;
 
 --SELECT  * FROM ficha_premios_postulados(19,1985);
 --DROP FUNCTION ficha_premios_postulados(integer, integer);
@@ -557,3 +557,45 @@ CREATE OR REPLACE FUNCTION ficha_actor(IN in_doc_identidad BIGINT)
 	
 -- DROP FUNCTION ficha_actor(BIGINT);
 -- SELECT * FROM ficha_actor(9525);
+
+CREATE OR REPLACE FUNCTION ficha_nominados_per()
+    RETURNS VARCHAR
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE
+        v_registro record;
+     BEGIN
+        FOR v_registro IN (
+
+        )
+    END; $$;
+
+CREATE OR REPLACE FUNCTION ficha_nominados_pel(IN in_id_audiovi INT)
+    RETURNS VARCHAR
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE
+        v_registro record;
+    BEGIN
+        FOR v_registro IN (
+
+        )
+    END; $$;
+
+CREATE OR REPLACE FUNCTION ficha_nominados(IN in_id_gala INT)
+    RETURNS TABLE (
+        premio VARCHAR,
+        nominadas VARCHAR
+    )
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE 
+        v_registro record;
+    BEGIN
+        FOR v_registro IN (
+            SELECT  FROM nominadas AS n
+            JOIN postuladas_p_pers AS PPP
+            ON n.id_postuladas_p_pers = ppp.id_postuladas_p_perse
+            WHERE n.ano_oscar = in_id_gala
+        )
+    END; $$;

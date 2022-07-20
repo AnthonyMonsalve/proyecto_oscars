@@ -1,3 +1,5 @@
+-- INI INSERT
+
 -------------- ROLES --------------
 --('actor','guionista','director','productor','fotografo','tecnico', 'ing.sonido', 'musico', 'estilista', 'artista')
 
@@ -1661,3 +1663,5 @@ INSERT INTO public.critica(
 INSERT INTO public.critica(
 	ano, tipo, textocritica, negativa)
 	VALUES (1987, 'postulados', 'No veo ningun inconveniente. Vamos bien', 'no');
+
+-- FIN INSERT

@@ -42,29 +42,6 @@ CREATE TRIGGER validar_insert_membresia
 	BEFORE INSERT ON public.miembro FOR EACH ROW
 	EXECUTE PROCEDURE validar_insert_membresia();
 
-
--- Validar crear_relacion_miembro_premios al crear una membresía
-CREATE OR REPLACE FUNCTION crear_relacion_miembro_premios()
-	RETURNS TRIGGER
-	LANGUAGE PLPGSQL
-	AS $BODY$
-	DECLARE
-	v_area_nt TEXT;
-	BEGIN
-		--CALL public.atualizar_area_nt_membresia(NEW.doc_identidad);
-		RETURN NEW;
-	END;
-	$BODY$;
-
--- Validar crear_relacion_miembro_premios al crear una membresía
-CREATE TRIGGER crear_relacion_miembro_premios 
-	AFTER INSERT ON
-	public.miembro FOR EACH ROW
-	EXECUTE PROCEDURE crear_relacion_miembro_premios();
-
-
-
-
 -- LISTO CASO DE PRUEBA
 -- CATEGORIA: 1.1.- Validar que cuando nivel = 1:
 CREATE OR REPLACE FUNCTION validar_categoria_nivel_1() 
@@ -213,9 +190,6 @@ CREATE OR REPLACE FUNCTION validar_audiovisual_update()
 		RETURN NEW;
 	END;
 	$BODY$;
-
-
-
 CREATE TRIGGER validar_audiovisual_update
 	BEFORE INSERT or update
 	ON public.audiovisual FOR EACH ROW
@@ -299,23 +273,23 @@ CREATE OR REPLACE FUNCTION public.validar_postulacion_insert()
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
-AS $BODY$
-Declare
-v_nombre varchar(50);
-v_mensaje varchar (50);
-v_ano integer;
-BEGIN
-	v_nombre=null;
-	perform from public.postuladas_p_pers 
-	where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and empate=new.empate and ronda_emp=new.ronda_emp and (id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi) or (new.id_rol is null and new.doc_identidad is null and new.id_audiovi is null) 
-	and (new.id_audiovi2 is null or id_audiovi2=new.id_audiovi2);
-	if found then
-		RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
-	END IF;
-	
-	RETURN NEW;
-END;
-$BODY$;
+	AS $BODY$
+	Declare
+	v_nombre varchar(50);
+	v_mensaje varchar (50);
+	v_ano integer;
+	BEGIN
+		v_nombre=null;
+		perform from public.postuladas_p_pers 
+		where ano_oscar=new.ano_oscar and id_categoria=new.id_categoria and empate=new.empate and ronda_emp=new.ronda_emp and (id_rol=new.id_rol and doc_identidad=new.doc_identidad and id_audiovi=new.id_audiovi) or (new.id_rol is null and new.doc_identidad is null and new.id_audiovi is null) 
+		and (new.id_audiovi2 is null or id_audiovi2=new.id_audiovi2);
+		if found then
+			RAISE EXCEPTION 'La postulacion que esta intentando ingresar ya existe';
+		END IF;
+		
+		RETURN NEW;
+	END;
+	$BODY$;
 CREATE TRIGGER validar_postulacion_insert
 	BEFORE INSERT
 	ON public.postuladas_p_pers FOR EACH ROW
@@ -334,28 +308,27 @@ CREATE OR REPLACE FUNCTION public.validar_postulacion_update()
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
-AS $BODY$
-Declare
-v_nombre varchar(50);
-v_mensaje varchar (50);
-v_ano integer;
-BEGIN
-	v_nombre=null;
-	
-	select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
-	if not found then
-		RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
-	END IF;
-	select ano into v_ano from public.gala where ano= NEW.ano_oscar;
-	if not found then
-		v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
-		RAISE EXCEPTION using message=v_mensaje;
-	END IF;
-	
-	RETURN NEW;
-END;
-$BODY$;
-
+	AS $BODY$
+	Declare
+	v_nombre varchar(50);
+	v_mensaje varchar (50);
+	v_ano integer;
+	BEGIN
+		v_nombre=null;
+		
+		select nombre into v_nombre from public.categoria where id_categoria=new.id_categoria and nivel='2';
+		if not found then
+			RAISE EXCEPTION 'No se puede ingresar una postulacion de una categoria';
+		END IF;
+		select ano into v_ano from public.gala where ano= NEW.ano_oscar;
+		if not found then
+			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano_oscar,'.');
+			RAISE EXCEPTION using message=v_mensaje;
+		END IF;
+		
+		RETURN NEW;
+	END;
+	$BODY$;
 CREATE TRIGGER validar_postulacion_update
 	BEFORE UPDATE
 	ON public.postuladas_p_pers FOR EACH ROW
