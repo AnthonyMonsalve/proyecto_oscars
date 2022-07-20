@@ -117,10 +117,6 @@ INSERT INTO public.presentador(
 
 INSERT INTO public.presentador(
 	id_gala, doc_identidad, id_categoria)
-	VALUES (1985, 4240, 35);
-
-INSERT INTO public.presentador(
-	id_gala, doc_identidad, id_categoria)
 	VALUES (1985, 1890, 36);
 
 INSERT INTO public.presentador(
