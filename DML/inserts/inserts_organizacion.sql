@@ -2,7 +2,7 @@
 
 INSERT INTO public.organizacion(
 	id_organizacion, nombre, mision, donacion_nt)
-	VALUES ( 1,'African Film Festival', 'African Film Festival, Inc. es una organización cultural sin ánimo de lucro estadounidense que presenta un festival de cine anual y programas comunitarios durante todo el año', array[('1987', 35, 1257.12)::donacion]);
+	VALUES ( 1,'African Film Festival', 'African Film Festival, Inc. es una organización cultural sin ánimo de lucro estadounidense que presenta un festival de cine anual y programas comunitarios durante todo el año', array[('1985', 35, 1257.12)::donacion]);
 
 INSERT INTO public.organizacion(
 	id_organizacion, nombre, mision, donacion_nt)
