@@ -385,7 +385,7 @@ CREATE OR replace FUNCTION ficha_premios_postulados (p_id_premio INT, p_ano_gala
             PER.doc_identidad = postuladas_p_pers.doc_identidad
             INNER JOIN audiovisual AUD ON
             AUD.id_audiovi = postuladas_p_pers.id_audiovi OR AUD.id_audiovi = postuladas_p_pers.id_audiovi2
-            WHERE postuladas_p_pers.ano_oscar = 1985 AND postuladas_p_pers.id_categoria = 18 and postuladas_p_pers.empate='no'
+            WHERE postuladas_p_pers.ano_oscar = p_ano_gala AND postuladas_p_pers.id_categoria = p_id_premio and postuladas_p_pers.empate='no'
         ) LOOP  
             pelicula := v_registro.titulo_espanol;
             titulo_original := v_registro.titulo_original;
