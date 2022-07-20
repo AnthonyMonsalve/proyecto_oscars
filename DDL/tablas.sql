@@ -129,18 +129,23 @@
     );
 
     -- LISTO
-     CREATE TABLE public.nominadas (
+   CREATE TABLE public.nominadas(
         id_nominada SERIAL NOT NULL,
-        ganador CHAR(2) NOT NULL CHECK(ganador IN ('si','no')),
-		empate varchar(2) not null check(empate IN ('si','no')), /*default no*/
-		ronda_emp int not null, /*default 0*/
-        id_postuladas_p_pers INT NOT NULL,
-        ano_oscar SMALLINT NOT NULL,
-        id_categoria INT NOT NULL,
-		cant_votos int,
-        CONSTRAINT PK_nominadas PRIMARY KEY (id_nominada, id_postuladas_p_pers, ano_oscar, id_categoria),
-        CONSTRAINT FK_postuladas_p_pers FOREIGN KEY ( id_postuladas_p_pers, ano_oscar, id_categoria) REFERENCES postuladas_p_pers(id_postuladas_p_pers, ano_oscar, id_categoria)
-    );
+        ganador character(2) COLLATE pg_catalog."default" NOT NULL,
+        id_postuladas_p_pers integer NOT NULL,
+        ano_oscar smallint NOT NULL,
+        id_categoria integer NOT NULL,
+        empate character varying(2) COLLATE pg_catalog."default",
+        ronda_emp integer,
+        terminada character varying(2) COLLATE pg_catalog."default",
+        cant_votos integer,
+        CONSTRAINT pk_nominadas PRIMARY KEY (id_nominada, id_postuladas_p_pers, ano_oscar, id_categoria),
+        CONSTRAINT fk_postuladas_p_pers FOREIGN KEY (ano_oscar, id_postuladas_p_pers, id_categoria)
+            REFERENCES public.postuladas_p_pers (ano_oscar, id_postuladas_p_pers, id_categoria) MATCH SIMPLE
+            ON UPDATE NO ACTION
+            ON DELETE NO ACTION,
+        CONSTRAINT nominadas_ganador_check CHECK (ganador = ANY (ARRAY['si'::bpchar, 'no'::bpchar]))
+    )
 
 
     -- LISTO
@@ -164,7 +169,7 @@
     CREATE TABLE public.votos (
         id_voto SERIAL PRIMARY KEY NOT NULL,
         fecha_hora TIMESTAMP NOT NULL,
-        tipo_voto VARCHAR(8) NOT NULL CHECK(tipo_voto IN ('postulado','nominado')),
+        tipo_voto VARCHAR(15) NOT NULL CHECK(tipo_voto IN ('postulado','nominado')),
         id_miembro INT NOT NULL REFERENCES miembro(id_miembro),
         id_nominada INT,
         id_categoria INT,

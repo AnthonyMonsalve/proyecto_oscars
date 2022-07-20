@@ -316,6 +316,11 @@ BEGIN
 	RETURN NEW;
 END;
 $BODY$;
+CREATE TRIGGER validar_postulacion_insert
+	BEFORE INSERT
+	ON public.postuladas_p_pers FOR EACH ROW
+	EXECUTE PROCEDURE validar_postulacion_insert();
+
 
 ALTER FUNCTION public.validar_postulacion_insert()
     OWNER TO postgres;
@@ -350,6 +355,12 @@ BEGIN
 	RETURN NEW;
 END;
 $BODY$;
+
+CREATE TRIGGER validar_postulacion_update
+	BEFORE UPDATE
+	ON public.postuladas_p_pers FOR EACH ROW
+	EXECUTE PROCEDURE validar_postulacion_update();
+
 
 ALTER FUNCTION public.validar_postulacion_update()
     OWNER TO postgres;

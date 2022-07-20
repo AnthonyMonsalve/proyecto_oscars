@@ -827,7 +827,7 @@ begin
 	if found then
 		INSERT INTO public.votos(
 		fecha_hora, tipo_voto, id_miembro, id_nominada, id_categoria, id_postuladas_p_pers, ano_oscar, id_categoria1, id_postuladas_p_pers1, ano_oscar1)
-		VALUES (now(), 'nominado', v_id_miembro,v_id_nominada, v_id_categoria,v_id_postulado, v_ano_oscar,null, null, null);
+		VALUES (now(), 'nominado', v_id_miembro,v_id_nominado, v_id_categoria,v_id_postulado, v_ano_oscar,null, null, null);
 	else
 		raise exception 'El id de nominado ingresado no esta registrado en el sistema';
 	end if;
