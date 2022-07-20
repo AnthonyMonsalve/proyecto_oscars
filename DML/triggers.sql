@@ -256,7 +256,6 @@ CREATE OR REPLACE FUNCTION validar_org()
 		RETURN NEW;
 	END;
 	$BODY$;
-
 CREATE TRIGGER validar_org
 	BEFORE INSERT OR UPDATE
 	ON public.organizacion FOR EACH ROW
@@ -295,10 +294,6 @@ CREATE TRIGGER validar_postulacion_insert
 	ON public.postuladas_p_pers FOR EACH ROW
 	EXECUTE PROCEDURE validar_postulacion_insert();
 
-
-ALTER FUNCTION public.validar_postulacion_insert()
-    OWNER TO postgres;
-
 -- FUNCTION: public.validar_postulacion_update()
 
 -- DROP FUNCTION IF EXISTS public.validar_postulacion_update();
@@ -333,11 +328,6 @@ CREATE TRIGGER validar_postulacion_update
 	BEFORE UPDATE
 	ON public.postuladas_p_pers FOR EACH ROW
 	EXECUTE PROCEDURE validar_postulacion_update();
-
-
-ALTER FUNCTION public.validar_postulacion_update()
-    OWNER TO postgres;
-
 
 -- Validar arco exclusivo de postu_p_pers
 CREATE OR REPLACE FUNCTION arcoexclusivo_postuladas_p_pers()

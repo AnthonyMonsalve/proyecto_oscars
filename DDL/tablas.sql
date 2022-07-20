@@ -164,7 +164,7 @@
             ON UPDATE NO ACTION
             ON DELETE NO ACTION,
         CONSTRAINT nominadas_ganador_check CHECK (ganador = ANY (ARRAY['si'::bpchar, 'no'::bpchar]))
-    )
+    );
 
 
     -- LISTO
