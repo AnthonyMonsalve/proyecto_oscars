@@ -519,10 +519,11 @@ CREATE OR REPLACE FUNCTION validar_critica()
 	AS $BODY$
 	DECLARE
 	v_mensaje varchar(50);
+	v_ano varchar;
 	BEGIN
-		select ano into v_ano from public.gala where ano= NEW.donacion_nt[i].ano;
+		select ano into v_ano from public.gala where ano= NEW.ano;
 		if not found then
-			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.donacion_nt[i].ano,'.');
+			v_mensaje=concat ('No hay niguna gala vinculada al ano ',NEW.ano,'.');
 			RAISE EXCEPTION using message=v_mensaje;
 		END IF;
 		RETURN NEW;
