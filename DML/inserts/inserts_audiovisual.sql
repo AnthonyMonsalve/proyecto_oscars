@@ -88,3 +88,120 @@
 	INSERT INTO public.audiovisual(
 	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
 	VALUES (18,'El magestuoso SCARFACE', 'BAD ScarHead', 'Después de obtener una tarjeta verde a cambio de asesinar a un funcionario del gobierno cubano, Tony Montana (Al Pacino) reclama el tráfico de drogas en Miami. Asesinando brutalmente a cualquiera que se interponga en su camino, Tony finalmente se convierte en el capo de la droga más grande del estado, controlando casi toda la cocaína que llega a Miami. Pero el aumento de la presión de la policía, las guerras con los cárteles de la droga colombianos y su propia paranoia alimentada por las drogas sirven para alimentar las llamas de su eventual caída.', '1985-12-09', 170, '{"Universal Pictures"}', 'C', 1981, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+		-- AUDIOVISUALES DE 1988
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (200,'Alguna pelicula 1', 'Some Movie 1', 'La sinopsis de Some Movie 1', '1988-11-10', 116, '{"Universal Pictures"}', 'A', 1988, '{"Comedia","Ciencia Ficción"}','www.direccionfotos.com','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (201,'Alguna pelicula 2', 'Some Movie 2', 'La sinopsis de Some Movie 2', '1988-11-11', 121, '{"Universal Pictures"}', 'A', 1988, '{"Comedia","Ciencia Ficción"}','www.direccionfotos.com','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (202,'Alguna pelicula 3', 'Some Movie 3', 'La sinopsis de Some Movie 3', '1988-11-12', 120, '{"Universal Pictures"}', 'A', 1988, '{"Comedia","Ciencia Ficción"}','www.direccionfotos.com','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (203,'Alguna pelicula 4', 'Some Movie 4','La sinopsis de Some Movie 4', '1988-12-13', 170, '{"Universal Pictures"}', 'C', 1988, '{"Drama","Crimen", "Bélico"}','www.direccionfotos.com','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (204,'Alguna pelicula 5', 'Some Movie 5','La sinopsis de Some Movie 5', '1988-12-15', 160, '{"Universal Pictures"}', 'C', 1988, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (205,'Alguna pelicula 6', 'Some Movie 6','La sinopsis de Some Movie 6', '1988-12-14', 180, '{"Universal Pictures"}', 'C', 1988, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (206,'Alguna pelicula 7', 'Some Movie 7','La sinopsis de Some Movie 7', '1988-12-15', 150, '{"Universal Pictures"}', 'C', 1988, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (207,'Alguna pelicula 8', 'Some Movie 8','La sinopsis de Some Movie 8', '1988-12-18', 190, '{"Universal Pictures"}', 'C', 1988, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (208,'Alguna pelicula 9', 'Some Movie 9','La sinopsis de Some Movie 9', '1988-12-16', 186, '{"Universal Pictures"}', 'C', 1988, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (209,'Algun documental 1', 'Some documental 1', 'La sinopsis de Some Documental 1', '1988-11-01', 70, '{"Earthworks Films"}', 'B', 1988, '{"Cultura"}','https://www.lavanguardia.com/peliculas-series/images/movie/poster/1985/5/w1280/jP4IVY3cR4g9cIC49cZlnD8FKMc.jpg','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (210,'Algun documental 2', 'Some documental 2', 'La sinopsis de Some documental 2', '1988-10-11', 40, '{"TBS"}', 'B', 1988, '{"Cultura"}','https://sdi4.chrislands.com/sdi/978/07/85/8/9780785824909.jpg','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (211,'Algun documental 3', 'Some documental 3', 'La sinopsis de Some documental 3', '1988-08-10', 40, '{"Nordisk Film"}', 'A', 1988, '{"Cultura"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbkxS2eS-BafH51uSWC6BAYSXS1W1oeTG300Aa_64IN_bnMAhi','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (212,'Algun cortometraje 1', 'Some short film 1', 'La sinopsis de Some short film 1', '1988-09-07', 41 , '{"HBO"}', 'A', 1988, '{"Comedia"}','https://pics.filmaffinity.com/The_Appointments_of_Dennis_Jennings-313589620-msmall.jpg','cortometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (213,'Algun cortometraje 2', 'Some short film 2', 'La sinopsis de Some short film 2', '1988-09-08', 41 , '{"HBO"}', 'A', 1988, '{"Comedia"}','https://pics.filmaffinity.com/The_Appointments_of_Dennis_Jennings-313589620-msmall.jpg','cortometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+
+	-- AUDIOVISUALES DE 1989
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (300,'Alguna pelicula 10', 'Some Movie 10', 'La sinopsis de Some Movie 10', '1989-11-10', 116, '{"Universal Pictures"}', 'A', 1989, '{"Comedia","Ciencia Ficción"}','www.direccionfotos.com','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (301,'Alguna pelicula 11', 'Some Movie 11', 'La sinopsis de Some Movie 11', '1989-11-11', 121, '{"Universal Pictures"}', 'A', 1989, '{"Comedia","Ciencia Ficción"}','www.direccionfotos.com','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (302,'Alguna pelicula 12', 'Some Movie 12', 'La sinopsis de Some Movie 12', '1989-11-12', 120, '{"Universal Pictures"}', 'A', 1989, '{"Comedia","Ciencia Ficción"}','www.direccionfotos.com','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (303,'Alguna pelicula 13', 'Some Movie 13','La sinopsis de Some Movie 13', '1989-12-13', 170, '{"Universal Pictures"}', 'C', 1989, '{"Drama","Crimen", "Bélico"}','www.direccionfotos.com','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (304,'Alguna pelicula 14', 'Some Movie 14','La sinopsis de Some Movie 14', '1989-12-15', 160, '{"Universal Pictures"}', 'C', 1989, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (305,'Alguna pelicula 15', 'Some Movie 15','La sinopsis de Some Movie 15', '1989-12-14', 180, '{"Universal Pictures"}', 'C', 1989, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (306,'Alguna pelicula 16', 'Some Movie 16','La sinopsis de Some Movie 16', '1989-12-15', 150, '{"Universal Pictures"}', 'C', 1989, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (307,'Alguna pelicula 17', 'Some Movie 17','La sinopsis de Some Movie 17', '1989-12-18', 190, '{"Universal Pictures"}', 'C', 1989, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (308,'Alguna pelicula 18', 'Some Movie 18','La sinopsis de Some Movie 18', '1989-12-16', 186, '{"Universal Pictures"}', 'C', 1989, '{"Drama","Crimen", "Bélico"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp6Py6zIThAfLViyfCFHT-yfMZ7gFY0imj8WBddOUQfZzAWDYh','largometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (309,'Algun documental 4', 'Some documental 4', 'La sinopsis de Some Documental 4', '1989-11-01', 70, '{"Earthworks Films"}', 'B', 1989, '{"Cultura"}','https://www.lavanguardia.com/peliculas-series/images/movie/poster/1985/5/w1280/jP4IVY3cR4g9cIC49cZlnD8FKMc.jpg','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (310,'Algun documental 5', 'Some documental 5', 'La sinopsis de Some documental 5', '1989-10-11', 40, '{"TBS"}', 'B', 1989, '{"Cultura"}','https://sdi4.chrislands.com/sdi/978/07/85/8/9780785824909.jpg','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+	INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (311,'Algun documental 6', 'Some documental 6', 'La sinopsis de Some documental 6', '1989-08-10', 40, '{"Nordisk Film"}', 'A', 1989, '{"Cultura"}','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbkxS2eS-BafH51uSWC6BAYSXS1W1oeTG300Aa_64IN_bnMAhi','documental', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (312,'Algun cortometraje 3', 'Some short film 3', 'La sinopsis de Some short film 3', '1989-09-07', 41 , '{"HBO"}', 'A', 1989, '{"Comedia"}','https://pics.filmaffinity.com/The_Appointments_of_Dennis_Jennings-313589620-msmall.jpg','cortometraje', 0, 0, 0, '{"Estados Unidos"}');
+
+    INSERT INTO public.audiovisual(
+	 id_audiovi, titulo_espanol, titulo_original, sinopsis, fecha_estreno_cine, duracion_min, distribucion_va, censura, ano_realizacion, genero_va, fotos,clas_audiovisual, total_nomi, total_postu, total_ganador, pais)
+	VALUES (313,'Algun cortometraje 4', 'Some short film 4', 'La sinopsis de Some short film 4', '1989-09-08', 41 , '{"HBO"}', 'A', 1989, '{"Comedia"}','https://pics.filmaffinity.com/The_Appointments_of_Dennis_Jennings-313589620-msmall.jpg','cortometraje', 0, 0, 0, '{"Estados Unidos"}');
