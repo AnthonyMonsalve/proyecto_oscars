@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job>
-  <name>Proyecto BD Tablas intermedias</name>
+  <name>Proyecto BD Tablas intermedias lustro</name>
   <description/>
   <extended_description/>
   <job_version/>
   <directory>/</directory>
   <created_user>-</created_user>
-  <created_date>2022/07/30 19:38:48.963</created_date>
+  <created_date>1985/08/01 11:13:20.368</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2022/07/30 19:38:48.963</modified_date>
+  <modified_date>1985/08/01 11:13:20.368</modified_date>
   <parameters>
     </parameters>
   <slaveservers>
@@ -296,7 +296,7 @@
       <repeat>N</repeat>
       <schedulerType>0</schedulerType>
       <intervalSeconds>0</intervalSeconds>
-      <intervalMinutes>525960</intervalMinutes>
+      <intervalMinutes>60</intervalMinutes>
       <hour>12</hour>
       <minutes>0</minutes>
       <weekDay>1</weekDay>
@@ -304,18 +304,18 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>112</xloc>
-      <yloc>192</yloc>
+      <xloc>208</xloc>
+      <yloc>208</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>% de votos</name>
+      <name>Transformation</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>C:\Users\samue\OneDrive\Documentos\Rubrica 3 Proyecto BD\Procesos Anuales.ktr</filename>
+      <filename/>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -335,55 +335,25 @@
       <follow_abort_remote>N</follow_abort_remote>
       <create_parent_folder>N</create_parent_folder>
       <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
+      <run_configuration/>
       <suppress_result_data>N</suppress_result_data>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>432</xloc>
-      <yloc>192</yloc>
+      <xloc>400</xloc>
+      <yloc>208</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Llenar Dimesiones</name>
+      <name>Success</name>
       <description/>
-      <type>TRANS</type>
+      <type>SUCCESS</type>
       <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>C:\Users\samue\OneDrive\Documentos\Rubrica 3 Proyecto BD\Llenar Tiempo.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <suppress_result_data>N</suppress_result_data>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
       <parallel>N</parallel>
       <draw>Y</draw>
-      <nr>1</nr>
-      <xloc>256</xloc>
-      <yloc>192</yloc>
+      <nr>0</nr>
+      <xloc>592</xloc>
+      <yloc>208</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -395,235 +365,34 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>592</xloc>
-      <yloc>512</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>% de votos por area</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>C:\Users\samue\OneDrive\Documentos\Rubrica 3 Proyecto BD\Votos por Area.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <suppress_result_data>N</suppress_result_data>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>592</xloc>
-      <yloc>192</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Success</name>
-      <description/>
-      <type>SUCCESS</type>
-      <attributes/>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1104</xloc>
-      <yloc>192</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Donaciones</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>C:\Users\samue\OneDrive\Documentos\Rubrica 3 Proyecto BD\Donaciones.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <suppress_result_data>N</suppress_result_data>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>1</nr>
-      <xloc>800</xloc>
-      <yloc>192</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Popularidad y aceeptacion</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>C:\Users\samue\OneDrive\Documentos\Rubrica 3 Proyecto BD\Participacion y popularidad.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <suppress_result_data>N</suppress_result_data>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>1</nr>
-      <xloc>912</xloc>
-      <yloc>192</yloc>
+      <xloc>400</xloc>
+      <yloc>336</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
   <hops>
     <hop>
       <from>Start</from>
-      <to>Llenar Dimesiones</to>
+      <to>Transformation</to>
       <from_nr>0</from_nr>
-      <to_nr>1</to_nr>
+      <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Llenar Dimesiones</from>
-      <to>% de votos</to>
-      <from_nr>1</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Llenar Dimesiones</from>
-      <to>Abort job</to>
-      <from_nr>1</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>% de votos</from>
-      <to>Abort job</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>% de votos</from>
-      <to>% de votos por area</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>% de votos por area</from>
-      <to>Abort job</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>% de votos por area</from>
-      <to>Donaciones</to>
-      <from_nr>0</from_nr>
-      <to_nr>1</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Donaciones</from>
-      <to>Abort job</to>
-      <from_nr>1</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Donaciones</from>
-      <to>Popularidad y aceeptacion</to>
-      <from_nr>1</from_nr>
-      <to_nr>1</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Popularidad y aceeptacion</from>
+      <from>Transformation</from>
       <to>Success</to>
-      <from_nr>1</from_nr>
+      <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Popularidad y aceeptacion</from>
+      <from>Transformation</from>
       <to>Abort job</to>
-      <from_nr>1</from_nr>
+      <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>

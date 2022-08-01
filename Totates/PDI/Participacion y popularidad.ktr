@@ -431,7 +431,7 @@
     <created_date>2022/07/31 20:18:01.487</created_date>
     <modified_user>-</modified_user>
     <modified_date>2022/07/31 20:18:01.487</modified_date>
-    <key_for_session_key/>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
@@ -441,10 +441,10 @@
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>Oscars</database>
+    <database>OscarsBD</database>
     <port>5432</port>
     <username>postgres</username>
-    <password>Encrypted 2be98afc86aa7f2a8a216a075d29ffe8a</password>
+    <password>Encrypted 706572726f2063616d61206d657361206263cdfddce80ec6868bb859be75d287acdb</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -492,10 +492,10 @@
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>OscarsDataMart</database>
+    <database>OscarsDM</database>
     <port>5432</port>
     <username>postgres</username>
-    <password>Encrypted 2be98afc86aa7f2a8a216a075d29ffe8a</password>
+    <password>Encrypted 706572726f2063616d61206d657361206263cdfddce80ec6868bb859be75d287acdb</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -636,6 +636,31 @@
     </hop>
   </order>
   <step>
+    <name>Detect empty stream</name>
+    <type>DetectEmptyStream</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1040</xloc>
+      <yloc>96</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Entrada Tabla</name>
     <type>TableInput</type>
     <description/>
@@ -674,8 +699,8 @@ where ano= extract(year from now())
         <origin>Entrada Tabla</origin>
         <comments>id_critica</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -684,7 +709,7 @@ where ano= extract(year from now())
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -697,8 +722,8 @@ where ano= extract(year from now())
         <origin>Entrada Tabla</origin>
         <comments>ano</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -707,7 +732,7 @@ where ano= extract(year from now())
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -720,8 +745,8 @@ where ano= extract(year from now())
         <origin>Entrada Tabla</origin>
         <comments>tipo</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -730,7 +755,7 @@ where ano= extract(year from now())
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -743,8 +768,8 @@ where ano= extract(year from now())
         <origin>Entrada Tabla</origin>
         <comments>textocritica</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -753,7 +778,7 @@ where ano= extract(year from now())
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -766,8 +791,8 @@ where ano= extract(year from now())
         <origin>Entrada Tabla</origin>
         <comments>negativa</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -776,7 +801,7 @@ where ano= extract(year from now())
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -792,124 +817,6 @@ where ano= extract(year from now())
     <GUI>
       <xloc>176</xloc>
       <yloc>208</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Memory group by</name>
-    <type>MemoryGroupBy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <give_back_row>N</give_back_row>
-    <group>
-      <field>
-        <name>ano</name>
-      </field>
-      <field>
-        <name>negativa</name>
-      </field>
-    </group>
-    <fields>
-      <field>
-        <aggregate>CANT_CRITICA</aggregate>
-        <subject>negativa</subject>
-        <type>COUNT_ALL</type>
-        <valuefield/>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>368</xloc>
-      <yloc>208</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Memory group by 2</name>
-    <type>MemoryGroupBy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <give_back_row>N</give_back_row>
-    <group>
-      <field>
-        <name>ano</name>
-      </field>
-    </group>
-    <fields>
-      <field>
-        <aggregate>TOTAL_CRITICAS</aggregate>
-        <subject>ano</subject>
-        <type>COUNT_ALL</type>
-        <valuefield/>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>368</xloc>
-      <yloc>336</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Juntar filas (producto cartesiano)</name>
-    <type>JoinRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <cache_size>500</cache_size>
-    <main/>
-    <compare>
-      <condition>
-        <negated>N</negated>
-        <leftvalue>ano</leftvalue>
-        <function>=</function>
-        <rightvalue>ano</rightvalue>
-      </condition>
-    </compare>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>528</xloc>
-      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1074,50 +981,6 @@ where ano= extract(year from now())
     </GUI>
   </step>
   <step>
-    <name>Filtrar filas</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <send_true_to>Juntar filas (producto cartesiano) 2</send_true_to>
-    <send_false_to/>
-    <compare>
-      <condition>
-        <negated>N</negated>
-        <leftvalue>negativa</leftvalue>
-        <function>=</function>
-        <rightvalue/>
-        <value>
-          <name>constant</name>
-          <type>String</type>
-          <text>si</text>
-          <length>-1</length>
-          <precision>-1</precision>
-          <isnull>N</isnull>
-          <mask/>
-        </value>
-      </condition>
-    </compare>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>672</xloc>
-      <yloc>288</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Entrada Tiempo</name>
     <type>TableInput</type>
     <description/>
@@ -1151,7 +1014,7 @@ end id_anio4
     when ano%5=4 then ano
 	when ano%5&lt;&gt;4 then 0
 end id_anio5
-FROM "public".gala where ano= 1985; 
+FROM "public".gala where ano= extract(year from now()); 
 
 
 </sql>
@@ -1316,8 +1179,8 @@ FROM "public".gala where ano= 1985;
     </GUI>
   </step>
   <step>
-    <name>Juntar filas (producto cartesiano) 2</name>
-    <type>JoinRows</type>
+    <name>Entrada popularidad</name>
+    <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1326,16 +1189,197 @@ FROM "public".gala where ano= 1985;
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <cache_size>500</cache_size>
-    <main/>
+    <connection>OscarsDataMart</connection>
+    <sql>SELECT
+ "%popularidad_anual" as popularidad_pasado
+, aceptacion_anual as aceptacion_pasado
+FROM public.fact_estadisticas
+where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio5) and popularidad_anual is not null
+
+-----extract(year from now())-1</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cached_row_meta_active>N</cached_row_meta_active>
+    <row-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>popularidad_pasado</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>popularidad_pasado</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>aceptacion_pasado</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>aceptacion_pasado</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+    </row-meta>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
+      <yloc>96</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Entrada popularidad 2</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>OscarsDataMart</connection>
+    <sql>SELECT
+ "%popularidad_anual" as popularidad_pasado
+, aceptacion_anual as aceptacion_pasado
+FROM public.fact_estadisticas
+where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio5) and popularidad_anual is not null
+
+-----extract(year from now())-1</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cached_row_meta_active>N</cached_row_meta_active>
+    <row-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>popularidad_pasado</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>popularidad_pasado</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>aceptacion_pasado</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>aceptacion_pasado</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+    </row-meta>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1168</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filtrar filas</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Juntar filas (producto cartesiano) 2</send_true_to>
+    <send_false_to/>
     <compare>
       <condition>
         <negated>N</negated>
-        <leftvalue/>
+        <leftvalue>negativa</leftvalue>
         <function>=</function>
         <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>si</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
       </condition>
     </compare>
     <attributes/>
@@ -1347,7 +1391,7 @@ FROM "public".gala where ano= 1985;
       </output>
     </remotesteps>
     <GUI>
-      <xloc>832</xloc>
+      <xloc>672</xloc>
       <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1386,8 +1430,8 @@ FROM "public".gala where ano= 1985;
     </GUI>
   </step>
   <step>
-    <name>User defined Java expression</name>
-    <type>Janino</type>
+    <name>Formula 2</name>
+    <type>Formula</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1397,9 +1441,9 @@ FROM "public".gala where ano= 1985;
       <schema_name/>
     </partitioning>
     <formula>
-      <field_name>popularidad</field_name>
-      <formula_string>porc_popularidad>50 ? 1 : porc_popularidad>=5 ? 2 : 3 </formula_string>
-      <value_type>Integer</value_type>
+      <field_name>porc_aceptacion</field_name>
+      <formula_string>[popularidad_pasado]-[porc_popularidad]</formula_string>
+      <value_type>Number</value_type>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
       <replace_field/>
@@ -1413,207 +1457,8 @@ FROM "public".gala where ano= 1985;
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1088</xloc>
+      <xloc>1472</xloc>
       <yloc>288</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Entrada popularidad</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>OscarsDataMart</connection>
-    <sql>SELECT
- "%popularidad_anual" as popularidad_pasado
-, aceptacion_anual as aceptacion_pasado
-FROM dm.fact_estadisticas
-where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio5) and popularidad_anual is not null
-
------extract(year from now())-1</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-    <cached_row_meta_active>N</cached_row_meta_active>
-    <row-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>popularidad_pasado</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>popularidad_pasado</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>aceptacion_pasado</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>aceptacion_pasado</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-    </row-meta>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>880</xloc>
-      <yloc>96</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Entrada popularidad 2</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>OscarsDataMart</connection>
-    <sql>SELECT
- "%popularidad_anual" as popularidad_pasado
-, aceptacion_anual
-FROM dm.fact_estadisticas
-where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio5) and popularidad_anual is not null
-
------extract(year from now())-1</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-    <cached_row_meta_active>N</cached_row_meta_active>
-    <row-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>popularidad_pasado</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>popularidad_pasado</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>aceptacion_anual</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>aceptacion_anual</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-    </row-meta>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1168</xloc>
-      <yloc>192</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Detect empty stream</name>
-    <type>DetectEmptyStream</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1040</xloc>
-      <yloc>96</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1664,8 +1509,8 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
     </GUI>
   </step>
   <step>
-    <name>Unión ordenada</name>
-    <type>SortedMerge</type>
+    <name>Juntar filas (producto cartesiano)</name>
+    <type>JoinRows</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1674,16 +1519,18 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <fields>
-      <field>
-        <name>aceptacion_pasado</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>popularidad_pasado</name>
-        <ascending>N</ascending>
-      </field>
-    </fields>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <cache_size>500</cache_size>
+    <main/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>ano</leftvalue>
+        <function>=</function>
+        <rightvalue>ano</rightvalue>
+      </condition>
+    </compare>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1693,8 +1540,45 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1312</xloc>
-      <yloc>144</yloc>
+      <xloc>528</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Juntar filas (producto cartesiano) 2</name>
+    <type>JoinRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <cache_size>500</cache_size>
+    <main/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue/>
+        <function>=</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>832</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1736,8 +1620,8 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
     </GUI>
   </step>
   <step>
-    <name>Formula 2</name>
-    <type>Formula</type>
+    <name>Memory group by</name>
+    <type>MemoryGroupBy</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1746,14 +1630,23 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <formula>
-      <field_name>porc_aceptacion</field_name>
-      <formula_string>[popularidad_pasado]-[porc_popularidad]</formula_string>
-      <value_type>Number</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
+    <give_back_row>N</give_back_row>
+    <group>
+      <field>
+        <name>ano</name>
+      </field>
+      <field>
+        <name>negativa</name>
+      </field>
+    </group>
+    <fields>
+      <field>
+        <aggregate>CANT_CRITICA</aggregate>
+        <subject>negativa</subject>
+        <type>COUNT_ALL</type>
+        <valuefield/>
+      </field>
+    </fields>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1763,14 +1656,14 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1472</xloc>
-      <yloc>288</yloc>
+      <xloc>368</xloc>
+      <yloc>208</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>User defined Java expression 2</name>
-    <type>Janino</type>
+    <name>Memory group by 2</name>
+    <type>MemoryGroupBy</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1779,14 +1672,20 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <formula>
-      <field_name>porc_aceptacion</field_name>
-      <formula_string>CANT_CRITICA == 0 ? 100 : porc_aceptacion</formula_string>
-      <value_type>Number</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field>porc_aceptacion</replace_field>
-    </formula>
+    <give_back_row>N</give_back_row>
+    <group>
+      <field>
+        <name>ano</name>
+      </field>
+    </group>
+    <fields>
+      <field>
+        <aggregate>TOTAL_CRITICAS</aggregate>
+        <subject>ano</subject>
+        <type>COUNT_ALL</type>
+        <valuefield/>
+      </field>
+    </fields>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1796,8 +1695,8 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1632</xloc>
-      <yloc>288</yloc>
+      <xloc>368</xloc>
+      <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1813,7 +1712,7 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
       <schema_name/>
     </partitioning>
     <connection>OscarsDataMart</connection>
-    <schema>dm</schema>
+    <schema>public</schema>
     <table>fact_estadisticas</table>
     <commit>1000</commit>
     <truncate>N</truncate>
@@ -1906,6 +1805,107 @@ where extract(year from now())-1 in (id_anio1,id_anio2,id_anio3,id_anio4,id_anio
     <GUI>
       <xloc>1632</xloc>
       <yloc>400</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Unión ordenada</name>
+    <type>SortedMerge</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>aceptacion_pasado</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>popularidad_pasado</name>
+        <ascending>N</ascending>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1312</xloc>
+      <yloc>144</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>User defined Java expression</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>popularidad</field_name>
+      <formula_string>porc_popularidad>50 ? 1 : porc_popularidad>=5 ? 2 : 3 </formula_string>
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1088</xloc>
+      <yloc>288</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>User defined Java expression 2</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>porc_aceptacion</field_name>
+      <formula_string>CANT_CRITICA == 0 ? 100 : porc_aceptacion</formula_string>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field>porc_aceptacion</replace_field>
+    </formula>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1632</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

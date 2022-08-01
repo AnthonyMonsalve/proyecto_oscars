@@ -288,8 +288,6 @@ INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titu
 
 INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (1, 301, 3333, NULL);
 
-INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad, cancion_titulo) VALUES (8, 6, 2525,  'Cancion 12');
-
 INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (6, 301, 7501);
 
 INSERT INTO public.rol_pel_pers (id_rol, id_audiovi, doc_identidad) VALUES (11, 301, 3903);

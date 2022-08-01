@@ -441,10 +441,10 @@
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>Oscars</database>
+    <database>OscarsBD</database>
     <port>5432</port>
     <username>postgres</username>
-    <password>Encrypted 2be98afc86aa7f2a8a216a075d29ffe8a</password>
+    <password>Encrypted 706572726f2063616d61206d657361206263cdfddce80ec6868bb859be75d287acdb</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -492,10 +492,10 @@
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>OscarsDataMart</database>
+    <database>OscarsDM</database>
     <port>5432</port>
     <username>postgres</username>
-    <password>Encrypted 2be98afc86aa7f2a8a216a075d29ffe8a</password>
+    <password>Encrypted 706572726f2063616d61206d657361206263cdfddce80ec6868bb859be75d287acdb</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -882,6 +882,31 @@
     </GUI>
   </step>
   <step>
+    <name>Detect empty stream</name>
+    <type>DetectEmptyStream</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1392</xloc>
+      <yloc>336</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Entrada Tiempo</name>
     <type>TableInput</type>
     <description/>
@@ -1080,6 +1105,516 @@ FROM "public".gala where ano= extract(year from now());
     </GUI>
   </step>
   <step>
+    <name>Entrada popularidad</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>OscarsDataMart</connection>
+    <sql>SELECT
+ id_lustro  ----extract (year from now())/5 *5
+, "%part_post"
+, "%part_nom"
+, "%part_gan"
+, "%part_general"
+, votos_post
+, votos_nom
+, votos_gan
+, votos_gen
+FROM public.fact_estadisticas
+where extract(year from now()) -1 in(id_anio1, id_anio2, id_anio3, id_anio4, id_anio5) and id_area is null and votos_post is not null
+
+----extract(year from now())-1</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cached_row_meta_active>N</cached_row_meta_active>
+    <row-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>id_lustro</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>id_lustro</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>%part_post</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>%part_post</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>%part_nom</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>%part_nom</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>%part_gan</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>%part_gan</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>%part_general</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>%part_general</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>votos_post</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>votos_post</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>votos_nom</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>votos_nom</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>votos_gan</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>votos_gan</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>votos_gen</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad</origin>
+        <comments>votos_gen</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+    </row-meta>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1216</xloc>
+      <yloc>336</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Entrada popularidad 2</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>OscarsDataMart</connection>
+    <sql>SELECT
+ id_lustro,  ----extract (year from now())/5 *5
+ "%part_post"
+, "%part_nom"
+, "%part_gan"
+, "%part_general"
+, votos_post
+, votos_nom
+, votos_gan
+, votos_gen
+FROM public.fact_estadisticas
+where extract(year from now()) -1 in(id_anio1, id_anio2, id_anio3, id_anio4, id_anio5) and id_area is null and votos_post is not null
+
+----extract(year from now())-1</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cached_row_meta_active>N</cached_row_meta_active>
+    <row-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>id_lustro</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>id_lustro</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>%part_post</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>%part_post</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>%part_nom</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>%part_nom</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>%part_gan</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>%part_gan</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Number</type>
+        <storagetype>normal</storagetype>
+        <name>%part_general</name>
+        <length>8</length>
+        <precision>8</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>%part_general</comments>
+        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>votos_post</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>votos_post</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>votos_nom</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>votos_nom</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>votos_gan</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>votos_gan</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>votos_gen</name>
+        <length>15</length>
+        <precision>0</precision>
+        <origin>Entrada popularidad 2</origin>
+        <comments>votos_gen</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>America/Caracas</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+    </row-meta>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1520</xloc>
+      <yloc>432</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Formula</name>
     <type>Formula</type>
     <description/>
@@ -1220,6 +1755,176 @@ FROM "public".gala where ano= extract(year from now());
     </GUI>
   </step>
   <step>
+    <name>Formula 4</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>crec_post</field_name>
+      <formula_string>[%part_post_gen]-[%part_post]</formula_string>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <formula>
+      <field_name>crec_nom</field_name>
+      <formula_string>[%part_nom_gen]-[%part_nom]</formula_string>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <formula>
+      <field_name>crec_gan</field_name>
+      <formula_string>[%part_gan_gen]-[%part_gan]</formula_string>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1824</xloc>
+      <yloc>560</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Formula 5</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>crec_gen</field_name>
+      <formula_string>([crec_post]+[crec_gan]+[crec_nom])/3</formula_string>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1936</xloc>
+      <yloc>560</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>If field value is null</name>
+    <type>IfNull</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <replaceAllByValue/>
+    <replaceAllMask/>
+    <selectFields>Y</selectFields>
+    <selectValuesType>N</selectValuesType>
+    <setEmptyStringAll>N</setEmptyStringAll>
+    <valuetypes>
+      </valuetypes>
+    <fields>
+      <field>
+        <name>id_lustro</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>%part_post</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>%part_nom</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>%part_gan</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>%part_general</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>votos_post</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>votos_nom</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>votos_gan</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>votos_gen</name>
+        <value>0</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1520</xloc>
+      <yloc>336</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Juntar filas (producto cartesiano)</name>
     <type>JoinRows</type>
     <description/>
@@ -1253,6 +1958,43 @@ FROM "public".gala where ano= extract(year from now());
     <GUI>
       <xloc>672</xloc>
       <yloc>240</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Juntar filas (producto cartesiano) 2</name>
+    <type>JoinRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <directory>%%java.io.tmpdir%%</directory>
+    <prefix>out</prefix>
+    <cache_size>500</cache_size>
+    <main/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>SUMA_GAN</leftvalue>
+        <function>=</function>
+        <rightvalue>SUMA_GAN</rightvalue>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1664</xloc>
+      <yloc>560</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1701,6 +2443,213 @@ FROM "public".gala where ano= extract(year from now());
     </GUI>
   </step>
   <step>
+    <name>Salida Tabla</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>OscarsDataMart</connection>
+    <schema>public</schema>
+    <table>fact_estadisticas</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>N</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1520</xloc>
+      <yloc>672</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Selecciona/Renombra valores</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id_lustro</name>
+        <rename>id_lustro</rename>
+      </field>
+      <field>
+        <name>id_anio1</name>
+        <rename>id_anio1</rename>
+      </field>
+      <field>
+        <name>id_anio2</name>
+        <rename>id_anio2</rename>
+      </field>
+      <field>
+        <name>id_anio3</name>
+        <rename>id_anio3</rename>
+      </field>
+      <field>
+        <name>id_anio4</name>
+        <rename>id_anio4</rename>
+      </field>
+      <field>
+        <name>id_anio5</name>
+        <rename>id_anio5</rename>
+      </field>
+      <field>
+        <name>%part_post_gen</name>
+        <rename>%part_post</rename>
+      </field>
+      <field>
+        <name>%part_nom_gen</name>
+        <rename>%part_nom</rename>
+      </field>
+      <field>
+        <name>%part_gan_gen</name>
+        <rename>%part_gan</rename>
+      </field>
+      <field>
+        <name>%part_gen</name>
+        <rename>%part_general</rename>
+      </field>
+      <field>
+        <name>crec_post</name>
+        <rename>crec_part_post</rename>
+      </field>
+      <field>
+        <name>crec_nom</name>
+        <rename>crec_part_nom</rename>
+      </field>
+      <field>
+        <name>crec_gan</name>
+        <rename>crec_part_gan</rename>
+      </field>
+      <field>
+        <name>crec_gen</name>
+        <rename>crec_part_general</rename>
+      </field>
+      <field>
+        <name>SUMA_GAN</name>
+        <rename>votos_gan</rename>
+      </field>
+      <field>
+        <name>SUMA_NOM</name>
+        <rename>votos_nom</rename>
+      </field>
+      <field>
+        <name>SUMA_POST</name>
+        <rename>votos_post</rename>
+      </field>
+      <field>
+        <name>SUMA_GEN</name>
+        <rename>votos_gen</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1808</xloc>
+      <yloc>672</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Unión ordenada</name>
+    <type>SortedMerge</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id_lustro</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>%part_post</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>%part_nom</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>%part_gan</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>%part_general</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>votos_post</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>votos_nom</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>votos_gan</name>
+        <ascending>N</ascending>
+      </field>
+      <field>
+        <name>votos_gen</name>
+        <ascending>N</ascending>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1664</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>miembros_todos</name>
     <type>TableInput</type>
     <description/>
@@ -1906,8 +2855,8 @@ where fecha_fin is null;</sql>
         <origin>miembros_todos 2</origin>
         <comments>id_miembro</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -1916,7 +2865,7 @@ where fecha_fin is null;</sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -1929,8 +2878,8 @@ where fecha_fin is null;</sql>
         <origin>miembros_todos 2</origin>
         <comments>fecha_inicio</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -1939,7 +2888,7 @@ where fecha_fin is null;</sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -1952,8 +2901,8 @@ where fecha_fin is null;</sql>
         <origin>miembros_todos 2</origin>
         <comments>vitalicio</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -1962,7 +2911,7 @@ where fecha_fin is null;</sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -1975,8 +2924,8 @@ where fecha_fin is null;</sql>
         <origin>miembros_todos 2</origin>
         <comments>doc_identidad</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -1985,7 +2934,7 @@ where fecha_fin is null;</sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -1998,8 +2947,8 @@ where fecha_fin is null;</sql>
         <origin>miembros_todos 2</origin>
         <comments>fecha_fin</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2008,7 +2957,7 @@ where fecha_fin is null;</sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2017,12 +2966,12 @@ where fecha_fin is null;</sql>
         <storagetype>normal</storagetype>
         <name>area_nt</name>
         <length>-1</length>
-        <precision>-1</precision>
+        <precision>0</precision>
         <origin>miembros_todos 2</origin>
         <comments>area_nt</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2031,7 +2980,7 @@ where fecha_fin is null;</sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2622,7 +3571,7 @@ where votos.ano_oscar=extract(year from now()) and miembro.fecha_fin is null;
         <storagetype>normal</storagetype>
         <name>area_nt</name>
         <length>-1</length>
-        <precision>0</precision>
+        <precision>-1</precision>
         <origin>votos_ganadores</origin>
         <comments>area_nt</comments>
         <conversion_Mask/>
@@ -2687,8 +3636,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>id_voto</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2697,7 +3646,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2710,8 +3659,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>fecha_hora</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2720,7 +3669,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2733,8 +3682,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>tipo_voto</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2743,7 +3692,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2756,8 +3705,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>id_miembro</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2766,7 +3715,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2779,8 +3728,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>id_nominada</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2789,7 +3738,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2802,8 +3751,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>id_categoria</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2812,7 +3761,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2825,8 +3774,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>id_postuladas_p_pers</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2835,7 +3784,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2848,8 +3797,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>ano_oscar</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2858,7 +3807,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2871,8 +3820,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>id_categoria1</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2881,7 +3830,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2894,8 +3843,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>id_postuladas_p_pers1</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2904,7 +3853,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2917,8 +3866,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>ano_oscar1</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2927,7 +3876,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2940,8 +3889,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>id_miembro</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2950,7 +3899,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2963,8 +3912,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>fecha_inicio</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2973,7 +3922,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -2986,8 +3935,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>vitalicio</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -2996,7 +3945,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -3009,8 +3958,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>doc_identidad</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -3019,7 +3968,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -3032,8 +3981,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>fecha_fin</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -3042,7 +3991,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -3055,8 +4004,8 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <origin>votos_nominados</origin>
         <comments>area_nt</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -3065,7 +4014,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -3297,7 +4246,7 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
         <storagetype>normal</storagetype>
         <name>area_nt</name>
         <length>-1</length>
-        <precision>0</precision>
+        <precision>-1</precision>
         <origin>votos_postulados</origin>
         <comments>area_nt</comments>
         <conversion_Mask/>
@@ -3327,955 +4276,6 @@ where ano_oscar1=extract(year from now()) and miembro.fecha_fin is null; </sql>
     <GUI>
       <xloc>144</xloc>
       <yloc>848</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Salida Tabla</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>OscarsDataMart</connection>
-    <schema>dm</schema>
-    <table>fact_estadisticas</table>
-    <commit>1000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>N</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1520</xloc>
-      <yloc>672</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Selecciona/Renombra valores</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>id_lustro</name>
-        <rename>id_lustro</rename>
-      </field>
-      <field>
-        <name>id_anio1</name>
-        <rename>id_anio1</rename>
-      </field>
-      <field>
-        <name>id_anio2</name>
-        <rename>id_anio2</rename>
-      </field>
-      <field>
-        <name>id_anio3</name>
-        <rename>id_anio3</rename>
-      </field>
-      <field>
-        <name>id_anio4</name>
-        <rename>id_anio4</rename>
-      </field>
-      <field>
-        <name>id_anio5</name>
-        <rename>id_anio5</rename>
-      </field>
-      <field>
-        <name>%part_post_gen</name>
-        <rename>%part_post</rename>
-      </field>
-      <field>
-        <name>%part_nom_gen</name>
-        <rename>%part_nom</rename>
-      </field>
-      <field>
-        <name>%part_gan_gen</name>
-        <rename>%part_gan</rename>
-      </field>
-      <field>
-        <name>%part_gen</name>
-        <rename>%part_general</rename>
-      </field>
-      <field>
-        <name>crec_post</name>
-        <rename>crec_part_post</rename>
-      </field>
-      <field>
-        <name>crec_nom</name>
-        <rename>crec_part_nom</rename>
-      </field>
-      <field>
-        <name>crec_gan</name>
-        <rename>crec_part_gan</rename>
-      </field>
-      <field>
-        <name>crec_gen</name>
-        <rename>crec_part_general</rename>
-      </field>
-      <field>
-        <name>SUMA_GAN</name>
-        <rename>votos_gan</rename>
-      </field>
-      <field>
-        <name>SUMA_NOM</name>
-        <rename>votos_nom</rename>
-      </field>
-      <field>
-        <name>SUMA_POST</name>
-        <rename>votos_post</rename>
-      </field>
-      <field>
-        <name>SUMA_GEN</name>
-        <rename>votos_gen</rename>
-      </field>
-      <select_unspecified>N</select_unspecified>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1808</xloc>
-      <yloc>672</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Formula 4</name>
-    <type>Formula</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <formula>
-      <field_name>crec_post</field_name>
-      <formula_string>[%part_post_gen]-[%part_post]</formula_string>
-      <value_type>Number</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
-    <formula>
-      <field_name>crec_nom</field_name>
-      <formula_string>[%part_nom_gen]-[%part_nom]</formula_string>
-      <value_type>Number</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
-    <formula>
-      <field_name>crec_gan</field_name>
-      <formula_string>[%part_gan_gen]-[%part_gan]</formula_string>
-      <value_type>Number</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1824</xloc>
-      <yloc>560</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Formula 5</name>
-    <type>Formula</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <formula>
-      <field_name>crec_gen</field_name>
-      <formula_string>([crec_post]+[crec_gan]+[crec_nom])/3</formula_string>
-      <value_type>Number</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1936</xloc>
-      <yloc>560</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Entrada popularidad</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>OscarsDataMart</connection>
-    <sql>SELECT
- id_lustro,  ----extract (year from now())/5 *5
- "%part_post"
-, "%part_nom"
-, "%part_gan"
-, "%part_general"
-, votos_post
-, votos_nom
-, votos_gan
-, votos_gen
-FROM dm.fact_estadisticas
-where extract(year from now()) -1 in(id_anio1, id_anio2, id_anio3, id_anio4, id_anio5) and id_area is null and votos_post is not null
-
-----extract(year from now())-1</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-    <cached_row_meta_active>N</cached_row_meta_active>
-    <row-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>id_lustro</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>id_lustro</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>%part_post</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>%part_post</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>%part_nom</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>%part_nom</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>%part_gan</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>%part_gan</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>%part_general</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>%part_general</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>votos_post</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>votos_post</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>votos_nom</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>votos_nom</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>votos_gan</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>votos_gan</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>votos_gen</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad</origin>
-        <comments>votos_gen</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-    </row-meta>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1216</xloc>
-      <yloc>336</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Entrada popularidad 2</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>OscarsDataMart</connection>
-    <sql>SELECT
- id_lustro,  ----extract (year from now())/5 *5
- "%part_post"
-, "%part_nom"
-, "%part_gan"
-, "%part_general"
-, votos_post
-, votos_nom
-, votos_gan
-, votos_gen
-FROM dm.fact_estadisticas
-where extract(year from now()) -1 in(id_anio1, id_anio2, id_anio3, id_anio4, id_anio5) and id_area is null and votos_post is not null
-
-----extract(year from now())-1</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-    <cached_row_meta_active>N</cached_row_meta_active>
-    <row-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>id_lustro</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>id_lustro</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>%part_post</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>%part_post</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>%part_nom</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>%part_nom</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>%part_gan</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>%part_gan</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Number</type>
-        <storagetype>normal</storagetype>
-        <name>%part_general</name>
-        <length>8</length>
-        <precision>8</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>%part_general</comments>
-        <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>votos_post</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>votos_post</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>votos_nom</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>votos_nom</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>votos_gan</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>votos_gan</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>Integer</type>
-        <storagetype>normal</storagetype>
-        <name>votos_gen</name>
-        <length>15</length>
-        <precision>0</precision>
-        <origin>Entrada popularidad 2</origin>
-        <comments>votos_gen</comments>
-        <conversion_Mask>####0;-####0</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
-        <date_format_timezone>America/Caracas</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-    </row-meta>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1520</xloc>
-      <yloc>432</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Detect empty stream</name>
-    <type>DetectEmptyStream</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1392</xloc>
-      <yloc>336</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>If field value is null</name>
-    <type>IfNull</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <replaceAllByValue/>
-    <replaceAllMask/>
-    <selectFields>Y</selectFields>
-    <selectValuesType>N</selectValuesType>
-    <setEmptyStringAll>N</setEmptyStringAll>
-    <valuetypes>
-      </valuetypes>
-    <fields>
-      <field>
-        <name>id_lustro</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>%part_post</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>%part_nom</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>%part_gan</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>%part_general</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>votos_post</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>votos_nom</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>votos_gan</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>votos_gen</name>
-        <value>0</value>
-        <mask/>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1520</xloc>
-      <yloc>336</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Unión ordenada</name>
-    <type>SortedMerge</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>id_lustro</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>%part_post</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>%part_nom</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>%part_gan</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>%part_general</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>votos_post</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>votos_nom</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>votos_gan</name>
-        <ascending>N</ascending>
-      </field>
-      <field>
-        <name>votos_gen</name>
-        <ascending>N</ascending>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1664</xloc>
-      <yloc>384</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Juntar filas (producto cartesiano) 2</name>
-    <type>JoinRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <cache_size>500</cache_size>
-    <main/>
-    <compare>
-      <condition>
-        <negated>N</negated>
-        <leftvalue>SUMA_GAN</leftvalue>
-        <function>=</function>
-        <rightvalue>SUMA_GAN</rightvalue>
-      </condition>
-    </compare>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1664</xloc>
-      <yloc>560</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

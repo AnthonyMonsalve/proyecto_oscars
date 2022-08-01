@@ -431,7 +431,7 @@
     <created_date>2022/07/31 19:14:04.842</created_date>
     <modified_user>-</modified_user>
     <modified_date>2022/07/31 19:14:04.842</modified_date>
-    <key_for_session_key/>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
@@ -441,10 +441,10 @@
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>Oscars</database>
+    <database>OscarsBD</database>
     <port>5432</port>
     <username>postgres</username>
-    <password>Encrypted 2be98afc86aa7f2a8a216a075d29ffe8a</password>
+    <password>Encrypted 706572726f2063616d61206d657361206263cdfddce80ec6868bb859be75d287acdb</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -492,10 +492,10 @@
     <server>localhost</server>
     <type>POSTGRESQL</type>
     <access>Native</access>
-    <database>OscarsDataMart</database>
+    <database>OscarsDM</database>
     <port>5432</port>
     <username>postgres</username>
-    <password>Encrypted 2be98afc86aa7f2a8a216a075d29ffe8a</password>
+    <password>Encrypted 706572726f2063616d61206d657361206263cdfddce80ec6868bb859be75d287acdb</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -618,8 +618,8 @@ UNNEST(donacion_nt) AS row_result
         <origin>Entrada Tabla</origin>
         <comments>anio_actual</comments>
         <conversion_Mask>####0.0#########;-####0.0#########</conversion_Mask>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -628,7 +628,7 @@ UNNEST(donacion_nt) AS row_result
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -641,8 +641,8 @@ UNNEST(donacion_nt) AS row_result
         <origin>Entrada Tabla</origin>
         <comments>row_result</comments>
         <conversion_Mask/>
-        <decimal_symbol>,</decimal_symbol>
-        <grouping_symbol>.</grouping_symbol>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
         <trim_type>none</trim_type>
         <case_insensitive>N</case_insensitive>
@@ -651,7 +651,7 @@ UNNEST(donacion_nt) AS row_result
         <sort_descending>N</sort_descending>
         <output_padding>N</output_padding>
         <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>es_ES</date_format_locale>
+        <date_format_locale>en_US</date_format_locale>
         <date_format_timezone>America/Caracas</date_format_timezone>
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
@@ -666,326 +666,6 @@ UNNEST(donacion_nt) AS row_result
     </remotesteps>
     <GUI>
       <xloc>112</xloc>
-      <yloc>192</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Partir campos</name>
-    <type>FieldSplitter</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <splitfield>row_result</splitfield>
-    <delimiter>,</delimiter>
-    <enclosure/>
-    <fields>
-      <field>
-        <name>anio</name>
-        <id/>
-        <idrem>N</idrem>
-        <type>String</type>
-        <format/>
-        <group/>
-        <decimal/>
-        <currency/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <nullif/>
-        <ifnull/>
-        <trimtype>none</trimtype>
-      </field>
-      <field>
-        <name>porcentaje</name>
-        <id/>
-        <idrem>N</idrem>
-        <type>Number</type>
-        <format/>
-        <group/>
-        <decimal/>
-        <currency/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <nullif/>
-        <ifnull/>
-        <trimtype>none</trimtype>
-      </field>
-      <field>
-        <name>monto</name>
-        <id/>
-        <idrem>N</idrem>
-        <type>String</type>
-        <format/>
-        <group/>
-        <decimal/>
-        <currency/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <nullif/>
-        <ifnull/>
-        <trimtype>none</trimtype>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>272</xloc>
-      <yloc>192</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Partir campos 2</name>
-    <type>FieldSplitter</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <splitfield>anio</splitfield>
-    <delimiter>(</delimiter>
-    <enclosure/>
-    <fields>
-      <field>
-        <name>par</name>
-        <id/>
-        <idrem>Y</idrem>
-        <type>String</type>
-        <format/>
-        <group/>
-        <decimal/>
-        <currency/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <nullif/>
-        <ifnull/>
-        <trimtype>none</trimtype>
-      </field>
-      <field>
-        <name>anio</name>
-        <id/>
-        <idrem>N</idrem>
-        <type>Integer</type>
-        <format/>
-        <group/>
-        <decimal/>
-        <currency/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <nullif/>
-        <ifnull/>
-        <trimtype>none</trimtype>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>464</xloc>
-      <yloc>192</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Partir campos 3</name>
-    <type>FieldSplitter</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <splitfield>monto</splitfield>
-    <delimiter>)</delimiter>
-    <enclosure/>
-    <fields>
-      <field>
-        <name>monto</name>
-        <id/>
-        <idrem>N</idrem>
-        <type>Number</type>
-        <format/>
-        <group/>
-        <decimal/>
-        <currency/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <nullif/>
-        <ifnull/>
-        <trimtype>none</trimtype>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>640</xloc>
-      <yloc>192</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Filtrar filas</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <send_true_to>Memory group by</send_true_to>
-    <send_false_to/>
-    <compare>
-      <condition>
-        <negated>N</negated>
-        <leftvalue>anio_actual</leftvalue>
-        <function>=</function>
-        <rightvalue>anio</rightvalue>
-      </condition>
-    </compare>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>800</xloc>
-      <yloc>192</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Memory group by</name>
-    <type>MemoryGroupBy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <give_back_row>N</give_back_row>
-    <group>
-      <field>
-        <name>anio</name>
-      </field>
-    </group>
-    <fields>
-      <field>
-        <aggregate>MONTO_TOTAL</aggregate>
-        <subject>monto</subject>
-        <type>SUM</type>
-        <valuefield/>
-      </field>
-      <field>
-        <aggregate>PORCENTAJE_TOTAL</aggregate>
-        <subject>porcentaje</subject>
-        <type>SUM</type>
-        <valuefield/>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>944</xloc>
-      <yloc>192</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Selecciona/Renombra valores</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>id_lustro</name>
-        <rename>id_lustro</rename>
-      </field>
-      <field>
-        <name>id_anio1</name>
-        <rename>id_anio1</rename>
-      </field>
-      <field>
-        <name>id_anio2</name>
-        <rename>id_anio2</rename>
-      </field>
-      <field>
-        <name>id_anio3</name>
-        <rename>id_anio3</rename>
-      </field>
-      <field>
-        <name>id_anio4</name>
-        <rename>id_anio4</rename>
-      </field>
-      <field>
-        <name>id_anio5</name>
-        <rename>id_anio5</rename>
-      </field>
-      <field>
-        <name>PORCENTAJE_TOTAL</name>
-        <rename>%donacion</rename>
-      </field>
-      <field>
-        <name>MONTO_TOTAL</name>
-        <rename>monto_donado</rename>
-      </field>
-      <select_unspecified>N</select_unspecified>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1296</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1189,6 +869,41 @@ FROM "public".gala where ano= extract(year from now());
     </GUI>
   </step>
   <step>
+    <name>Filtrar filas</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Memory group by</send_true_to>
+    <send_false_to/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>anio_actual</leftvalue>
+        <function>=</function>
+        <rightvalue>anio</rightvalue>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>800</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Juntar filas (producto cartesiano)</name>
     <type>JoinRows</type>
     <description/>
@@ -1226,6 +941,231 @@ FROM "public".gala where ano= extract(year from now());
     </GUI>
   </step>
   <step>
+    <name>Memory group by</name>
+    <type>MemoryGroupBy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <give_back_row>N</give_back_row>
+    <group>
+      <field>
+        <name>anio</name>
+      </field>
+    </group>
+    <fields>
+      <field>
+        <aggregate>MONTO_TOTAL</aggregate>
+        <subject>monto</subject>
+        <type>SUM</type>
+        <valuefield/>
+      </field>
+      <field>
+        <aggregate>PORCENTAJE_TOTAL</aggregate>
+        <subject>porcentaje</subject>
+        <type>SUM</type>
+        <valuefield/>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>944</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Partir campos</name>
+    <type>FieldSplitter</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <splitfield>row_result</splitfield>
+    <delimiter>,</delimiter>
+    <enclosure/>
+    <fields>
+      <field>
+        <name>anio</name>
+        <id/>
+        <idrem>N</idrem>
+        <type>String</type>
+        <format/>
+        <group/>
+        <decimal/>
+        <currency/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif/>
+        <ifnull/>
+        <trimtype>none</trimtype>
+      </field>
+      <field>
+        <name>porcentaje</name>
+        <id/>
+        <idrem>N</idrem>
+        <type>Number</type>
+        <format/>
+        <group/>
+        <decimal/>
+        <currency/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif/>
+        <ifnull/>
+        <trimtype>none</trimtype>
+      </field>
+      <field>
+        <name>monto</name>
+        <id/>
+        <idrem>N</idrem>
+        <type>String</type>
+        <format/>
+        <group/>
+        <decimal/>
+        <currency/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif/>
+        <ifnull/>
+        <trimtype>none</trimtype>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>256</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Partir campos 2</name>
+    <type>FieldSplitter</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <splitfield>anio</splitfield>
+    <delimiter>(</delimiter>
+    <enclosure/>
+    <fields>
+      <field>
+        <name>par</name>
+        <id/>
+        <idrem>Y</idrem>
+        <type>String</type>
+        <format/>
+        <group/>
+        <decimal/>
+        <currency/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif/>
+        <ifnull/>
+        <trimtype>none</trimtype>
+      </field>
+      <field>
+        <name>anio</name>
+        <id/>
+        <idrem>N</idrem>
+        <type>Integer</type>
+        <format/>
+        <group/>
+        <decimal/>
+        <currency/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif/>
+        <ifnull/>
+        <trimtype>none</trimtype>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>464</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Partir campos 3</name>
+    <type>FieldSplitter</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <splitfield>monto</splitfield>
+    <delimiter>)</delimiter>
+    <enclosure/>
+    <fields>
+      <field>
+        <name>monto</name>
+        <id/>
+        <idrem>N</idrem>
+        <type>Number</type>
+        <format/>
+        <group/>
+        <decimal/>
+        <currency/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif/>
+        <ifnull/>
+        <trimtype>none</trimtype>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>640</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Salida Tabla</name>
     <type>TableOutput</type>
     <description/>
@@ -1237,7 +1177,7 @@ FROM "public".gala where ano= extract(year from now());
       <schema_name/>
     </partitioning>
     <connection>OscarsDataMart</connection>
-    <schema>dm</schema>
+    <schema>public</schema>
     <table>fact_estadisticas</table>
     <commit>1000</commit>
     <truncate>N</truncate>
@@ -1266,6 +1206,66 @@ FROM "public".gala where ano= extract(year from now());
     <GUI>
       <xloc>1296</xloc>
       <yloc>304</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Selecciona/Renombra valores</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>id_lustro</name>
+        <rename>id_lustro</rename>
+      </field>
+      <field>
+        <name>id_anio1</name>
+        <rename>id_anio1</rename>
+      </field>
+      <field>
+        <name>id_anio2</name>
+        <rename>id_anio2</rename>
+      </field>
+      <field>
+        <name>id_anio3</name>
+        <rename>id_anio3</rename>
+      </field>
+      <field>
+        <name>id_anio4</name>
+        <rename>id_anio4</rename>
+      </field>
+      <field>
+        <name>id_anio5</name>
+        <rename>id_anio5</rename>
+      </field>
+      <field>
+        <name>PORCENTAJE_TOTAL</name>
+        <rename>%donacion</rename>
+      </field>
+      <field>
+        <name>MONTO_TOTAL</name>
+        <rename>monto_donado</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1296</xloc>
+      <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
